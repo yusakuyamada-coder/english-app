@@ -3,56 +3,38 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>English Pronunciation Practice</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <title>English Coach AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&display=swap" rel="stylesheet" />
   <style>
-    :root {
-      --accent: #1D9E75; --accent-light: #E1F5EE; --accent-mid: #0F6E56;
-      --bg: #ffffff; --bg2: #f7f7f5; --text: #1a1a18; --text-sub: #6b6b66;
-      --border: rgba(0,0,0,0.1); --radius: 12px;
-    }
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0efe9; color: var(--text); padding: 2rem 1rem; display: flex; justify-content: center; }
-    .container { width: 100%; max-width: 600px; background: white; padding: 2rem; border-radius: var(--radius); box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
-    .header h1 { font-size: 24px; margin-bottom: 0.5rem; }
-    .api-section { background: var(--bg2); padding: 1rem; border-radius: 8px; margin: 1.5rem 0; }
-    .api-section input { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-family: monospace; }
-    .phrase-card { background: var(--accent-light); padding: 1.5rem; border-radius: var(--radius); margin-bottom: 1.5rem; text-align: center; }
-    .phrase-text { font-size: 22px; font-weight: 600; color: var(--accent-dark); margin: 10px 0; }
-    .conversation { background: var(--bg2); padding: 1rem; border-radius: 8px; min-height: 150px; margin-bottom: 1.5rem; max-height: 300px; overflow-y: auto; }
-    .msg { margin-bottom: 1rem; padding: 10px; border-radius: 8px; background: white; border: 1px solid var(--border); }
-    .msg-label { font-size: 10px; font-weight: bold; text-transform: uppercase; color: var(--text-sub); }
-    .controls { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-    .rec-btn { width: 70px; height: 70px; border-radius: 50%; border: none; background: var(--accent); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 24px; transition: 0.2s; }
-    .rec-btn.recording { background: #E24B4A; animation: pulse 1s infinite; }
-    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-    .status { font-size: 13px; color: var(--text-sub); }
-    .play-btn { margin-top: 5px; padding: 5px 10px; font-size: 12px; background: white; border: 1px solid var(--accent); color: var(--accent); border-radius: 4px; cursor: pointer; }
-    .error-msg { background: #FFF0F0; color: #A32D2D; padding: 1rem; border-radius: 8px; margin-top: 1rem; font-size: 13px; border: 1px solid #F5C6C6; }
+    :root { --accent: #1D9E75; --bg: #f0efe9; --text: #1a1a18; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); padding: 1rem; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 500px; background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .phrase-card { background: #E1F5EE; padding: 1.5rem; border-radius: 12px; margin: 1.5rem 0; text-align: center; }
+    .phrase-text { font-size: 20px; font-weight: 600; color: #085041; margin-bottom: 10px; }
+    .api-section { background: #f7f7f5; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
+    .api-section input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; }
+    .conversation { background: #f7f7f5; padding: 10px; border-radius: 8px; min-height: 100px; margin-bottom: 1rem; font-size: 14px; }
+    .msg { margin-bottom: 8px; padding: 8px; background: white; border-radius: 6px; border: 1px solid #eee; }
+    .rec-btn { width: 64px; height: 64px; border-radius: 50%; border: none; background: var(--accent); color: white; cursor: pointer; font-size: 24px; transition: 0.2s; display: block; margin: 0 auto; }
+    .rec-btn.recording { background: #E24B4A; transform: scale(1.1); }
+    .status { font-size: 12px; color: #666; text-align: center; margin-top: 10px; }
+    .error-msg { background: #FFF0F0; color: #A32D2D; padding: 10px; border-radius: 8px; font-size: 12px; margin-top: 10px; border: 1px solid #F5C6C6; white-space: pre-wrap; }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="header">
-      <h1>English Coach</h1>
-      <p>Gemini 1.5 Flash を使用中</p>
-    </div>
-
+    <h2 style="font-size: 20px; margin-bottom: 10px;">English Coach AI</h2>
+    
     <div class="api-section">
-      <label style="font-size: 12px; display: block; margin-bottom: 5px;">Gemini API Key</label>
-      <input type="password" id="apiKey" placeholder="AIza..." />
+      <input type="password" id="apiKey" placeholder="Gemini APIキーを入力 (AIza...)" />
     </div>
 
     <div class="phrase-card">
-      <div style="font-size: 12px; color: var(--accent-mid);">Try saying this:</div>
-      <div class="phrase-text" id="phraseText">How are you doing today?</div>
-      <button onclick="nextPhrase()" style="background: none; border: 1px solid var(--accent); color: var(--accent); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px;">Next</button>
+      <div style="font-size: 11px; opacity: 0.7;">これを言ってみて:</div>
+      <div class="phrase-text" id="phraseText">Hello, how can I improve my English?</div>
     </div>
 
-    <div class="conversation" id="conversation">
-      <div id="placeholder" style="color: #999; text-align: center; font-size: 13px; margin-top: 50px;">録音ボタンを押して話してください</div>
-    </div>
+    <div class="conversation" id="conversation"></div>
 
     <div class="controls">
       <button class="rec-btn" id="recBtn" onclick="toggleRecord()">🎤</button>
@@ -62,26 +44,21 @@
   </div>
 
   <script>
-    const phraseList = [
-      "How are you doing today?",
-      "I would like to order a coffee, please.",
-      "Could you tell me how to get to the station?",
-      "That sounds like a wonderful idea!",
-      "I am looking forward to meeting you."
-    ];
-    let currentIdx = 0;
     let isRecording = false;
     let mediaRecorder = null;
     let audioChunks = [];
-
-    function nextPhrase() {
-      currentIdx = (currentIdx + 1) % phraseList.length;
-      document.getElementById('phraseText').textContent = phraseList[currentIdx];
-    }
+    
+    // 予備のモデルリスト (2026年現在で有効なものを順に試す)
+    const MODEL_CANDIDATES = [
+      "gemini-3-flash",
+      "gemini-3-flash-latest",
+      "gemini-1.5-flash-latest",
+      "gemini-1.5-flash"
+    ];
 
     async function toggleRecord() {
       const key = document.getElementById('apiKey').value.trim();
-      if (!key) { alert('APIキーを入力してください'); return; }
+      if (!key) { alert('キーを入力してください'); return; }
 
       if (isRecording) {
         mediaRecorder.stop();
@@ -98,28 +75,29 @@
         mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
         mediaRecorder.onstop = async () => {
           const blob = new Blob(audioChunks, { type: 'audio/webm' });
-          process(blob, key);
+          await tryModels(blob, key);
         };
         mediaRecorder.start();
         isRecording = true;
         document.getElementById('recBtn').classList.add('recording');
-        document.getElementById('statusText').textContent = '録音中... 停止するにはもう一度タップ';
-      } catch (e) {
-        showError('マイクが使えません: ' + e.message);
-      }
+        document.getElementById('statusText').textContent = '録音中... 停止は再タップ';
+      } catch (e) { showError('マイクが使えません'); }
     }
 
-    async function process(blob, key) {
-      const reader = new FileReader();
-      reader.readAsDataURL(blob);
-      reader.onloadend = async () => {
-        const base64Audio = reader.result.split(',')[1];
-        const target = document.getElementById('phraseText').textContent;
-        const prompt = `Student practiced: "${target}". Analyze their audio. Respond ONLY with JSON: {"transcript":"(what they said)","feedback":"(short tip)","next":"(next phrase)"}`;
+    async function tryModels(blob, key) {
+      const base64Audio = await new Promise(r => {
+        const reader = new FileReader();
+        reader.onload = () => r(reader.result.split(',')[1]);
+        reader.readAsDataURL(blob);
+      });
 
+      const prompt = `Pronunciation check. Respond ONLY JSON: {"transcript":"...","feedback":"..."}`;
+
+      // 使えるモデルが見つかるまでループで試す
+      for (const modelName of MODEL_CANDIDATES) {
         try {
-          // エンドポイントを v1beta に、モデルを gemini-1.5-flash に固定
-          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+          console.log(`Trying model: ${modelName}`);
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${key}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -128,59 +106,34 @@
           });
 
           const data = await res.json();
-          if (data.error) throw new Error(data.error.message);
+          if (data.error) {
+            console.warn(`${modelName} failed: ${data.error.message}`);
+            continue; // 次のモデルを試す
+          }
 
           const result = JSON.parse(data.candidates[0].content.parts[0].text.replace(/```json|```/g, ''));
-          
-          document.getElementById('placeholder')?.remove();
           addMsg('You', result.transcript);
-          addMsg('Coach', result.feedback);
-          addMsg('Next', result.next);
-          document.getElementById('phraseText').textContent = result.next;
-          document.getElementById('statusText').textContent = '完了！';
-
-          // TTS
-          try {
-            const ttsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${key}`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                contents: [{ parts: [{ text: result.next }] }],
-                generationConfig: { responseModalities: ["AUDIO"] }
-              })
-            });
-            const ttsData = await ttsRes.json();
-            const audioUrl = `data:audio/wav;base64,${ttsData.candidates[0].content.parts[0].inlineData.data}`;
-            addAudio(audioUrl);
-          } catch (e) { console.log('TTS Skip'); }
-
+          addMsg('AI', result.feedback);
+          document.getElementById('statusText').textContent = '完了！(' + modelName + ')';
+          document.getElementById('errorArea').innerHTML = ''; // エラーを消す
+          return; // 成功したので終了
         } catch (e) {
-          showError('エラーが発生しました: ' + e.message);
+          console.error(`${modelName} Exception:`, e);
         }
-      };
+      }
+      showError("全てのモデルでエラーが発生しました。APIキーの有効期限や、Google AI Studioでの課金設定を確認してください。");
     }
 
     function addMsg(label, text) {
       const conv = document.getElementById('conversation');
       const div = document.createElement('div');
       div.className = 'msg';
-      div.innerHTML = `<div class="msg-label">${label}</div><div>${text}</div>`;
-      conv.appendChild(div);
-      conv.scrollTop = conv.scrollHeight;
-    }
-
-    function addAudio(url) {
-      const conv = document.getElementById('conversation');
-      const btn = document.createElement('button');
-      btn.className = 'play-btn';
-      btn.textContent = '▶ AIの声を聞く';
-      btn.onclick = () => new Audio(url).play();
-      conv.lastChild.appendChild(btn);
+      div.innerHTML = `<b>${label}:</b> ${text}`;
+      conv.prepend(div);
     }
 
     function showError(msg) {
-      const area = document.getElementById('errorArea');
-      area.innerHTML = `<div class="error-msg">${msg}</div>`;
+      document.getElementById('errorArea').innerHTML = `<div class="error-msg">${msg}</div>`;
       document.getElementById('statusText').textContent = 'エラー';
     }
   </script>
