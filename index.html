@@ -420,7 +420,7 @@
     <div class="header">
       <div class="header-top">
         <h1>English Pronunciation Practice</h1>
-        <span class="gemini-badge">Gemini 2.0 Flash</span>
+        <span class="gemini-badge">Gemini 1.5 Flash</span>
       </div>
       <p>録音して話すと、発音フィードバックと次のフレーズが返ってきます。</p>
     </div>
@@ -466,7 +466,7 @@
     </div>
 
     <div class="footer">
-      Powered by Gemini 2.0 Flash &amp; Gemini 2.5 Flash TTS &nbsp;·&nbsp; キーはブラウザ内のみで使用されます
+      Powered by Gemini 1.5 Flash &amp; 2.5 TTS &nbsp;·&nbsp; キーはブラウザ内のみで使用されます
     </div>
 
   </div>
@@ -612,9 +612,9 @@ The suggested phrase was: "${targetPhrase}"
 Listen to the audio and:
 1. Transcribe exactly what the student said.
 2. Give 1-2 sentences of specific, kind feedback on pronunciation or word choice compared to the target phrase.
-3. Provide a natural follow-up sentence for the student to say next in a ${currentTopic} conversation. Make it slightly more challenging than the current phrase.
+3. Provide a natural follow-up sentence for the student to say next in a ${currentTopic} conversation.
 
-Respond ONLY in this exact JSON format (no markdown, no extra text):
+Respond ONLY in this exact JSON format:
 {"transcript":"...","feedback":"...","next_phrase":"..."}`;
 
       let transcript = '';
@@ -622,8 +622,9 @@ Respond ONLY in this exact JSON format (no markdown, no extra text):
       let nextPhrase = '';
 
       try {
+        // 解析には gemini-1.5-flash を使用 (安定版 v1 を使用)
         const res = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
+          `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${key}`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -654,12 +655,12 @@ Respond ONLY in this exact JSON format (no markdown, no extra text):
       addMessage('you', transcript);
       addMessage('feedback', feedbackText);
 
-      // TTS via Gemini 2.5 Flash
+      // TTS (音声合成) には専用の gemini-2.5-flash-preview-tts を使用
       setStatus('音声を生成中...', 'active');
       let audioUrl = null;
       try {
         const ttsRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-preview-tts:generateContent?key=${key}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${key}`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -681,7 +682,7 @@ Respond ONLY in this exact JSON format (no markdown, no extra text):
           for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
           audioUrl = URL.createObjectURL(new Blob([bytes], { type: rawMime }));
         }
-      } catch (_) { /* TTSはオプション */ }
+      } catch (_) { /* TTSエラーは無視してテキストだけ表示 */ }
 
       addMessage('ai', nextPhrase, audioUrl);
       document.getElementById('phraseText').textContent = nextPhrase;
@@ -713,19 +714,4 @@ Respond ONLY in this exact JSON format (no markdown, no extra text):
       bubble.textContent = text;
 
       div.appendChild(label);
-      div.appendChild(bubble);
-
-      if (type === 'ai' && audioUrl) {
-        const btn = document.createElement('button');
-        btn.className = 'play-btn';
-        btn.innerHTML = '▶ 音声を聞く';
-        btn.onclick = () => new Audio(audioUrl).play();
-        div.appendChild(btn);
-      }
-
-      conv.appendChild(div);
-      conv.scrollTop = conv.scrollHeight;
-    }
-  </script>
-</body>
-</html>
+      div.appendChild
