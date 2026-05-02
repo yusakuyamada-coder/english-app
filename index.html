@@ -3,133 +3,100 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>English Coach AI</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <title>English Coach AI Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --accent: #1D9E75; --accent-light: #E1F5EE; --accent-mid: #0F6E56;
-      --bg: #ffffff; --bg2: #f7f7f5; --bg3: #f0efe9; --text: #1a1a18; --text-sub: #6b6b66;
-      --border: rgba(0,0,0,0.1); --radius: 16px;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #1a1a18; --bg2: #242420; --bg3: #121210; --text: #e8e6de; --text-sub: #9a9890;
-        --border: rgba(255,255,255,0.1); --accent-light: #0a3326;
-      }
+      --accent: #1D9E75; --accent-light: #E1F5EE; --bg: #ffffff; --bg2: #f7f7f5;
+      --text: #1a1a18; --text-sub: #6b6b66; --border: rgba(0,0,0,0.1); --radius: 16px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg3); color: var(--text); display: flex; justify-content: center; padding: 2rem 1rem; min-height: 100vh; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0efe9; color: var(--text); display: flex; justify-content: center; padding: 2rem 1rem; min-height: 100vh; }
     .container { width: 100%; max-width: 600px; }
     
-    /* Header */
-    .header { margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
-    .header h1 { font-family: 'DM Serif Display', serif; font-size: 28px; margin-bottom: 4px; }
-    .header p { font-size: 13px; color: var(--text-sub); }
+    .header { margin-bottom: 2rem; text-align: center; }
+    .header h1 { font-family: 'DM Serif Display', serif; font-size: 32px; color: var(--accent-mid); }
 
     /* API Key */
-    .api-section { background: var(--bg2); padding: 1.25rem; border-radius: var(--radius); margin-bottom: 1.5rem; border: 1px solid var(--border); }
-    .api-section label { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-sub); display: block; margin-bottom: 8px; }
-    .api-section input { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); font-family: monospace; }
-
-    /* Topics */
-    .topic-bar { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 1.5rem; padding-bottom: 5px; }
-    .topic-chip { padding: 8px 16px; border-radius: 999px; background: var(--bg); border: 1px solid var(--border); font-size: 12px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: 0.2s; }
-    .topic-chip.active { background: var(--accent); color: white; border-color: var(--accent); }
+    .api-section { background: var(--bg); padding: 1rem; border-radius: 12px; margin-bottom: 1rem; border: 1px solid var(--border); }
+    .api-section input { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-family: monospace; }
 
     /* Phrase Card */
-    .phrase-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; position: relative; }
-    .phrase-label { font-size: 11px; color: var(--text-sub); margin-bottom: 8px; text-transform: uppercase; }
-    .phrase-text { font-family: 'DM Serif Display', serif; font-size: 22px; line-height: 1.3; }
-    .next-btn { position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; font-size: 11px; cursor: pointer; color: var(--text-sub); }
+    .phrase-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1rem; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .phrase-label { font-size: 11px; color: var(--text-sub); text-transform: uppercase; margin-bottom: 8px; }
+    .phrase-text { font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--text); }
 
-    /* Conversation Area */
-    .conversation { background: var(--bg2); border-radius: var(--radius); padding: 1.25rem; min-height: 200px; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 12px; }
-    .msg { padding: 12px; border-radius: 12px; font-size: 14px; line-height: 1.6; border: 1px solid var(--border); animation: slideUp 0.3s ease; }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .msg-label { font-size: 10px; font-weight: bold; margin-bottom: 4px; opacity: 0.6; }
-    .msg.you { background: var(--bg); align-self: flex-start; }
-    .msg.ai { background: var(--accent-light); border-color: var(--accent); color: var(--accent-mid); align-self: flex-start; }
-    
+    /* Comparison Result Area */
+    .result-card { background: white; border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1rem; display: none; border: 2px solid var(--accent-light); }
+    .score-badge { display: inline-block; padding: 4px 12px; background: var(--accent); color: white; border-radius: 999px; font-weight: 700; margin-bottom: 1rem; }
+    .compare-grid { display: grid; grid-template-columns: 80px 1fr; gap: 10px; font-size: 14px; margin-bottom: 1rem; }
+    .compare-label { font-weight: bold; color: var(--text-sub); }
+    .compare-val.target { color: var(--text); font-weight: 600; }
+    .compare-val.you { color: #E24B4A; font-weight: 600; }
+
+    /* Feedback */
+    .feedback-box { background: var(--bg2); padding: 12px; border-radius: 8px; font-size: 14px; line-height: 1.6; border-left: 4px solid var(--accent); }
+
     /* Controls */
-    .controls { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-    .rec-btn { width: 72px; height: 72px; border-radius: 50%; border: 3px solid var(--accent); background: var(--bg); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
-    .rec-btn:hover { transform: scale(1.05); }
-    .rec-btn.recording { border-color: #E24B4A; background: #FFF5F5; animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(226,75,74,0.4); } 70% { box-shadow: 0 0 0 15px rgba(226,75,74,0); } 100% { box-shadow: 0 0 0 0 rgba(226,75,74,0); } }
-    .rec-icon { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); transition: 0.3s; }
-    .rec-btn.recording .rec-icon { border-radius: 4px; background: #E24B4A; transform: scale(0.8); }
-    .status { font-size: 13px; color: var(--text-sub); }
-
-    .play-btn { margin-top: 8px; padding: 4px 12px; border-radius: 6px; border: 1px solid var(--accent); background: white; color: var(--accent); font-size: 11px; font-weight: 600; cursor: pointer; }
+    .controls { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 1.5rem; }
+    .rec-btn { width: 80px; height: 80px; border-radius: 50%; border: none; background: var(--accent); color: white; cursor: pointer; font-size: 30px; transition: 0.3s; box-shadow: 0 4px 15px rgba(29, 158, 117, 0.3); }
+    .rec-btn.recording { background: #E24B4A; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    .status { font-size: 13px; color: var(--text-sub); font-weight: 500; }
   </style>
 </head>
 <body>
   <div class="container">
-    <header class="header">
-      <h1>English Coach AI</h1>
-      <p>発音を解析して、自然な会話をガイドします</p>
-    </header>
-
-    <div class="api-section">
-      <label>Gemini API Key</label>
-      <input type="password" id="apiKey" placeholder="AIza..." />
+    <div class="header">
+      <h1>English Coach AI Pro</h1>
+      <p>発音を比較・採点します</p>
     </div>
 
-    <div class="topic-bar" id="topicBar">
-      <span class="topic-chip active" data-topic="日常会話">Daily Chat</span>
-      <span class="topic-chip" data-topic="ビジネス">Business</span>
-      <span class="topic-chip" data-topic="旅行">Travel</span>
+    <div class="api-section">
+      <input type="password" id="apiKey" placeholder="Gemini API Key を入力" />
     </div>
 
     <div class="phrase-card">
-      <div class="phrase-label">Try saying this</div>
-      <div class="phrase-text" id="phraseText">How's your day going so far?</div>
-      <button class="next-btn" onclick="nextPhrase()">Next</button>
+      <div class="phrase-label">Target Phrase</div>
+      <div class="phrase-text" id="phraseText">How are you doing today?</div>
     </div>
 
-    <div class="conversation" id="conversation">
-      <div style="margin: auto; color: var(--text-sub); font-size: 13px; font-style: italic;" id="placeholder">
-        マイクを押して、上のフレーズを話してみてください。
+    <div id="resultCard" class="result-card">
+      <div id="scoreBadge" class="score-badge">Score: 0</div>
+      <div class="compare-grid">
+        <div class="compare-label">お手本:</div>
+        <div class="compare-val target" id="targetRef"></div>
+        <div class="compare-label">あなた:</div>
+        <div class="compare-val you" id="userRef"></div>
       </div>
+      <div class="feedback-box" id="feedbackText"></div>
     </div>
 
     <div class="controls">
-      <button class="rec-btn" id="recBtn" onclick="toggleRecord()">
-        <div class="rec-icon"></div>
-      </button>
-      <p class="status" id="statusText">タップして録音開始</p>
+      <button class="rec-btn" id="recBtn" onclick="toggleRecord()">🎤</button>
+      <p class="status" id="statusText">ボタンを押して録音開始</p>
+      <button onclick="nextPhrase()" style="background:none; border:none; color:var(--accent); font-weight:600; cursor:pointer; text-decoration:underline;">別のフレーズを練習する</button>
     </div>
   </div>
 
   <script>
-    const phrases = {
-      "日常会話": ["How's your day going so far?", "That sounds like a great plan!", "I'm looking forward to it."],
-      "ビジネス": ["Let's circle back on this later.", "Could you walk me through the details?", "We need to align our priorities."],
-      "旅行": ["Could you recommend a good restaurant?", "I'd like to check in, please.", "How much is the fare to the airport?"]
-    };
-
-    let currentTopic = "日常会話";
+    const phrases = [
+      "How are you doing today?",
+      "I would like to order a coffee, please.",
+      "Could you tell me how to get to the station?",
+      "That sounds like a wonderful idea!",
+      "I am looking forward to meeting you."
+    ];
     let currentIdx = 0;
     let isRecording = false;
     let mediaRecorder = null;
     let audioChunks = [];
 
     function nextPhrase() {
-      currentIdx = (currentIdx + 1) % phrases[currentTopic].length;
-      document.getElementById('phraseText').textContent = phrases[currentTopic][currentIdx];
+      currentIdx = (currentIdx + 1) % phrases.length;
+      document.getElementById('phraseText').textContent = phrases[currentIdx];
+      document.getElementById('resultCard').style.display = 'none';
     }
-
-    document.getElementById('topicBar').onclick = e => {
-      const chip = e.target.closest('.topic-chip');
-      if (!chip) return;
-      document.querySelectorAll('.topic-chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      currentTopic = chip.dataset.topic;
-      currentIdx = 0;
-      document.getElementById('phraseText').textContent = phrases[currentTopic][0];
-    };
 
     async function toggleRecord() {
       const key = document.getElementById('apiKey').value.trim();
@@ -139,7 +106,7 @@
         mediaRecorder.stop();
         isRecording = false;
         document.getElementById('recBtn').classList.remove('recording');
-        document.getElementById('statusText').textContent = 'AIが解析中...';
+        document.getElementById('statusText').textContent = 'AIが比較中...';
         return;
       }
 
@@ -160,15 +127,19 @@
         mediaRecorder.start();
         isRecording = true;
         document.getElementById('recBtn').classList.add('recording');
-        document.getElementById('statusText').textContent = '録音中... 再度タップで停止';
+        document.getElementById('statusText').textContent = '録音中... 停止するにはもう一度押す';
       } catch (e) { alert('マイクを許可してください'); }
     }
 
     async function process(base64, key) {
       const target = document.getElementById('phraseText').textContent;
-      const prompt = `あなたは英語コーチです。生徒は「${target}」という練習をしています。
-      音声を聞いて、1.文字起こし 2.発音アドバイス(日本語1.2文) 3.次に言うべきフレーズ をJSONで返してください。
-      形式: {"transcript":"...","feedback":"...","next":"..."}`;
+      // AIへのプロンプトを「比較と採点」に特化させる
+      const prompt = `あなたはプロの英語コーチです。
+      生徒は「${target}」というフレーズを練習しました。
+      録音を聞いて、お手本とどれくらい一致しているか比較してください。
+      
+      必ず以下のJSON形式でのみ回答してください:
+      {"transcript":"(あなたが聞き取った生徒の英語)","score":(0から100の数字),"feedback":"(お手本との違いを日本語で具体的に指摘)"}`;
 
       try {
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${key}`, {
@@ -181,50 +152,22 @@
 
         const data = await res.json();
         if (data.error) throw new Error(data.error.message);
-        const result = JSON.parse(data.candidates[0].content.parts[0].text.replace(/```json|```/g, ''));
-
-        document.getElementById('placeholder')?.remove();
-        addMsg('you', result.transcript, 'あなたが言ったこと');
-        addMsg('ai', result.feedback, 'アドバイス');
         
-        // 次のフレーズに更新
-        document.getElementById('phraseText').textContent = result.next;
-        document.getElementById('statusText').textContent = '完了！次は上のフレーズをどうぞ';
+        const jsonText = data.candidates[0].content.parts[0].text.replace(/```json|```/g, '').trim();
+        const result = JSON.parse(jsonText);
 
-        // TTS (AIの声)
-        try {
-          const ttsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${key}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: result.next }] }],
-              generationConfig: { responseModalities: ["AUDIO"] }
-            })
-          });
-          const ttsData = await ttsRes.json();
-          const audioUrl = `data:audio/wav;base64,${ttsData.candidates[0].content.parts[0].inlineData.data}`;
-          addMsg('ai', `Next phrase: ${result.next}`, 'AIのお手本', audioUrl);
-        } catch (e) { console.log('TTS Error'); }
+        // 結果を画面に表示
+        document.getElementById('resultCard').style.display = 'block';
+        document.getElementById('scoreBadge').textContent = `Score: ${result.score}`;
+        document.getElementById('targetRef').textContent = target;
+        document.getElementById('userRef').textContent = result.transcript;
+        document.getElementById('feedbackText').textContent = result.feedback;
+        
+        document.getElementById('statusText').textContent = result.score >= 80 ? '素晴らしい！' : 'もう一度挑戦してみましょう';
 
       } catch (e) {
-        document.getElementById('statusText').textContent = 'エラー: ' + e.message;
+        document.getElementById('statusText').textContent = '解析エラー: ' + e.message;
       }
-    }
-
-    function addMsg(type, text, label, audioUrl = null) {
-      const conv = document.getElementById('conversation');
-      const div = document.createElement('div');
-      div.className = 'msg ' + type;
-      div.innerHTML = `<div class="msg-label">${label}</div><div>${text}</div>`;
-      if (audioUrl) {
-        const btn = document.createElement('button');
-        btn.className = 'play-btn';
-        btn.textContent = '▶ お手本を聞く';
-        btn.onclick = () => new Audio(audioUrl).play();
-        div.appendChild(btn);
-      }
-      conv.appendChild(div);
-      conv.scrollTop = conv.scrollHeight;
     }
   </script>
 </body>
