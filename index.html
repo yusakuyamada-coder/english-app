@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>English Pronunciation Practice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent: #1D9E75;
+      --accent-light: #E1F5EE;
+      --accent-mid: #0F6E56;
+      --accent-dark: #085041;
+      --bg: #ffffff;
+      --bg2: #f7f7f5;
+      --bg3: #f0efe9;
+      --text: #1a1a18;
+      --text-sub: #6b6b66;
+      --border: rgba(0,0,0,0.10);
+      --border-mid: rgba(0,0,0,0.18);
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a18;
+        --bg2: #242420;
+        --bg3: #2e2e2a;
+        --text: #e8e6de;
+        --text-sub: #9a9890;
+        --border: rgba(255,255,255,0.10);
+        --border-mid: rgba(255,255,255,0.18);
+        --accent-light: #0a3326;
+        --accent-mid: #5DCAA5;
+        --accent-dark: #9FE1CB;
+      }
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg3);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 640px;
+    }
+
+    /* Header */
+    .header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 0.5px solid var(--border-mid);
+    }
+
+    .header-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    .header h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 28px;
+      font-weight: 400;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+
+    .gemini-badge {
+      flex-shrink: 0;
+      margin-top: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #E6F1FB;
+      color: #185FA5;
+      border: 0.5px solid #B5D4F4;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .gemini-badge { background: #0c2d4a; color: #85B7EB; border-color: #185FA5; }
+    }
+
+    .header p {
+      font-size: 13px;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+
+    /* API Key section */
+    .api-section {
+      background: var(--bg2);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .api-section label {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-sub);
+      margin-bottom: 8px;
+    }
+
+    .api-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .api-section input {
+      flex: 1;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      border: 0.5px solid var(--border-mid);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      background: var(--bg);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .api-section input:focus { border-color: var(--accent); }
+
+    .free-badge {
+      flex-shrink: 0;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #EAF3DE;
+      color: #3B6D11;
+      border: 0.5px solid #C0DD97;
+      white-space: nowrap;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .free-badge { background: #172606; color: #97C459; border-color: #3B6D11; }
+    }
+
+    .api-hint {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    .api-hint a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .api-hint a:hover { text-decoration: underline; }
+
+    /* Topic chips */
+    .topic-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+    }
+
+    .topic-chip {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 0.5px solid var(--border-mid);
+      background: var(--bg);
+      color: var(--text-sub);
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+
+    .topic-chip:hover { background: var(--bg2); color: var(--text); }
+
+    .topic-chip.active {
+      background: var(--accent-light);
+      color: var(--accent-mid);
+      border-color: var(--accent);
+    }
+
+    /* Phrase card */
+    .phrase-card {
+      background: var(--bg);
+      border: 0.5px solid var(--border-mid);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 1.25rem;
+    }
+
+    .phrase-label {
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-sub);
+      margin-bottom: 4px;
+    }
+
+    .phrase-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 1.3;
+      color: var(--text);
+    }
+
+    .skip-btn {
+      flex-shrink: 0;
+      font-size: 12px;
+      color: var(--text-sub);
+      background: none;
+      border: 0.5px solid var(--border-mid);
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+
+    .skip-btn:hover { background: var(--bg2); color: var(--text); }
+
+    /* Conversation */
+    .conversation {
+      background: var(--bg2);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.25rem;
+      min-height: 180px;
+      max-height: 380px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .placeholder-msg {
+      color: var(--text-sub);
+      font-size: 13px;
+      font-style: italic;
+      margin: auto;
+      text-align: center;
+      line-height: 1.8;
+    }
+
+    .msg {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      animation: fadeUp 0.3s ease;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .msg-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--text-sub);
+    }
+
+    .msg-bubble {
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      line-height: 1.7;
+      border: 0.5px solid var(--border);
+      background: var(--bg);
+    }
+
+    .msg.ai .msg-label { color: var(--accent-mid); }
+    .msg.ai .msg-bubble {
+      background: var(--accent-light);
+      border-color: var(--accent);
+      color: var(--accent-dark);
+    }
+
+    .msg.feedback .msg-label { color: #854F0B; }
+    .msg.feedback .msg-bubble {
+      background: #FAEEDA;
+      border-color: #FAC775;
+      color: #412402;
+      font-size: 13px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .msg.feedback .msg-label { color: #EF9F27; }
+      .msg.feedback .msg-bubble { background: #2a1a06; border-color: #854F0B; color: #FAC775; }
+    }
+
+    .play-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 500;
+      font-family: inherit;
+      padding: 5px 12px;
+      border: 0.5px solid var(--accent);
+      background: var(--accent-light);
+      color: var(--accent-mid);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.15s;
+    }
+
+    .play-btn:hover { background: #9FE1CB; }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 1.5rem;
+    }
+
+    .rec-btn {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      background: var(--bg);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.18s;
+    }
+
+    .rec-btn:hover { background: var(--accent-light); }
+
+    .rec-btn.recording {
+      background: #FCEBEB;
+      border-color: #E24B4A;
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .rec-btn.recording { background: #2d0f0f; }
+    }
+
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(226,75,74,0.35); }
+      50%      { box-shadow: 0 0 0 12px rgba(226,75,74,0); }
+    }
+
+    .rec-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--accent);
+      transition: all 0.18s;
+    }
+
+    .rec-btn.recording .rec-icon {
+      border-radius: 5px;
+      width: 20px;
+      height: 20px;
+      background: #E24B4A;
+    }
+
+    .status-text {
+      font-size: 13px;
+      color: var(--text-sub);
+      text-align: center;
+      min-height: 20px;
+    }
+
+    .status-text.active { color: var(--accent-mid); font-weight: 500; }
+    .status-text.error  { color: #A32D2D; }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-sub);
+      border-top: 0.5px solid var(--border);
+      padding-top: 1.25rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="header">
+      <div class="header-top">
+        <h1>English Pronunciation Practice</h1>
+        <span class="gemini-badge">Gemini 2.0 Flash</span>
+      </div>
+      <p>録音して話すと、発音フィードバックと次のフレーズが返ってきます。</p>
+    </div>
+
+    <div class="api-section">
+      <label>Gemini API Key</label>
+      <div class="api-row">
+        <input type="password" id="apiKey" placeholder="AIza..." autocomplete="off" />
+        <span class="free-badge">無料枠あり</span>
+      </div>
+      <p class="api-hint">
+        キーの取得は <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com</a> から（無料・Googleアカウントがあればすぐ発行できます）
+      </p>
+    </div>
+
+    <div class="topic-bar" id="topicBar">
+      <span class="topic-chip active" data-topic="daily conversation">Daily chat</span>
+      <span class="topic-chip" data-topic="business English">Business</span>
+      <span class="topic-chip" data-topic="travel situations">Travel</span>
+      <span class="topic-chip" data-topic="casual slang and idioms">Slang</span>
+      <span class="topic-chip" data-topic="interview preparation">Interview</span>
+    </div>
+
+    <div class="phrase-card">
+      <div>
+        <div class="phrase-label">Try saying this</div>
+        <div class="phrase-text" id="phraseText">How's your day going so far?</div>
+      </div>
+      <button class="skip-btn" onclick="nextPhrase()">次のフレーズ</button>
+    </div>
+
+    <div class="conversation" id="conversation">
+      <div class="placeholder-msg" id="placeholder">
+        下のボタンを押して話しかけてみてください。<br>発音フィードバックがここに表示されます。
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="rec-btn" id="recBtn" onclick="toggleRecord()">
+        <div class="rec-icon" id="recIcon"></div>
+      </button>
+      <div class="status-text" id="statusText">タップして録音開始</div>
+    </div>
+
+    <div class="footer">
+      Powered by Gemini 2.0 Flash &amp; Gemini 2.5 Flash TTS &nbsp;·&nbsp; キーはブラウザ内のみで使用されます
+    </div>
+
+  </div>
+
+  <script>
+    const phrases = {
+      "daily conversation": [
+        "How's your day going so far?",
+        "I really appreciate your help.",
+        "Would you mind if I sat here?",
+        "I'm looking forward to the weekend.",
+        "That sounds like a great idea!",
+        "Could you say that again, please?",
+        "I haven't seen you in a while!",
+      ],
+      "business English": [
+        "Let's circle back on this later.",
+        "Could you walk me through the process?",
+        "I'd like to schedule a follow-up meeting.",
+        "We need to align our priorities.",
+        "What's the deadline for this deliverable?",
+        "I'll send you a summary by end of day.",
+        "Can we revisit this in the next sprint?",
+      ],
+      "travel situations": [
+        "Could you recommend a good restaurant nearby?",
+        "How long does it take to get there?",
+        "I'd like to check in, please.",
+        "Is there a bus that goes downtown?",
+        "Could I get a receipt for that?",
+        "Do you have any vegetarian options?",
+        "I think I left something in my room.",
+      ],
+      "casual slang and idioms": [
+        "I'm totally swamped this week.",
+        "That blew me away, honestly.",
+        "We're on the same page about this.",
+        "Don't sweat it — it happens.",
+        "That's a piece of cake for you.",
+        "I'm down for that, let's do it.",
+        "She really nailed the presentation.",
+      ],
+      "interview preparation": [
+        "I'm highly motivated and detail-oriented.",
+        "I thrive in fast-paced environments.",
+        "My greatest strength is problem-solving.",
+        "I'm eager to contribute to your team.",
+        "I have five years of relevant experience.",
+        "I'm always looking for ways to improve.",
+        "I enjoy collaborating across different teams.",
+      ],
+    };
+
+    let currentTopic = "daily conversation";
+    let currentPhraseIdx = 0;
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let isRecording = false;
+
+    function getKey() {
+      return document.getElementById('apiKey').value.trim();
+    }
+
+    function setStatus(msg, cls = '') {
+      const el = document.getElementById('statusText');
+      el.textContent = msg;
+      el.className = 'status-text' + (cls ? ' ' + cls : '');
+    }
+
+    function nextPhrase() {
+      const list = phrases[currentTopic];
+      currentPhraseIdx = (currentPhraseIdx + 1) % list.length;
+      document.getElementById('phraseText').textContent = list[currentPhraseIdx];
+    }
+
+    document.getElementById('topicBar').addEventListener('click', e => {
+      const chip = e.target.closest('.topic-chip');
+      if (!chip) return;
+      document.querySelectorAll('.topic-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      currentTopic = chip.dataset.topic;
+      currentPhraseIdx = 0;
+      document.getElementById('phraseText').textContent = phrases[currentTopic][0];
+      document.getElementById('conversation').innerHTML =
+        '<div class="placeholder-msg">下のボタンを押して話しかけてみてください。<br>発音フィードバックがここに表示されます。</div>';
+    });
+
+    async function toggleRecord() {
+      if (isRecording) {
+        mediaRecorder.stop();
+        isRecording = false;
+        document.getElementById('recBtn').classList.remove('recording');
+        setStatus('処理中...', 'active');
+        return;
+      }
+
+      if (!getKey()) {
+        setStatus('Gemini APIキーを入力してください。', 'error');
+        return;
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        audioChunks = [];
+        const mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
+        mediaRecorder = new MediaRecorder(stream, { mimeType });
+        mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+        mediaRecorder.onstop = async () => {
+          stream.getTracks().forEach(t => t.stop());
+          const blob = new Blob(audioChunks, { type: mimeType });
+          await processAudio(blob, mimeType);
+        };
+        mediaRecorder.start();
+        isRecording = true;
+        document.getElementById('recBtn').classList.add('recording');
+        setStatus('録音中... もう一度タップして停止', 'active');
+      } catch (err) {
+        setStatus('マイクのアクセスが拒否されました。', 'error');
+      }
+    }
+
+    function blobToBase64(blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    async function processAudio(blob, mimeType) {
+      const key = getKey();
+      const targetPhrase = document.getElementById('phraseText').textContent;
+
+      setStatus('Geminiで解析中...', 'active');
+
+      const base64Audio = await blobToBase64(blob);
+
+      const prompt = `You are a warm and encouraging English pronunciation coach. The student is practicing ${currentTopic}.
+
+The suggested phrase was: "${targetPhrase}"
+
+Listen to the audio and:
+1. Transcribe exactly what the student said.
+2. Give 1-2 sentences of specific, kind feedback on pronunciation or word choice compared to the target phrase.
+3. Provide a natural follow-up sentence for the student to say next in a ${currentTopic} conversation. Make it slightly more challenging than the current phrase.
+
+Respond ONLY in this exact JSON format (no markdown, no extra text):
+{"transcript":"...","feedback":"...","next_phrase":"..."}`;
+
+      let transcript = '';
+      let feedbackText = '';
+      let nextPhrase = '';
+
+      try {
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{
+                parts: [
+                  { inline_data: { mime_type: mimeType, data: base64Audio } },
+                  { text: prompt }
+                ]
+              }],
+              generationConfig: { temperature: 0.7, maxOutputTokens: 512 }
+            })
+          }
+        );
+        const data = await res.json();
+        if (data.error) throw new Error(data.error.message);
+        const raw = data.candidates[0].content.parts[0].text.replace(/```json|```/g, '').trim();
+        const parsed = JSON.parse(raw);
+        transcript = parsed.transcript;
+        feedbackText = parsed.feedback;
+        nextPhrase = parsed.next_phrase;
+      } catch (err) {
+        setStatus('エラー: ' + err.message, 'error');
+        return;
+      }
+
+      removePlaceholder();
+      addMessage('you', transcript);
+      addMessage('feedback', feedbackText);
+
+      // TTS via Gemini 2.5 Flash
+      setStatus('音声を生成中...', 'active');
+      let audioUrl = null;
+      try {
+        const ttsRes = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${key}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: nextPhrase }] }],
+              generationConfig: {
+                responseModalities: ['AUDIO'],
+                speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Aoede' } } }
+              }
+            })
+          }
+        );
+        const ttsData = await ttsRes.json();
+        if (!ttsData.error) {
+          const part = ttsData.candidates[0].content.parts[0].inlineData;
+          const rawMime = part.mimeType || 'audio/wav';
+          const binary = atob(part.data);
+          const bytes = new Uint8Array(binary.length);
+          for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+          audioUrl = URL.createObjectURL(new Blob([bytes], { type: rawMime }));
+        }
+      } catch (_) { /* TTSはオプション */ }
+
+      addMessage('ai', nextPhrase, audioUrl);
+      document.getElementById('phraseText').textContent = nextPhrase;
+      setStatus('タップして録音開始');
+    }
+
+    function removePlaceholder() {
+      const el = document.querySelector('.placeholder-msg');
+      if (el) el.remove();
+    }
+
+    function addMessage(type, text, audioUrl = null) {
+      const conv = document.getElementById('conversation');
+      const div = document.createElement('div');
+      div.className = 'msg ' + type;
+
+      const labels = {
+        you: 'あなたが言ったこと',
+        feedback: '発音のアドバイス',
+        ai: '次はこれを言ってみよう'
+      };
+
+      const label = document.createElement('div');
+      label.className = 'msg-label';
+      label.textContent = labels[type];
+
+      const bubble = document.createElement('div');
+      bubble.className = 'msg-bubble';
+      bubble.textContent = text;
+
+      div.appendChild(label);
+      div.appendChild(bubble);
+
+      if (type === 'ai' && audioUrl) {
+        const btn = document.createElement('button');
+        btn.className = 'play-btn';
+        btn.innerHTML = '▶ 音声を聞く';
+        btn.onclick = () => new Audio(audioUrl).play();
+        div.appendChild(btn);
+      }
+
+      conv.appendChild(div);
+      conv.scrollTop = conv.scrollHeight;
+    }
+  </script>
+</body>
+</html>
