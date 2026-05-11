@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>English Correction Tool (Stable)</title>
+  <title>English Correction Tool</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -12,21 +12,16 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Plus Jakarta Sans', 'Noto Sans JP', sans-serif; background: #f0efe9; color: var(--text); display: flex; justify-content: center; padding: 2rem 1rem; min-height: 100vh; }
     .container { width: 100%; max-width: 500px; }
-    
     .api-section { background: var(--bg); padding: 1rem; border-radius: 12px; margin-bottom: 2rem; border: 1px solid var(--border); }
     .api-section input { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-family: monospace; font-size: 12px; }
-
     .result-card { background: white; border-radius: var(--radius); padding: 1.5rem; margin-bottom: 2rem; display: none; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
     .score-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
     .score-badge { padding: 6px 16px; background: var(--accent); color: white; border-radius: 999px; font-weight: 700; font-size: 18px; }
-    
     .compare-section { margin-bottom: 1.5rem; }
     .compare-label { font-size: 11px; font-weight: bold; color: var(--text-sub); text-transform: uppercase; margin-bottom: 4px; }
     .val-you { font-size: 16px; color: #E24B4A; font-weight: 600; line-height: 1.4; margin-bottom: 12px; }
     .val-better { font-size: 18px; color: var(--accent); font-weight: 700; line-height: 1.4; }
-
     .feedback-box { background: #f7f7f5; padding: 15px; border-radius: 10px; font-size: 14px; line-height: 1.7; border-left: 5px solid var(--accent); color: #333; }
-
     .controls { display: flex; flex-direction: column; align-items: center; gap: 15px; }
     .rec-btn { width: 85px; height: 85px; border-radius: 50%; border: none; background: var(--accent); color: white; cursor: pointer; font-size: 35px; transition: 0.3s; box-shadow: 0 8px 20px rgba(29, 158, 117, 0.3); }
     .rec-btn.recording { background: #E24B4A; animation: pulse 1.2s infinite; }
@@ -107,8 +102,8 @@
       形式: {"transcript":"...","improved":"...","score":85,"feedback":"..."}`;
 
       try {
-        // モデルを安定版の 1.5-flash に変更
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+        // 最も安定しているエイリアス「gemini-1.5-flash-latest」を指定
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${key}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -117,10 +112,7 @@
         });
 
         const data = await res.json();
-        if (data.error) {
-           // 具体的なエラー内容を表示
-           throw new Error(data.error.message);
-        }
+        if (data.error) throw new Error(data.error.message);
         
         const jsonText = data.candidates[0].content.parts[0].text.replace(/```json|```/g, '').trim();
         const result = JSON.parse(jsonText);
