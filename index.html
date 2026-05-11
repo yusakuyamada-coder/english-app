@@ -3,23 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>English Correction Tool (Final)</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet" />
+  <title>English Coach Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
-    :root { --accent: #1D9E75; --bg: #ffffff; --text: #1a1a18; --text-sub: #6b6b66; --border: rgba(0,0,0,0.1); --radius: 16px; }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Plus Jakarta Sans', 'Noto Sans JP', sans-serif; background: #f0efe9; display: flex; justify-content: center; padding: 2rem 1rem; min-height: 100vh; }
+    :root { --accent: #1D9E75; --bg: #ffffff; --text: #1a1a18; --radius: 16px; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0efe9; display: flex; justify-content: center; padding: 2rem 1rem; }
     .container { width: 100%; max-width: 500px; }
-    .api-section { background: var(--bg); padding: 1rem; border-radius: 12px; margin-bottom: 2rem; border: 1px solid var(--border); }
-    .api-section input { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-family: monospace; font-size: 12px; }
-    .result-card { background: white; border-radius: var(--radius); padding: 1.5rem; margin-bottom: 2rem; display: none; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-    .score-badge { padding: 4px 12px; background: var(--accent); color: white; border-radius: 999px; font-weight: 700; margin-bottom: 1rem; display: inline-block; }
-    .compare-label { font-size: 11px; font-weight: bold; color: var(--text-sub); text-transform: uppercase; margin-bottom: 4px; }
-    .val-you { font-size: 16px; color: #E24B4A; font-weight: 600; margin-bottom: 12px; }
-    .val-better { font-size: 18px; color: var(--accent); font-weight: 700; margin-bottom: 12px; }
-    .feedback-box { background: #f7f7f5; padding: 15px; border-radius: 10px; font-size: 14px; line-height: 1.6; border-left: 5px solid var(--accent); }
+    .api-section { background: var(--bg); padding: 1rem; border-radius: 12px; margin-bottom: 2rem; border: 1px solid rgba(0,0,0,0.1); }
+    .api-section input { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-family: monospace; }
+    .result-card { background: white; border-radius: var(--radius); padding: 1.5rem; margin-bottom: 2rem; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+    .score-badge { padding: 6px 16px; background: var(--accent); color: white; border-radius: 999px; font-weight: 700; margin-bottom: 1rem; display: inline-block; }
+    .val-you { color: #E24B4A; font-weight: 600; margin-bottom: 12px; }
+    .val-better { color: var(--accent); font-weight: 700; margin-bottom: 12px; }
+    .feedback { background: #f7f7f5; padding: 15px; border-radius: 10px; font-size: 14px; border-left: 5px solid var(--accent); }
     .controls { display: flex; flex-direction: column; align-items: center; gap: 15px; }
-    .rec-btn { width: 85px; height: 85px; border-radius: 50%; border: none; background: var(--accent); color: white; cursor: pointer; font-size: 35px; box-shadow: 0 8px 20px rgba(29, 158, 117, 0.3); transition: 0.3s; }
+    .rec-btn { width: 85px; height: 85px; border-radius: 50%; border: none; background: var(--accent); color: white; cursor: pointer; font-size: 35px; }
     .rec-btn.recording { background: #E24B4A; animation: pulse 1.2s infinite; }
     @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
   </style>
@@ -27,25 +25,36 @@
 <body>
   <div class="container">
     <div class="api-section">
-      <input type="password" id="apiKey" placeholder="Gemini API Key を入力" />
+      <label style="font-size: 11px; font-weight: bold; color: #666;">Gemini API Key</label>
+      <input type="password" id="apiKey" placeholder="AIza..." />
     </div>
 
     <div id="resultCard" class="result-card">
       <div id="scoreBadge" class="score-badge">Score: 0</div>
-      <div class="compare-label">あなたが話した内容:</div>
       <div id="userAns" class="val-you"></div>
-      <div class="compare-label">より自然な表現:</div>
       <div id="betterAns" class="val-better"></div>
-      <div id="feedbackText" class="feedback-box"></div>
+      <div id="feedbackText" class="feedback"></div>
     </div>
 
     <div class="controls">
-      <p id="statusText" style="font-weight:600; color:var(--text-sub);">録音ボタンを押してスタート</p>
+      <p id="statusText" style="font-weight:600; color:#666; text-align: center;">ボタンを押して録音開始</p>
       <button class="rec-btn" id="recBtn" onclick="toggleRecord()">🎤</button>
+      
+      <div style="margin-top: 20px; font-size: 11px; color: #999;">
+        モデルが混んでいる場合は切り替えてください:<br>
+        <button onclick="changeModel('gemini-2.0-flash')" style="font-size:10px;">2.0 Flash</button>
+        <button onclick="changeModel('gemini-3-flash-preview')" style="font-size:10px;">3 Flash (Latest)</button>
+      </div>
     </div>
   </div>
 
   <script>
+    let currentModel = "gemini-2.0-flash"; // 最初に試すモデル
+    function changeModel(name) {
+      currentModel = name;
+      alert("モデルを " + name + " に切り替えました。もう一度試してください。");
+    }
+
     let isRecording = false, mediaRecorder = null, audioChunks = [];
 
     async function toggleRecord() {
@@ -55,7 +64,7 @@
         mediaRecorder.stop();
         isRecording = false;
         document.getElementById('recBtn').classList.remove('recording');
-        document.getElementById('statusText').textContent = 'AI分析中...';
+        document.getElementById('statusText').textContent = 'AIが解析中...';
         return;
       }
       try {
@@ -75,24 +84,17 @@
         mediaRecorder.start();
         isRecording = true;
         document.getElementById('recBtn').classList.add('recording');
-        document.getElementById('statusText').textContent = '話してください... (再タップで終了)';
+        document.getElementById('statusText').textContent = '話してください...';
       } catch (e) { alert('マイクを許可してください'); }
     }
 
     async function process(base64, key) {
-// プロンプトを添削と自然な表現の提示に特化
-      const prompt = `あなたはプロの英語添削講師です。
-生徒の音声を聞いて、以下の4点を分析し、JSON形式でのみ回答してください。
+      const prompt = `英語添削講師として、音声を書き起こし、より自然な表現に直し、日本語で解説してください。
+      必ず以下の形式のJSONで回答してください: {"transcript":"...","improved":"...","score":0-100,"feedback":"..."}`;
 
-1. transcript: 聞き取った文章
-2. improved: 文法的に正しく、よりネイティブに近い自然な表現
-3. score: 元の文章の正確さ・自然さを0〜100で採点
-4. feedback: 修正のポイントや、なぜその方が自然なのかを日本語で簡潔に解説
-
-形式: {"transcript":"...","improved":"...","score":85,"feedback":"..."}`;
       try {
-        // v1 (安定版) エンドポイント + gemini-1.5-flash
-        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${key}`;
+        // v1beta を使用 (最新モデルにはこれが必要な場合が多い)
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${key}`;
         
         const res = await fetch(url, {
           method: 'POST',
@@ -105,17 +107,16 @@
         const data = await res.json();
         if (data.error) throw new Error(data.error.message);
         
-        const textResponse = data.candidates[0].content.parts[0].text;
-        const result = JSON.parse(textResponse.match(/\{.*\}/s)[0]);
+        const result = JSON.parse(data.candidates[0].content.parts[0].text.match(/\{.*\}/s)[0]);
 
         document.getElementById('resultCard').style.display = 'block';
         document.getElementById('scoreBadge').textContent = `Score: ${result.score}`;
-        document.getElementById('userAns').textContent = result.transcript;
-        document.getElementById('betterAns').textContent = result.improved;
+        document.getElementById('userAns').textContent = "あなたの英語: " + result.transcript;
+        document.getElementById('betterAns').textContent = "自然な表現: " + result.improved;
         document.getElementById('feedbackText').textContent = result.feedback;
         document.getElementById('statusText').textContent = '添削完了！';
       } catch (e) {
-        document.getElementById('statusText').textContent = 'エラー: ' + e.message;
+        document.getElementById('statusText').innerHTML = `<span style="color:red">エラー: ${e.message}</span><br>下のボタンでモデルを切り替えてみてください。`;
       }
     }
   </script>
