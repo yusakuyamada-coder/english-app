@@ -9,15 +9,13 @@
     :root { --accent: #1D9E75; --bg: #ffffff; --text: #1a1a18; --radius: 16px; }
     body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0efe9; display: flex; justify-content: center; padding: 2rem 1rem; }
     .container { width: 100%; max-width: 500px; }
-    .api-section { background: var(--bg); padding: 1rem; border-radius: 12px; margin-bottom: 2rem; border: 1px solid rgba(0,0,0,0.1); }
-    .api-section input { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-family: monospace; width: 100%; }
     .result-card { background: white; border-radius: var(--radius); padding: 1.5rem; margin-bottom: 2rem; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
     .score-badge { padding: 6px 16px; background: var(--accent); color: white; border-radius: 999px; font-weight: 700; margin-bottom: 1rem; display: inline-block; }
     .label { font-size: 11px; font-weight: bold; color: #666; text-transform: uppercase; margin-bottom: 4px; }
     .val-you { color: #E24B4A; font-weight: 600; margin-bottom: 12px; font-size: 16px; }
     .val-better { color: var(--accent); font-weight: 700; margin-bottom: 12px; font-size: 18px; }
     .feedback { background: #f7f7f5; padding: 15px; border-radius: 10px; font-size: 14px; border-left: 5px solid var(--accent); line-height: 1.6; }
-    .controls { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+    .controls { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 2rem; }
     .rec-btn { width: 85px; height: 85px; border-radius: 50%; border: none; background: var(--accent); color: white; cursor: pointer; font-size: 35px; box-shadow: 0 8px 20px rgba(29, 158, 117, 0.3); }
     .rec-btn.recording { background: #E24B4A; animation: pulse 1.2s infinite; }
     @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
@@ -25,10 +23,6 @@
 </head>
 <body>
   <div class="container">
-    <div class="api-section">
-      <input type="password" id="apiKey" placeholder="Gemini API Key を入力" />
-    </div>
-
     <div id="resultCard" class="result-card">
       <div id="scoreBadge" class="score-badge">Score: 0</div>
       <div class="label">Your Speech:</div>
@@ -48,8 +42,6 @@
     let isRecording = false, mediaRecorder = null, audioChunks = [];
 
     async function toggleRecord() {
-      const key = document.getElementById('apiKey').value.trim();
-      if (!key) { alert('APIキーを入力してください'); return; }
       if (isRecording) {
         mediaRecorder.stop();
         isRecording = false;
@@ -69,28 +61,46 @@
             rd.onload = () => r(rd.result.split(',')[1]);
             rd.readAsDataURL(blob);
           });
-          process(base64, key);
+          process(base64);
         };
         mediaRecorder.start();
         isRecording = true;
         document.getElementById('recBtn').classList.add('recording');
-        document.getElementById('statusText').textContent = '話してください... (再タップで終了)';
+        document.getElementById('statusText').textContent = '話してください...';
       } catch (e) { alert('マイクを許可してください'); }
     }
 
-    async function process(base64, key) {
-      const prompt = `あなたはプロの英語添削講師です。音声を聞き取って以下のJSON形式で回答してください: {"transcript":"聞き取り","improved":"自然な表現","score":0-100,"feedback":"日本語解説"}`;
+    async function process(base64) {
+     const prompt = `あなたは「学習者の挑戦を心から称賛し、かつ的確にレベルアップさせる」超一流の英語コーチです。
+
+以下のガイドラインに従って、生徒の音声を分析し、JSON形式でのみ回答してください：
+
+1. 精神性: まず、英語で発話しようとした勇気や継続している姿勢を、ポジティブな言葉で全力で褒めてください。
+2. 指導: 褒めるだけでなく、プロとして文法ミスや不自然な言い回しは一切妥協せず、正解（Improved）を提示してください。
+3. フィードバックの構成: 
+   - 冒頭：学習アクションに対する「称賛の言葉」
+   - 中盤：なぜ修正が必要かという「論理的な解説」
+   - 結び：次へのやる気に繋がる「応援メッセージ」
+
+回答形式（JSONのみ）:
+{
+  "transcript": "聞き取った英文",
+  "improved": "最も自然なネイティブ表現",
+  "score": 0〜100（挑戦の姿勢も加味したスコア）,
+  "feedback": "（称賛 ＋ 具体的解説 ＋ 応援メッセージ）を日本語で150文字程度"
+}`;
       try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${key}`;
-        const res = await fetch(url, {
+        // 自作したAPIエンドポイントを叩く
+        const res = await fetch('/api/correct', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents: [{ parts: [{ inline_data: { mime_type: "audio/webm", data: base64 } }, { text: prompt }] }] })
+          body: JSON.stringify({ base64Audio: base64, prompt: prompt })
         });
+        
         const data = await res.json();
-        if (data.error) throw new Error(data.error.message);
-        const result = JSON.parse(data.candidates[0].content.parts[0].text.match(/\{.*\}/s)[0]);
+        if (data.error) throw new Error(data.error);
 
+        const result = JSON.parse(data.candidates[0].content.parts[0].text.match(/\{.*\}/s)[0]);
         document.getElementById('resultCard').style.display = 'block';
         document.getElementById('scoreBadge').textContent = `Score: ${result.score}`;
         document.getElementById('userAns').textContent = result.transcript;
