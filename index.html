@@ -3,50 +3,213 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>English Coach AI Pro</title>
+  <title>English Coach - Pattern 140</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
-    :root { --accent: #1D9E75; --bg: #ffffff; --text: #1a1a18; --radius: 16px; }
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0efe9; display: flex; justify-content: center; padding: 2rem 1rem; }
+    :root { --accent: #1D9E75; --accent-light: #E1F5EE; --bg: #ffffff; --text: #1a1a18; --radius: 16px; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0efe9; display: flex; justify-content: center; padding: 1rem; min-height: 100vh; }
     .container { width: 100%; max-width: 500px; }
-    .result-card { background: white; border-radius: var(--radius); padding: 1.5rem; margin-bottom: 2rem; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+    .question-card { background: var(--bg); border: 2px solid var(--accent); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .pattern-tag { font-size: 11px; font-weight: bold; color: var(--accent); background: var(--accent-light); padding: 4px 12px; border-radius: 99px; margin-bottom: 12px; display: inline-block; border: 1px solid var(--accent); }
+    .question-ja { font-size: 18px; font-weight: 700; color: var(--text); line-height: 1.6; }
+    .result-card { background: white; border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
     .score-badge { padding: 6px 16px; background: var(--accent); color: white; border-radius: 999px; font-weight: 700; margin-bottom: 1rem; display: inline-block; }
-    .label { font-size: 11px; font-weight: bold; color: #666; text-transform: uppercase; margin-bottom: 4px; }
-    .val-you { color: #E24B4A; font-weight: 600; margin-bottom: 12px; font-size: 16px; }
-    .val-better { color: var(--accent); font-weight: 700; margin-bottom: 12px; font-size: 18px; }
-    .feedback { background: #f7f7f5; padding: 15px; border-radius: 10px; font-size: 14px; border-left: 5px solid var(--accent); line-height: 1.6; }
-    .controls { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 2rem; }
-    .rec-btn { width: 85px; height: 85px; border-radius: 50%; border: none; background: var(--accent); color: white; cursor: pointer; font-size: 35px; box-shadow: 0 8px 20px rgba(29, 158, 117, 0.3); }
+    .label { font-size: 10px; font-weight: bold; color: #666; text-transform: uppercase; margin-bottom: 4px; }
+    .val-you { color: #E24B4A; font-weight: 600; margin-bottom: 12px; font-size: 15px; }
+    .val-better { color: var(--accent); font-weight: 700; margin-bottom: 12px; font-size: 17px; }
+    .feedback { background: #f7f7f5; padding: 15px; border-radius: 10px; font-size: 14px; border-left: 5px solid var(--accent); line-height: 1.6; white-space: pre-wrap; }
+    .controls { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .rec-btn { width: 80px; height: 80px; border-radius: 50%; border: none; background: var(--accent); color: white; cursor: pointer; font-size: 32px; box-shadow: 0 8px 20px rgba(29, 158, 117, 0.3); }
     .rec-btn.recording { background: #E24B4A; animation: pulse 1.2s infinite; }
+    .next-btn { background: none; border: 1px solid #ccc; color: #666; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 13px; background: white; }
     @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
   </style>
 </head>
 <body>
   <div class="container">
+    <div class="question-card">
+      <div id="patternTag" class="pattern-tag">...</div>
+      <div id="questionText" class="question-ja">問題を読み込んでいます</div>
+    </div>
     <div id="resultCard" class="result-card">
       <div id="scoreBadge" class="score-badge">Score: 0</div>
-      <div class="label">Your Speech:</div>
+      <div class="label">Your Answer:</div>
       <div id="userAns" class="val-you"></div>
-      <div class="label">Natural Expression:</div>
+      <div class="label">Correct Example:</div>
       <div id="betterAns" class="val-better"></div>
       <div id="feedbackText" class="feedback"></div>
     </div>
-
     <div class="controls">
-      <p id="statusText" style="font-weight:600; color:#666;">録音ボタンを押してスタート</p>
+      <p id="statusText" style="font-weight:600; color:#666; font-size: 13px;">🎤 ボタンを押して英語で回答</p>
       <button class="rec-btn" id="recBtn" onclick="toggleRecord()">🎤</button>
+      <button class="next-btn" onclick="setRandomQuestion()">別の問題 ➔</button>
     </div>
   </div>
 
   <script>
+    // CSVから抽出した全140問のデータ
+    const questionList = [
+      {"ja": "こちらは私の友人、ケンです。", "pattern": "「これ」！ (This is )"},
+      {"ja": "このピザは美味しいです。", "pattern": "「これ」！ (This is )"},
+      {"ja": "これは私の席です。", "pattern": "「これ」！ (This is )"},
+      {"ja": "この話は面白いです。", "pattern": "「これ」！ (This is )"},
+      {"ja": "これは私の番号です。", "pattern": "「これ」！ (This is )"},
+      {"ja": "この犬はとてもかわいい！", "pattern": "「これ」！ (This is )"},
+      {"ja": "これは東京にある人気のカフェです。", "pattern": "「これ」！ (This is )"},
+      {"ja": "これは私のものではありません。", "pattern": "「これ」！ (This is )"},
+      {"ja": "これはあなたのせいではありません。", "pattern": "「これ」！ (This is )"},
+      {"ja": "これは正しくありません。（間違っています。）", "pattern": "「これ」！ (This is )"},
+      {"ja": "今、重要なメールを書いています。", "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"},
+      {"ja": "彼は今、電話で話しています。", "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"},
+      {"ja": "私たちはプロジェクトのプレゼンを準備しています。", "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"},
+      {"ja": "外は雨が降っています。", "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"},
+      {"ja": "彼女はキッチンで夕食を作っています。", "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"},
+      {"ja": "彼らは公園でサッカーをしています。", "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"},
+      {"ja": "私は今、新しいスキルを学んでいます。", "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"},
+      {"ja": "誰かがドアを叩いています。", "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"},
+      {"ja": "私は今、駅に向かっています。", "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"},
+      {"ja": "あなたは私の話を聞いていますか？", "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"},
+      {"ja": "ラーメンが食べたい気分だよ。", "pattern": "〜な気分だよ！ (I feel like -ing)"},
+      {"ja": "今日は何もしたくない気分だな。", "pattern": "〜な気分だよ！ (I feel like -ing)"},
+      {"ja": "散歩に行きたい気分です。", "pattern": "〜な気分だよ！ (I feel like -ing)"},
+      {"ja": "今夜は映画を見たい気分です。", "pattern": "〜な気分だよ！ (I feel like -ing)"},
+      {"ja": "甘いものが食べたい気分だな。", "pattern": "〜な気分だよ！ (I feel like -ing)"},
+      {"ja": "泣きたい気分だよ。", "pattern": "〜な気分だよ！ (I feel like -ing)"},
+      {"ja": "今は誰とも話したくない気分なんだ。", "pattern": "〜な気分だよ！ (I feel like -ing)"},
+      {"ja": "踊りたい気分です！", "pattern": "〜な気分だよ！ (I feel like -ing)"},
+      {"ja": "今日は早く寝たい気分だよ。", "pattern": "〜な気分だよ！ (I feel like -ing)"},
+      {"ja": "買い物に行きたい気分だな。", "pattern": "〜な気分だよ！ (I feel like -ing)"},
+      {"ja": "私は毎日コーヒーを飲みます。", "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"},
+      {"ja": "彼女は週末にヨガをします。", "pattern": "いつもの私！　⭐️ (I + 動詞의 原形)"},
+      {"ja": "彼らはいつもこの時間にランチを食べます。", "pattern": "いつもの私！　⭐️ (I + 動詞의 原形)"},
+      {"ja": "私は週末、大抵家にいます。", "pattern": "いつもの私！　⭐️ (I + 動詞의 原形)"},
+      {"ja": "私の父は銀行で働いています。", "pattern": "いつもの私！　⭐️ (I + 動詞의 原形)"},
+      {"ja": "彼らは英語を上手に話します。", "pattern": "いつもの私！　⭐️ (I + 動詞의 原形)"},
+      {"ja": "私は夜、よく本を読みます。", "pattern": "いつもの私！　⭐️ (I + 動詞의 原形)"},
+      {"ja": "彼女は甘いものが大好きです。", "pattern": "いつもの私！　⭐️ (I + 動詞의 原形)"},
+      {"ja": "この電車は各駅に止まります。", "pattern": "いつもの私！　⭐️ (I + 動詞의 原形)"},
+      {"ja": "私は大抵7時に起きます。", "pattern": "いつもの私！　⭐️ (I + 動詞의 原形)"},
+      {"ja": "明日、顧客に電話するつもりです。", "pattern": "未来は決めた！⭐️ (I'm going to / I will)"},
+      {"ja": "今週末、友達に会う予定です。", "pattern": "未来は決めた！⭐️ (I'm going to / I will)"},
+      {"ja": "今夜、新しい映画を見るつもりなんだ。", "pattern": "未来は決めた！⭐️ (I'm going to / I will)"},
+      {"ja": "来月、日本に行く予定です。", "pattern": "未来は決めた！⭐️ (I'm going to / I will)"},
+      {"ja": "彼は来年、新しい家を買うつもりです。", "pattern": "未来は決めた！⭐️ (I'm going to / I will)"},
+      {"ja": "私たちは今夜、外食する予定だよ。", "pattern": "未来は決めた！⭐️ (I'm going to / I will)"},
+      {"ja": "私は医者になるつもりです。", "pattern": "未来は決めた！⭐️ (I'm going to / I will)"},
+      {"ja": "明日、雨が降るでしょう。", "pattern": "未来は決めた！⭐️ (I'm going to / I will)"},
+      {"ja": "彼女はきっと時間通りに来るよ。", "pattern": "未来は決めた！⭐️ (I'm going to / I will)"},
+      {"ja": "私はあなたをいつも支えます。", "pattern": "未来は決めた！⭐️ (I'm going to / I will)"},
+      {"ja": "昨夜、プロジェクトを終わらせました。", "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"},
+      {"ja": "今朝、早く起きました。", "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"},
+      {"ja": "昨日、彼に会いましたよ。", "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"},
+      {"ja": "2年前にその映画を見ました。", "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"},
+      {"ja": "彼女は先週、新しい車を買いました。", "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"},
+      {"ja": "私たちは昨夜、素晴らしいディナーを楽しみました。", "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"},
+      {"ja": "彼は昨日、仕事に行きませんでした。", "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"},
+      {"ja": "今朝は朝食を食べませんでした。", "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"},
+      {"ja": "昨日は雨が降りましたか？", "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"},
+      {"ja": "その時、何て言ったの？", "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"},
+      {"ja": "彼女に会ったことがあります。", "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"},
+      {"ja": "私は3回その映画を見たことがあります。", "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"},
+      {"ja": "彼はすでに宿題を終わらせました。", "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"},
+      {"ja": "私たちはまだ昼食を食べていません。", "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"},
+      {"ja": "私は一度も日本に行ったことがありません。", "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"},
+      {"ja": "あなたはこれまでに寿司を食べたことがありますか？", "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"},
+      {"ja": "彼女はどこに行ったの？（今ここにはいない）", "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"},
+      {"ja": "私はちょうどメールを送り終えたところです。", "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"},
+      {"ja": "ずっと忙しかったです。", "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"},
+      {"ja": "彼は10年間ここに住んでいます。", "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"},
+      {"ja": "私はフランス語を話せます。", "pattern": "できるもん！どこで？どうやって？ (I can / Where can I / How can I)"},
+      {"ja": "ここでチケットを買えますか？", "pattern": "できるもん！どこで？どうやって？ (I can / Where can I / How can I)"},
+      {"ja": "どうすればそこに行けますか？", "pattern": "できるもん！どこで？どうやって？ (I can / Where can I / How can I)"},
+      {"ja": "彼はギターをとても上手に弾けます。", "pattern": "できるもん！どこで？どうやって？ (I can / Where can I / How can I)"},
+      {"ja": "私たちは明日の会議に出席できます。", "pattern": "できるもん！どこで？どうやって？ (I can / Where can I / How can I)"},
+      {"ja": "メニューを見せてもらえますか？", "pattern": "できるもん！どこで？どうやって？ (I can / Where can I / How can I)"},
+      {"ja": "私は泳げません。", "pattern": "できるもん！どこで？どうやって？ (I can / Where can I / How can I)"},
+      {"ja": "何をすればいいですか？", "pattern": "できるもん！どこで？どうやって？ (I can / Where can I / How can I)"},
+      {"ja": "どこでタクシーを拾えますか？", "pattern": "できるもん！どこで？どうやって？ (I can / Where can I / How can I)"},
+      {"ja": "このペンを使ってもいいですか？", "pattern": "できるもん！どこで？どうやって？ (I can / Where can I / How can I)"},
+      {"ja": "私はこの会議に出席しなければなりません。", "pattern": "絶対やらなきゃ！ (I have to / I must / I need to)"},
+      {"ja": "私たちは今すぐ出発しなければなりません。", "pattern": "絶対やらなきゃ！ (I have to / I must / I need to)"},
+      {"ja": "あなたはもっと練習する必要がありますね。", "pattern": "絶対やらなきゃ！ (I have to / I must / I need to)"},
+      {"ja": "彼は今日、仕事を終わらせなければなりません。", "pattern": "絶対やらなきゃ！ (I have to / I must / I need to)"},
+      {"ja": "私は明日、早く起きる必要があります。", "pattern": "絶対やらなきゃ！ (I have to / I must / I need to)"},
+      {"ja": "ここで靴を脱がなければなりませんか？", "pattern": "絶対やらなきゃ！ (I have to / I must / I need to)"},
+      {"ja": "忘れないようにしなければなりません。", "pattern": "絶対やらなきゃ！ (I have to / I must / I need to)"},
+      {"ja": "私は新しいパソコンを買う必要があります。", "pattern": "絶対やらなきゃ！ (I have to / I must / I need to)"},
+      {"ja": "私たちは規則を守らなければなりません。", "pattern": "絶対やらなきゃ！ (I have to / I must / I need to)"},
+      {"ja": "あなたは病院に行くべきです。", "pattern": "絶対やらなきゃ！ (I have to / I must / I need to)"},
+      {"ja": "それを今すぐやる必要はありませんよ。", "pattern": "別にいいよ！ (You don't have to)"},
+      {"ja": "明日、学校に来る必要はありません。", "pattern": "別にいいよ！ (You don't have to)"},
+      {"ja": "急ぐ必要はありませんよ、時間はたっぷりあります。", "pattern": "別にいいよ！ (You don't have to)"},
+      {"ja": "それを買わなくてもいいですよ。", "pattern": "別にいいよ！ (You don't have to)"},
+      {"ja": "私のことを心配しなくても大丈夫ですよ。", "pattern": "別にいいよ！ (You don't have to)"},
+      {"ja": "スーツを着る必要はありません、カジュアルで大丈夫です。", "pattern": "別にいいよ！ (You don't have to)"},
+      {"ja": "すべてを食べる必要はありませんよ。", "pattern": "別にいいよ！ (You don't have to)"},
+      {"ja": "彼に謝る必要はありません、あなたのせいではないですから。", "pattern": "別にいいよ！ (You don't have to)"},
+      {"ja": "今日、それを終わらせる必要はありません。", "pattern": "別にいいよ！ (You don't have to)"},
+      {"ja": "ここでお金を払う必要はありません、無料です。", "pattern": "別にいいよ！ (You don't have to)"},
+      {"ja": "窓を開けてくれませんか？", "pattern": "お願いできる？ (Will you...? / Could you...?)"},
+      {"ja": "手伝ってくれませんか？", "pattern": "お願いできる？ (Will you...? / Could you...?)"},
+      {"ja": "駅への道を教えていただけますか？", "pattern": "お願いできる？ (Will you...? / Could you...?)"},
+      {"ja": "ペンを貸してくれますか？", "pattern": "お願いできる？ (Will you...? / Could you...?)"},
+      {"ja": "もう一度言っていただけますか？", "pattern": "お願いできる？ (Will you...? / Could you...?)"},
+      {"ja": "塩を取ってくれますか？", "pattern": "お願いできる？ (Will you...? / Could you...?)"},
+      {"ja": "ここで待っていてくれますか？", "pattern": "お願いできる？ (Will you...? / Could you...?)"},
+      {"ja": "後で電話してくれますか？", "pattern": "お願いできる？ (Will you...? / Could you...?)"},
+      {"ja": "静かにしていただけますか？", "pattern": "お願いできる？ (Will you...? / Could you...?)"},
+      {"ja": "ドアを閉めてくれますか？", "pattern": "お願いできる？ (Will you...? / Could you...?)"},
+      {"ja": "コーヒーはいかがですか？", "pattern": "〜はどう？ (Would you like...? / How about...?)"},
+      {"ja": "クッキーをいくつか食べませんか？", "pattern": "〜はどう？ (Would you like...? / How about...?)"},
+      {"ja": "今週末、映画に行きませんか？", "pattern": "〜はどう？ (Would you like...? / How about...?)"},
+      {"ja": "私の新しい家に来ませんか？", "pattern": "〜はどう？ (Would you like...? / How about...?)"},
+      {"ja": "もっと砂糖を入れますか？", "pattern": "〜はどう？ (Would you like...? / How about...?)"},
+      {"ja": "一緒にランチを食べませんか？", "pattern": "〜はどう？ (Would you like...? / How about...?)"},
+      {"ja": "何か飲むものはいかがですか？", "pattern": "〜はどう？ (Would you like...? / How about...?)"},
+      {"ja": "散歩に行きませんか？", "pattern": "〜はどう？ (Would you like...? / How about...?)"},
+      {"ja": "窓側の席はいかがですか？", "pattern": "〜はどう？ (Would you like...? / How about...?)"},
+      {"ja": "休憩しませんか？", "pattern": "〜はどう？ (Would you like...? / How about...?)"},
+      {"ja": "映画に行こうよ！", "pattern": "一緒にやろ！ (Let's...)"},
+      {"ja": "夕食を食べに行きましょう。", "pattern": "一緒にやろ！ (Let's...)"},
+      {"ja": "テニスをしようよ！", "pattern": "一緒にやろ！ (Let's...)"},
+      {"ja": "この歌を一緒に歌おう。", "pattern": "一緒にやろ！ (Let's...)"},
+      {"ja": "駅で会いましょう。", "pattern": "一緒にやろ！ (Let's...)"},
+      {"ja": "パーティーをしましょう！", "pattern": "一緒にやろ！ (Let's...)"},
+      {"ja": "休憩しようよ。", "pattern": "一緒にやろ！ (Let's...)"},
+      {"ja": "タクシーで行きましょう。", "pattern": "一緒にやろ！ (Let's...)"},
+      {"ja": "新しいプロジェクトを始めましょう。", "pattern": "一緒にやろ！ (Let's...)"},
+      {"ja": "ここを片付けようよ。", "pattern": "一緒にやろ！ (Let's...)"},
+      {"ja": "明日、何をしますか？", "pattern": "疑問文 (What/Who/Where...)"},
+      {"ja": "彼は誰ですか？", "pattern": "疑問文 (What/Who/Where...)"},
+      {"ja": "どこに住んでいますか？", "pattern": "疑問文 (What/Who/Where...)"},
+      {"ja": "いつ日本に来ましたか？", "pattern": "疑問文 (What/Who/Where...)"},
+      {"ja": "なぜ怒っているのですか？", "pattern": "疑問文 (What/Who/Where...)"},
+      {"ja": "どの映画が好きですか？", "pattern": "疑問文 (What/Who/Where...)"},
+      {"ja": "昨日のパーティーはどうでしたか？", "pattern": "疑問文 (What/Who/Where...)"},
+      {"ja": "これは誰のペンですか？", "pattern": "疑問文 (What/Who/Where...)"},
+      {"ja": "どれくらいここにいますか？", "pattern": "疑問文 (What/Who/Where...)"},
+      {"ja": "誕生日はいつですか？", "pattern": "疑問文 (What/Who/Where...)"}
+    ];
+
+    let currentQuestion = {};
     let isRecording = false, mediaRecorder = null, audioChunks = [];
+
+    function setRandomQuestion() {
+      currentQuestion = questionList[Math.floor(Math.random() * questionList.length)];
+      document.getElementById('patternTag').textContent = currentQuestion.pattern;
+      document.getElementById('questionText').textContent = currentQuestion.ja;
+      document.getElementById('resultCard').style.display = 'none';
+      document.getElementById('statusText').textContent = '🎤 ボタンを押して英語で回答';
+    }
+
+    setRandomQuestion();
 
     async function toggleRecord() {
       if (isRecording) {
         mediaRecorder.stop();
         isRecording = false;
         document.getElementById('recBtn').classList.remove('recording');
-        document.getElementById('statusText').textContent = 'AIが解析中...';
+        document.getElementById('statusText').textContent = 'AI分析中...';
         return;
       }
       try {
@@ -71,27 +234,19 @@
     }
 
     async function process(base64) {
-const prompt = `あなたはプロの英語添削講師です。生徒の音声を聞いて、以下のJSON形式でのみ回答してください。
-出力は純粋なJSONのみとし、他のテキストは一切含めないでください。
+      const prompt = `あなたはプロの英語コーチです。
+生徒に「${currentQuestion.ja}」という日本語を、「${currentQuestion.pattern}」の型を使って英語で言わせる練習をさせています。
+以下のJSON形式でのみ回答してください: {"transcript":"聞き取り","improved":"自然な表現","score":0-100,"feedback":"【解説】型の説明と論理的なアドバイスを日本語で簡潔に"}`;
 
-1. transcript: 聞き取った文章
-2. improved: より自然なネイティブの表現
-3. score: 自然さを0-100で採点
-4. feedback: 日本語での解説
-
-形式: {"transcript":"...","improved":"...","score":85,"feedback":"..."}`;
       try {
-        // 自作したAPIエンドポイントを叩く
         const res = await fetch('/api/correct', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ base64Audio: base64, prompt: prompt })
         });
-        
         const data = await res.json();
-        if (data.error) throw new Error(data.error);
-
         const result = JSON.parse(data.candidates[0].content.parts[0].text.match(/\{.*\}/s)[0]);
+
         document.getElementById('resultCard').style.display = 'block';
         document.getElementById('scoreBadge').textContent = `Score: ${result.score}`;
         document.getElementById('userAns').textContent = result.transcript;
