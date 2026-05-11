@@ -3,30 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>English Correction Tool</title>
+  <title>English Correction Tool (Final)</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet" />
   <style>
-    :root {
-      --accent: #1D9E75; --bg: #ffffff; --text: #1a1a18; --text-sub: #6b6b66; --border: rgba(0,0,0,0.1); --radius: 16px;
-    }
+    :root { --accent: #1D9E75; --bg: #ffffff; --text: #1a1a18; --text-sub: #6b6b66; --border: rgba(0,0,0,0.1); --radius: 16px; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Plus Jakarta Sans', 'Noto Sans JP', sans-serif; background: #f0efe9; color: var(--text); display: flex; justify-content: center; padding: 2rem 1rem; min-height: 100vh; }
+    body { font-family: 'Plus Jakarta Sans', 'Noto Sans JP', sans-serif; background: #f0efe9; display: flex; justify-content: center; padding: 2rem 1rem; min-height: 100vh; }
     .container { width: 100%; max-width: 500px; }
     .api-section { background: var(--bg); padding: 1rem; border-radius: 12px; margin-bottom: 2rem; border: 1px solid var(--border); }
     .api-section input { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-family: monospace; font-size: 12px; }
     .result-card { background: white; border-radius: var(--radius); padding: 1.5rem; margin-bottom: 2rem; display: none; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-    .score-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
-    .score-badge { padding: 6px 16px; background: var(--accent); color: white; border-radius: 999px; font-weight: 700; font-size: 18px; }
-    .compare-section { margin-bottom: 1.5rem; }
+    .score-badge { padding: 4px 12px; background: var(--accent); color: white; border-radius: 999px; font-weight: 700; margin-bottom: 1rem; display: inline-block; }
     .compare-label { font-size: 11px; font-weight: bold; color: var(--text-sub); text-transform: uppercase; margin-bottom: 4px; }
-    .val-you { font-size: 16px; color: #E24B4A; font-weight: 600; line-height: 1.4; margin-bottom: 12px; }
-    .val-better { font-size: 18px; color: var(--accent); font-weight: 700; line-height: 1.4; }
-    .feedback-box { background: #f7f7f5; padding: 15px; border-radius: 10px; font-size: 14px; line-height: 1.7; border-left: 5px solid var(--accent); color: #333; }
+    .val-you { font-size: 16px; color: #E24B4A; font-weight: 600; margin-bottom: 12px; }
+    .val-better { font-size: 18px; color: var(--accent); font-weight: 700; margin-bottom: 12px; }
+    .feedback-box { background: #f7f7f5; padding: 15px; border-radius: 10px; font-size: 14px; line-height: 1.6; border-left: 5px solid var(--accent); }
     .controls { display: flex; flex-direction: column; align-items: center; gap: 15px; }
-    .rec-btn { width: 85px; height: 85px; border-radius: 50%; border: none; background: var(--accent); color: white; cursor: pointer; font-size: 35px; transition: 0.3s; box-shadow: 0 8px 20px rgba(29, 158, 117, 0.3); }
+    .rec-btn { width: 85px; height: 85px; border-radius: 50%; border: none; background: var(--accent); color: white; cursor: pointer; font-size: 35px; box-shadow: 0 8px 20px rgba(29, 158, 117, 0.3); transition: 0.3s; }
     .rec-btn.recording { background: #E24B4A; animation: pulse 1.2s infinite; }
     @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-    .status { font-size: 14px; color: var(--text-sub); font-weight: 600; text-align: center; }
   </style>
 </head>
 <body>
@@ -36,42 +31,33 @@
     </div>
 
     <div id="resultCard" class="result-card">
-      <div class="score-row">
-        <span class="score-badge" id="scoreBadge">0</span>
-        <span style="font-size: 12px; color: var(--text-sub);">Naturalness Score</span>
-      </div>
-      <div class="compare-section">
-        <div class="compare-label">あなたが話した内容:</div>
-        <div class="val-you" id="userAns"></div>
-        <div class="compare-label">より自然な表現:</div>
-        <div class="val-better" id="betterAns"></div>
-      </div>
-      <div class="feedback-box" id="feedbackText"></div>
+      <div id="scoreBadge" class="score-badge">Score: 0</div>
+      <div class="compare-label">あなたが話した内容:</div>
+      <div id="userAns" class="val-you"></div>
+      <div class="compare-label">より自然な表現:</div>
+      <div id="betterAns" class="val-better"></div>
+      <div id="feedbackText" class="feedback-box"></div>
     </div>
 
     <div class="controls">
-      <p class="status" id="statusText">録音して添削を開始</p>
+      <p id="statusText" style="font-weight:600; color:var(--text-sub);">録音ボタンを押してスタート</p>
       <button class="rec-btn" id="recBtn" onclick="toggleRecord()">🎤</button>
     </div>
   </div>
 
   <script>
-    let isRecording = false;
-    let mediaRecorder = null;
-    let audioChunks = [];
+    let isRecording = false, mediaRecorder = null, audioChunks = [];
 
     async function toggleRecord() {
       const key = document.getElementById('apiKey').value.trim();
       if (!key) { alert('APIキーを入力してください'); return; }
-
       if (isRecording) {
         mediaRecorder.stop();
         isRecording = false;
         document.getElementById('recBtn').classList.remove('recording');
-        document.getElementById('statusText').textContent = 'AIが分析中...';
+        document.getElementById('statusText').textContent = 'AI分析中...';
         return;
       }
-
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaRecorder = new MediaRecorder(stream);
@@ -89,21 +75,19 @@
         mediaRecorder.start();
         isRecording = true;
         document.getElementById('recBtn').classList.add('recording');
-        document.getElementById('statusText').textContent = '録音中... (再タップで終了)';
+        document.getElementById('statusText').textContent = '話してください... (再タップで終了)';
       } catch (e) { alert('マイクを許可してください'); }
     }
 
     async function process(base64, key) {
-      const prompt = `あなたはプロの英語添削講師です。生徒の音声を聞いて、以下をJSONで返してください。
-      1. transcript: 聞き取った文章
-      2. improved: 自然な表現
-      3. score: 0-100点
-      4. feedback: 日本語解説
-      形式: {"transcript":"...","improved":"...","score":85,"feedback":"..."}`;
+      const prompt = `英語添削講師として、音声を書き起こし、より自然な表現に直し、日本語で解説してください。
+      必ず以下のJSON形式で回答してください: {"transcript":"...","improved":"...","score":0-100,"feedback":"..."}`;
 
       try {
-        // 最も安定しているエイリアス「gemini-1.5-flash-latest」を指定
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+        // v1 (安定版) エンドポイント + gemini-1.5-flash
+        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${key}`;
+        
+        const res = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -114,16 +98,15 @@
         const data = await res.json();
         if (data.error) throw new Error(data.error.message);
         
-        const jsonText = data.candidates[0].content.parts[0].text.replace(/```json|```/g, '').trim();
-        const result = JSON.parse(jsonText);
+        const textResponse = data.candidates[0].content.parts[0].text;
+        const result = JSON.parse(textResponse.match(/\{.*\}/s)[0]);
 
         document.getElementById('resultCard').style.display = 'block';
-        document.getElementById('scoreBadge').textContent = result.score;
+        document.getElementById('scoreBadge').textContent = `Score: ${result.score}`;
         document.getElementById('userAns').textContent = result.transcript;
         document.getElementById('betterAns').textContent = result.improved;
         document.getElementById('feedbackText').textContent = result.feedback;
         document.getElementById('statusText').textContent = '添削完了！';
-
       } catch (e) {
         document.getElementById('statusText').textContent = 'エラー: ' + e.message;
       }
