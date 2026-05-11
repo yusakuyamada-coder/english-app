@@ -80,9 +80,16 @@
     }
 
     async function process(base64, key) {
-      const prompt = `英語添削講師として、音声を書き起こし、より自然な表現に直し、日本語で解説してください。
-      必ず以下のJSON形式で回答してください: {"transcript":"...","improved":"...","score":0-100,"feedback":"..."}`;
+// プロンプトを添削と自然な表現の提示に特化
+      const prompt = `あなたはプロの英語添削講師です。
+生徒の音声を聞いて、以下の4点を分析し、JSON形式でのみ回答してください。
 
+1. transcript: 聞き取った文章
+2. improved: 文法的に正しく、よりネイティブに近い自然な表現
+3. score: 元の文章の正確さ・自然さを0〜100で採点
+4. feedback: 修正のポイントや、なぜその方が自然なのかを日本語で簡潔に解説
+
+形式: {"transcript":"...","improved":"...","score":85,"feedback":"..."}`;
       try {
         // v1 (安定版) エンドポイント + gemini-1.5-flash
         const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${key}`;
