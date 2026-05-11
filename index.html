@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>English Correction Tool</title>
+  <title>English Correction Tool (Stable)</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --accent: #1D9E75; --accent-light: #E1F5EE; --bg: #ffffff;
-      --text: #1a1a18; --text-sub: #6b6b66; --border: rgba(0,0,0,0.1); --radius: 16px;
+      --accent: #1D9E75; --bg: #ffffff; --text: #1a1a18; --text-sub: #6b6b66; --border: rgba(0,0,0,0.1); --radius: 16px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Plus Jakarta Sans', 'Noto Sans JP', sans-serif; background: #f0efe9; color: var(--text); display: flex; justify-content: center; padding: 2rem 1rem; min-height: 100vh; }
@@ -17,10 +16,7 @@
     .api-section { background: var(--bg); padding: 1rem; border-radius: 12px; margin-bottom: 2rem; border: 1px solid var(--border); }
     .api-section input { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-family: monospace; font-size: 12px; }
 
-    /* リザルト表示エリア */
-    .result-card { background: white; border-radius: var(--radius); padding: 1.5rem; margin-bottom: 2rem; display: none; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.05); animation: slideUp 0.4s ease; }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    
+    .result-card { background: white; border-radius: var(--radius); padding: 1.5rem; margin-bottom: 2rem; display: none; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
     .score-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
     .score-badge { padding: 6px 16px; background: var(--accent); color: white; border-radius: 999px; font-weight: 700; font-size: 18px; }
     
@@ -31,11 +27,10 @@
 
     .feedback-box { background: #f7f7f5; padding: 15px; border-radius: 10px; font-size: 14px; line-height: 1.7; border-left: 5px solid var(--accent); color: #333; }
 
-    /* 操作エリア */
-    .controls { display: flex; flex-direction: column; align-items: center; gap: 15px; position: sticky; bottom: 20px; }
+    .controls { display: flex; flex-direction: column; align-items: center; gap: 15px; }
     .rec-btn { width: 85px; height: 85px; border-radius: 50%; border: none; background: var(--accent); color: white; cursor: pointer; font-size: 35px; transition: 0.3s; box-shadow: 0 8px 20px rgba(29, 158, 117, 0.3); }
     .rec-btn.recording { background: #E24B4A; animation: pulse 1.2s infinite; }
-    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); box-shadow: 0 0 0 15px rgba(226, 75, 74, 0.2); } 100% { transform: scale(1); } }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
     .status { font-size: 14px; color: var(--text-sub); font-weight: 600; text-align: center; }
   </style>
 </head>
@@ -50,15 +45,12 @@
         <span class="score-badge" id="scoreBadge">0</span>
         <span style="font-size: 12px; color: var(--text-sub);">Naturalness Score</span>
       </div>
-      
       <div class="compare-section">
         <div class="compare-label">あなたが話した内容:</div>
         <div class="val-you" id="userAns"></div>
-        
         <div class="compare-label">より自然な表現:</div>
         <div class="val-better" id="betterAns"></div>
       </div>
-      
       <div class="feedback-box" id="feedbackText"></div>
     </div>
 
@@ -102,24 +94,21 @@
         mediaRecorder.start();
         isRecording = true;
         document.getElementById('recBtn').classList.add('recording');
-        document.getElementById('statusText').textContent = '話してください... (もう一度押すと終了)';
+        document.getElementById('statusText').textContent = '録音中... (再タップで終了)';
       } catch (e) { alert('マイクを許可してください'); }
     }
 
     async function process(base64, key) {
-      // プロンプトを添削と自然な表現の提示に特化
-      const prompt = `あなたはプロの英語添削講師です。
-生徒の音声を聞いて、以下の4点を分析し、JSON形式でのみ回答してください。
-
-1. transcript: 聞き取った文章
-2. improved: 文法的に正しく、よりネイティブに近い自然な表現
-3. score: 元の文章の正確さ・自然さを0〜100で採点
-4. feedback: 修正のポイントや、なぜその方が自然なのかを日本語で簡潔に解説
-
-形式: {"transcript":"...","improved":"...","score":85,"feedback":"..."}`;
+      const prompt = `あなたはプロの英語添削講師です。生徒の音声を聞いて、以下をJSONで返してください。
+      1. transcript: 聞き取った文章
+      2. improved: 自然な表現
+      3. score: 0-100点
+      4. feedback: 日本語解説
+      形式: {"transcript":"...","improved":"...","score":85,"feedback":"..."}`;
 
       try {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${key}`, {
+        // モデルを安定版の 1.5-flash に変更
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -128,18 +117,19 @@
         });
 
         const data = await res.json();
-        if (data.error) throw new Error(data.error.message);
+        if (data.error) {
+           // 具体的なエラー内容を表示
+           throw new Error(data.error.message);
+        }
         
         const jsonText = data.candidates[0].content.parts[0].text.replace(/```json|```/g, '').trim();
         const result = JSON.parse(jsonText);
 
-        // 画面の更新
         document.getElementById('resultCard').style.display = 'block';
         document.getElementById('scoreBadge').textContent = result.score;
         document.getElementById('userAns').textContent = result.transcript;
         document.getElementById('betterAns').textContent = result.improved;
         document.getElementById('feedbackText').textContent = result.feedback;
-        
         document.getElementById('statusText').textContent = '添削完了！';
 
       } catch (e) {
