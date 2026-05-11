@@ -48,148 +48,708 @@
 
   <script>
     // CSVから抽出した全140問のデータ
-    const questionList = [
-      {"ja": "こちらは私の友人、ケンです。", "pattern": "「これ」！ (This is )"},
-      {"ja": "このピザは美味しいです。", "pattern": "「これ」！ (This is )"},
-      {"ja": "これは私の席です。", "pattern": "「これ」！ (This is )"},
-      {"ja": "この話は面白いです。", "pattern": "「これ」！ (This is )"},
-      {"ja": "これは私の番号です。", "pattern": "「これ」！ (This is )"},
-      {"ja": "この犬はとてもかわいい！", "pattern": "「これ」！ (This is )"},
-      {"ja": "これは東京にある人気のカフェです。", "pattern": "「これ」！ (This is )"},
-      {"ja": "これは私のものではありません。", "pattern": "「これ」！ (This is )"},
-      {"ja": "これはあなたのせいではありません。", "pattern": "「これ」！ (This is )"},
-      {"ja": "これは正しくありません。（間違っています。）", "pattern": "「これ」！ (This is )"},
-      {"ja": "今、重要なメールを書いています。", "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"},
-      {"ja": "彼は今、電話で話しています。", "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"},
-      {"ja": "私たちはプロジェクトのプレゼンを準備しています。", "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"},
-      {"ja": "外は雨が降っています。", "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"},
-      {"ja": "彼女はキッチンで夕食を作っています。", "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"},
-      {"ja": "彼らは公園でサッカーをしています。", "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"},
-      {"ja": "私は今、新しいスキルを学んでいます。", "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"},
-      {"ja": "誰かがドアを叩いています。", "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"},
-      {"ja": "私は今、駅に向かっています。", "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"},
-      {"ja": "あなたは私の話を聞いていますか？", "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"},
-      {"ja": "ラーメンが食べたい気分だよ。", "pattern": "〜な気分だよ！ (I feel like -ing)"},
-      {"ja": "今日は何もしたくない気分だな。", "pattern": "〜な気分だよ！ (I feel like -ing)"},
-      {"ja": "散歩に行きたい気分です。", "pattern": "〜な気分だよ！ (I feel like -ing)"},
-      {"ja": "今夜は映画を見たい気分です。", "pattern": "〜な気分だよ！ (I feel like -ing)"},
-      {"ja": "甘いものが食べたい気分だな。", "pattern": "〜な気分だよ！ (I feel like -ing)"},
-      {"ja": "泣きたい気分だよ。", "pattern": "〜な気分だよ！ (I feel like -ing)"},
-      {"ja": "今は誰とも話したくない気分なんだ。", "pattern": "〜な気分だよ！ (I feel like -ing)"},
-      {"ja": "踊りたい気分です！", "pattern": "〜な気分だよ！ (I feel like -ing)"},
-      {"ja": "今日は早く寝たい気分だよ。", "pattern": "〜な気分だよ！ (I feel like -ing)"},
-      {"ja": "買い物に行きたい気分だな。", "pattern": "〜な気分だよ！ (I feel like -ing)"},
-      {"ja": "私は毎日コーヒーを飲みます。", "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"},
-      {"ja": "彼女は週末にヨガをします。", "pattern": "いつもの私！　⭐️ (I + 動詞의 原形)"},
-      {"ja": "彼らはいつもこの時間にランチを食べます。", "pattern": "いつもの私！　⭐️ (I + 動詞의 原形)"},
-      {"ja": "私は週末、大抵家にいます。", "pattern": "いつもの私！　⭐️ (I + 動詞의 原形)"},
-      {"ja": "私の父は銀行で働いています。", "pattern": "いつもの私！　⭐️ (I + 動詞의 原形)"},
-      {"ja": "彼らは英語を上手に話します。", "pattern": "いつもの私！　⭐️ (I + 動詞의 原形)"},
-      {"ja": "私は夜、よく本を読みます。", "pattern": "いつもの私！　⭐️ (I + 動詞의 原形)"},
-      {"ja": "彼女は甘いものが大好きです。", "pattern": "いつもの私！　⭐️ (I + 動詞의 原形)"},
-      {"ja": "この電車は各駅に止まります。", "pattern": "いつもの私！　⭐️ (I + 動詞의 原形)"},
-      {"ja": "私は大抵7時に起きます。", "pattern": "いつもの私！　⭐️ (I + 動詞의 原形)"},
-      {"ja": "明日、顧客に電話するつもりです。", "pattern": "未来は決めた！⭐️ (I'm going to / I will)"},
-      {"ja": "今週末、友達に会う予定です。", "pattern": "未来は決めた！⭐️ (I'm going to / I will)"},
-      {"ja": "今夜、新しい映画を見るつもりなんだ。", "pattern": "未来は決めた！⭐️ (I'm going to / I will)"},
-      {"ja": "来月、日本に行く予定です。", "pattern": "未来は決めた！⭐️ (I'm going to / I will)"},
-      {"ja": "彼は来年、新しい家を買うつもりです。", "pattern": "未来は決めた！⭐️ (I'm going to / I will)"},
-      {"ja": "私たちは今夜、外食する予定だよ。", "pattern": "未来は決めた！⭐️ (I'm going to / I will)"},
-      {"ja": "私は医者になるつもりです。", "pattern": "未来は決めた！⭐️ (I'm going to / I will)"},
-      {"ja": "明日、雨が降るでしょう。", "pattern": "未来は決めた！⭐️ (I'm going to / I will)"},
-      {"ja": "彼女はきっと時間通りに来るよ。", "pattern": "未来は決めた！⭐️ (I'm going to / I will)"},
-      {"ja": "私はあなたをいつも支えます。", "pattern": "未来は決めた！⭐️ (I'm going to / I will)"},
-      {"ja": "昨夜、プロジェクトを終わらせました。", "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"},
-      {"ja": "今朝、早く起きました。", "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"},
-      {"ja": "昨日、彼に会いましたよ。", "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"},
-      {"ja": "2年前にその映画を見ました。", "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"},
-      {"ja": "彼女は先週、新しい車を買いました。", "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"},
-      {"ja": "私たちは昨夜、素晴らしいディナーを楽しみました。", "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"},
-      {"ja": "彼は昨日、仕事に行きませんでした。", "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"},
-      {"ja": "今朝は朝食を食べませんでした。", "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"},
-      {"ja": "昨日は雨が降りましたか？", "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"},
-      {"ja": "その時、何て言ったの？", "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"},
-      {"ja": "彼女に会ったことがあります。", "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"},
-      {"ja": "私は3回その映画を見たことがあります。", "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"},
-      {"ja": "彼はすでに宿題を終わらせました。", "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"},
-      {"ja": "私たちはまだ昼食を食べていません。", "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"},
-      {"ja": "私は一度も日本に行ったことがありません。", "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"},
-      {"ja": "あなたはこれまでに寿司を食べたことがありますか？", "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"},
-      {"ja": "彼女はどこに行ったの？（今ここにはいない）", "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"},
-      {"ja": "私はちょうどメールを送り終えたところです。", "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"},
-      {"ja": "ずっと忙しかったです。", "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"},
-      {"ja": "彼は10年間ここに住んでいます。", "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"},
-      {"ja": "私はフランス語を話せます。", "pattern": "できるもん！どこで？どうやって？ (I can / Where can I / How can I)"},
-      {"ja": "ここでチケットを買えますか？", "pattern": "できるもん！どこで？どうやって？ (I can / Where can I / How can I)"},
-      {"ja": "どうすればそこに行けますか？", "pattern": "できるもん！どこで？どうやって？ (I can / Where can I / How can I)"},
-      {"ja": "彼はギターをとても上手に弾けます。", "pattern": "できるもん！どこで？どうやって？ (I can / Where can I / How can I)"},
-      {"ja": "私たちは明日の会議に出席できます。", "pattern": "できるもん！どこで？どうやって？ (I can / Where can I / How can I)"},
-      {"ja": "メニューを見せてもらえますか？", "pattern": "できるもん！どこで？どうやって？ (I can / Where can I / How can I)"},
-      {"ja": "私は泳げません。", "pattern": "できるもん！どこで？どうやって？ (I can / Where can I / How can I)"},
-      {"ja": "何をすればいいですか？", "pattern": "できるもん！どこで？どうやって？ (I can / Where can I / How can I)"},
-      {"ja": "どこでタクシーを拾えますか？", "pattern": "できるもん！どこで？どうやって？ (I can / Where can I / How can I)"},
-      {"ja": "このペンを使ってもいいですか？", "pattern": "できるもん！どこで？どうやって？ (I can / Where can I / How can I)"},
-      {"ja": "私はこの会議に出席しなければなりません。", "pattern": "絶対やらなきゃ！ (I have to / I must / I need to)"},
-      {"ja": "私たちは今すぐ出発しなければなりません。", "pattern": "絶対やらなきゃ！ (I have to / I must / I need to)"},
-      {"ja": "あなたはもっと練習する必要がありますね。", "pattern": "絶対やらなきゃ！ (I have to / I must / I need to)"},
-      {"ja": "彼は今日、仕事を終わらせなければなりません。", "pattern": "絶対やらなきゃ！ (I have to / I must / I need to)"},
-      {"ja": "私は明日、早く起きる必要があります。", "pattern": "絶対やらなきゃ！ (I have to / I must / I need to)"},
-      {"ja": "ここで靴を脱がなければなりませんか？", "pattern": "絶対やらなきゃ！ (I have to / I must / I need to)"},
-      {"ja": "忘れないようにしなければなりません。", "pattern": "絶対やらなきゃ！ (I have to / I must / I need to)"},
-      {"ja": "私は新しいパソコンを買う必要があります。", "pattern": "絶対やらなきゃ！ (I have to / I must / I need to)"},
-      {"ja": "私たちは規則を守らなければなりません。", "pattern": "絶対やらなきゃ！ (I have to / I must / I need to)"},
-      {"ja": "あなたは病院に行くべきです。", "pattern": "絶対やらなきゃ！ (I have to / I must / I need to)"},
-      {"ja": "それを今すぐやる必要はありませんよ。", "pattern": "別にいいよ！ (You don't have to)"},
-      {"ja": "明日、学校に来る必要はありません。", "pattern": "別にいいよ！ (You don't have to)"},
-      {"ja": "急ぐ必要はありませんよ、時間はたっぷりあります。", "pattern": "別にいいよ！ (You don't have to)"},
-      {"ja": "それを買わなくてもいいですよ。", "pattern": "別にいいよ！ (You don't have to)"},
-      {"ja": "私のことを心配しなくても大丈夫ですよ。", "pattern": "別にいいよ！ (You don't have to)"},
-      {"ja": "スーツを着る必要はありません、カジュアルで大丈夫です。", "pattern": "別にいいよ！ (You don't have to)"},
-      {"ja": "すべてを食べる必要はありませんよ。", "pattern": "別にいいよ！ (You don't have to)"},
-      {"ja": "彼に謝る必要はありません、あなたのせいではないですから。", "pattern": "別にいいよ！ (You don't have to)"},
-      {"ja": "今日、それを終わらせる必要はありません。", "pattern": "別にいいよ！ (You don't have to)"},
-      {"ja": "ここでお金を払う必要はありません、無料です。", "pattern": "別にいいよ！ (You don't have to)"},
-      {"ja": "窓を開けてくれませんか？", "pattern": "お願いできる？ (Will you...? / Could you...?)"},
-      {"ja": "手伝ってくれませんか？", "pattern": "お願いできる？ (Will you...? / Could you...?)"},
-      {"ja": "駅への道を教えていただけますか？", "pattern": "お願いできる？ (Will you...? / Could you...?)"},
-      {"ja": "ペンを貸してくれますか？", "pattern": "お願いできる？ (Will you...? / Could you...?)"},
-      {"ja": "もう一度言っていただけますか？", "pattern": "お願いできる？ (Will you...? / Could you...?)"},
-      {"ja": "塩を取ってくれますか？", "pattern": "お願いできる？ (Will you...? / Could you...?)"},
-      {"ja": "ここで待っていてくれますか？", "pattern": "お願いできる？ (Will you...? / Could you...?)"},
-      {"ja": "後で電話してくれますか？", "pattern": "お願いできる？ (Will you...? / Could you...?)"},
-      {"ja": "静かにしていただけますか？", "pattern": "お願いできる？ (Will you...? / Could you...?)"},
-      {"ja": "ドアを閉めてくれますか？", "pattern": "お願いできる？ (Will you...? / Could you...?)"},
-      {"ja": "コーヒーはいかがですか？", "pattern": "〜はどう？ (Would you like...? / How about...?)"},
-      {"ja": "クッキーをいくつか食べませんか？", "pattern": "〜はどう？ (Would you like...? / How about...?)"},
-      {"ja": "今週末、映画に行きませんか？", "pattern": "〜はどう？ (Would you like...? / How about...?)"},
-      {"ja": "私の新しい家に来ませんか？", "pattern": "〜はどう？ (Would you like...? / How about...?)"},
-      {"ja": "もっと砂糖を入れますか？", "pattern": "〜はどう？ (Would you like...? / How about...?)"},
-      {"ja": "一緒にランチを食べませんか？", "pattern": "〜はどう？ (Would you like...? / How about...?)"},
-      {"ja": "何か飲むものはいかがですか？", "pattern": "〜はどう？ (Would you like...? / How about...?)"},
-      {"ja": "散歩に行きませんか？", "pattern": "〜はどう？ (Would you like...? / How about...?)"},
-      {"ja": "窓側の席はいかがですか？", "pattern": "〜はどう？ (Would you like...? / How about...?)"},
-      {"ja": "休憩しませんか？", "pattern": "〜はどう？ (Would you like...? / How about...?)"},
-      {"ja": "映画に行こうよ！", "pattern": "一緒にやろ！ (Let's...)"},
-      {"ja": "夕食を食べに行きましょう。", "pattern": "一緒にやろ！ (Let's...)"},
-      {"ja": "テニスをしようよ！", "pattern": "一緒にやろ！ (Let's...)"},
-      {"ja": "この歌を一緒に歌おう。", "pattern": "一緒にやろ！ (Let's...)"},
-      {"ja": "駅で会いましょう。", "pattern": "一緒にやろ！ (Let's...)"},
-      {"ja": "パーティーをしましょう！", "pattern": "一緒にやろ！ (Let's...)"},
-      {"ja": "休憩しようよ。", "pattern": "一緒にやろ！ (Let's...)"},
-      {"ja": "タクシーで行きましょう。", "pattern": "一緒にやろ！ (Let's...)"},
-      {"ja": "新しいプロジェクトを始めましょう。", "pattern": "一緒にやろ！ (Let's...)"},
-      {"ja": "ここを片付けようよ。", "pattern": "一緒にやろ！ (Let's...)"},
-      {"ja": "明日、何をしますか？", "pattern": "疑問文 (What/Who/Where...)"},
-      {"ja": "彼は誰ですか？", "pattern": "疑問文 (What/Who/Where...)"},
-      {"ja": "どこに住んでいますか？", "pattern": "疑問文 (What/Who/Where...)"},
-      {"ja": "いつ日本に来ましたか？", "pattern": "疑問文 (What/Who/Where...)"},
-      {"ja": "なぜ怒っているのですか？", "pattern": "疑問文 (What/Who/Where...)"},
-      {"ja": "どの映画が好きですか？", "pattern": "疑問文 (What/Who/Where...)"},
-      {"ja": "昨日のパーティーはどうでしたか？", "pattern": "疑問文 (What/Who/Where...)"},
-      {"ja": "これは誰のペンですか？", "pattern": "疑問文 (What/Who/Where...)"},
-      {"ja": "どれくらいここにいますか？", "pattern": "疑問文 (What/Who/Where...)"},
-      {"ja": "誕生日はいつですか？", "pattern": "疑問文 (What/Who/Where...)"}
-    ];
+const questionList = [
+  {
+    "ja": "こちらは私の友人、ケンです。",
+    "en": "This is my friend, Ken.",
+    "pattern": "「これ」！ (This is)"
+  },
+  {
+    "ja": "このピザは美味しいです。",
+    "en": "This pizza is delicious.",
+    "pattern": "「これ」！ (This is)"
+  },
+  {
+    "ja": "これは私の席です。",
+    "en": "This is my seat.",
+    "pattern": "「これ」！ (This is)"
+  },
+  {
+    "ja": "この話は面白いです。",
+    "en": "This story is interesting.",
+    "pattern": "「これ」！ (This is)"
+  },
+  {
+    "ja": "これは私の番号です。",
+    "en": "This is my number.",
+    "pattern": "「これ」！ (This is)"
+  },
+  {
+    "ja": "この犬はとてもかわいい！",
+    "en": "This dog is so cute!",
+    "pattern": "「これ」！ (This is)"
+  },
+  {
+    "ja": "これは東京にある人気のカフェです。",
+    "en": "This is a popular cafe in Tokyo.",
+    "pattern": "「これ」！ (This is)"
+  },
+  {
+    "ja": "これは私のものではありません。",
+    "en": "This isn't mine.",
+    "pattern": "「これ」！ (This is)"
+  },
+  {
+    "ja": "これはあなたのせいではありません。",
+    "en": "This isn't your fault.",
+    "pattern": "「これ」！ (This is)"
+  },
+  {
+    "ja": "これは正しくありません。（間違っています。）",
+    "en": "This isn't right.",
+    "pattern": "「これ」！ (This is)"
+  },
+  {
+    "ja": "これは熱くありません。（ぬるいです。）",
+    "en": "This isn't hot.",
+    "pattern": "「これ」！ (This is)"
+  },
+  {
+    "ja": "これは終わっていません。（未完成です。）",
+    "en": "This isn't finished.",
+    "pattern": "「これ」！ (This is)"
+  },
+  {
+    "ja": "これは問題ありません。",
+    "en": "This isn't a problem.",
+    "pattern": "「これ」！ (This is)"
+  },
+  {
+    "ja": "これはあなたのものですか？",
+    "en": "Is this yours?",
+    "pattern": "「これ」！ (This is)"
+  },
+  {
+    "ja": "写真に写っているのはあなたですか？",
+    "en": "Is this you in the picture?",
+    "pattern": "「これ」！ (This is)"
+  },
+  {
+    "ja": "これは彼のLINE IDですか？",
+    "en": "Is this his LINE ID?",
+    "pattern": "「これ」！ (This is)"
+  },
+  {
+    "ja": "これは私のコーヒーですか？",
+    "en": "Is this my coffee?",
+    "pattern": "「これ」！ (This is)"
+  },
+  {
+    "ja": "これは重要ですか？",
+    "en": "Is this important?",
+    "pattern": "「これ」！ (This is)"
+  },
+  {
+    "ja": "これは多すぎますか？",
+    "en": "Is this too much?",
+    "pattern": "「これ」！ (This is)"
+  },
+  {
+    "ja": "これは今開いていますか？",
+    "en": "Is this open now?",
+    "pattern": "「これ」！ (This is)"
+  },
+  {
+    "ja": "ただ見ているだけです。",
+    "en": "I'm just looking.",
+    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
+  },
+  {
+    "ja": "トイレを探しています。",
+    "en": "I'm looking for the restroom.",
+    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
+  },
+  {
+    "ja": "あなたは話すのが速すぎます。",
+    "en": "You're talking too fast.",
+    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
+  },
+  {
+    "ja": "彼女はバスを待っています。",
+    "en": "She's waiting for the bus.",
+    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
+  },
+  {
+    "ja": "今、雨が降っています。",
+    "en": "It's raining now.",
+    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
+  },
+  {
+    "ja": "彼らは二階でNetflixを見ています。",
+    "en": "They're watching Netflix upstairs.",
+    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
+  },
+  {
+    "ja": "赤ちゃんはぐっすり眠っています。",
+    "en": "The baby is sleeping soundly.",
+    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
+  },
+  {
+    "ja": "私は今日は仕事をしていません。",
+    "en": "I'm not working today.",
+    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
+  },
+  {
+    "ja": "あなたは私の話を聞いていません。",
+    "en": "You're not listening to me.",
+    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
+  },
+  {
+    "ja": "彼はジャケットを着ていません。",
+    "en": "He's not wearing a jacket.",
+    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
+  },
+  {
+    "ja": "彼女は今月、肉を食べていません。",
+    "en": "She's not eating meat this month.",
+    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
+  },
+  {
+    "ja": "ここは雪が降っていません。",
+    "en": "It's not snowing here.",
+    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
+  },
+  {
+    "ja": "私たちはもうロンドンには住んでいません。",
+    "en": "We're not living in London anymore.",
+    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
+  },
+  {
+    "ja": "彼らはこのコンピューターを使っていません。",
+    "en": "They're not using this computer.",
+    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
+  },
+  {
+    "ja": "私はあなたを邪魔していますか？/ご迷惑ですか？",
+    "en": "Am I bothering you?",
+    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
+  },
+  {
+    "ja": "もう気分は良くなりましたか？",
+    "en": "Are you feeling better now?",
+    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
+  },
+  {
+    "ja": "今、あなたは彼女のことを考えていますか？",
+    "en": "Are you thinking about her now?",
+    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
+  },
+  {
+    "ja": "彼らは新しいアパートを探していますか？",
+    "en": "Are they looking for a new apartment?",
+    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
+  },
+  {
+    "ja": "彼は今夜、東京に行く予定ですか？",
+    "en": "Is he going to Tokyo tonight?",
+    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
+  },
+  {
+    "ja": "あなたは何を飲んでいるのですか？",
+    "en": "What are you drinking?",
+    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
+  },
+  {
+    "ja": "コーヒーを飲みたい気分だ。",
+    "en": "I feel like drinking some coffee.",
+    "pattern": "〜な気分だよ！ (I feel like -ing)"
+  },
+  {
+    "ja": "髪型を変えたい気分だ。",
+    "en": "I feel like changing my hairstyle.",
+    "pattern": "〜な気分だよ！ (I feel like -ing)"
+  },
+  {
+    "ja": "何か新しいことを学びたい気分だ。",
+    "en": "I feel like learning something new.",
+    "pattern": "〜な気分だよ！ (I feel like -ing)"
+  },
+  {
+    "ja": "買い物をしたい気分だ。",
+    "en": "I feel like going shoping.",
+    "pattern": "〜な気分だよ！ (I feel like -ing)"
+  },
+  {
+    "ja": "ビーチでまったりしたい気分だ。",
+    "en": "I feel like chilling on the beach.",
+    "pattern": "〜な気分だよ！ (I feel like -ing)"
+  },
+  {
+    "ja": "誰でも時々、諦めたい気分になる。",
+    "en": "Everyone feels like giving up sometimes.",
+    "pattern": "〜な気分だよ！ (I feel like -ing)"
+  },
+  {
+    "ja": "今は時間を無駄にしているような気がする。",
+    "en": "It feels like I'm wasting my time now.",
+    "pattern": "〜な気分だよ！ (I feel like -ing)"
+  },
+  {
+    "ja": "そのことについては話したくない気分だ。",
+    "en": "I don't feel like talking about it.",
+    "pattern": "〜な気分だよ！ (I feel like -ing)"
+  },
+  {
+    "ja": "今日は家にいたい気分じゃない。",
+    "en": "I don't feel like staying home today.",
+    "pattern": "〜な気分だよ！ (I feel like -ing)"
+  },
+  {
+    "ja": "彼は今日、料理をする気分じゃない。",
+    "en": "He doesn't feel like cooking today.",
+    "pattern": "〜な気分だよ！ (I feel like -ing)"
+  },
+  {
+    "ja": "彼女は誰にも会う気分じゃない。",
+    "en": "She doesn't feel like seeing anyone.",
+    "pattern": "〜な気分だよ！ (I feel like -ing)"
+  },
+  {
+    "ja": "ピザを食べたい気分ですか？",
+    "en": "Do you feel like getting pizza?",
+    "pattern": "〜な気分だよ！ (I feel like -ing)"
+  },
+  {
+    "ja": "あなたも運動したい気分ですか？",
+    "en": "Do you feel like working out too?",
+    "pattern": "〜な気分だよ！ (I feel like -ing)"
+  },
+  {
+    "ja": "昨日、ラーメンが食べたい気分だった。",
+    "en": "I felt like having ramen yesterday.",
+    "pattern": "〜な気分だよ！ (I feel like -ing)"
+  },
+  {
+    "ja": "先週は家にいたい気分だった。",
+    "en": "We felt like staying home last week.",
+    "pattern": "〜な気分だよ！ (I feel like -ing)"
+  },
+  {
+    "ja": "どこに行きたい気分ですか？",
+    "en": "Where do you feel like going?",
+    "pattern": "〜な気分だよ！ (I feel like -ing)"
+  },
+  {
+    "ja": "少し休みたい気分じゃないの？",
+    "en": "Don't you feel like resting a bit?",
+    "pattern": "〜な気分だよ！ (I feel like -ing)"
+  },
+  {
+    "ja": "それは踊りたいような気分にさせる",
+    "en": "It makes me feel like dancing.",
+    "pattern": "〜な気分だよ！ (I feel like -ing)"
+  },
+  {
+    "ja": "何がそんなにあなたを帰りたい気持ちにさせるの？",
+    "en": "What makes you feel like going home so much?",
+    "pattern": "〜な気分だよ！ (I feel like -ing)"
+  },
+  {
+    "ja": "もうすでに夏みたいに感じる。",
+    "en": "It feels like summer already.",
+    "pattern": "〜な気分だよ！ (I feel like -ing)"
+  },
+  {
+    "ja": "私は早く起きます。",
+    "en": "I wake up early.",
+    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
+  },
+  {
+    "ja": "私は花粉症です",
+    "en": "I have allergies.",
+    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
+  },
+  {
+    "ja": "私は仕事にバスで行きます。",
+    "en": "I take the bus to work.",
+    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
+  },
+  {
+    "ja": "私はたいてい11時前に寝ます。",
+    "en": "I usually go to bed before eleven.",
+    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
+  },
+  {
+    "ja": "私は料理をしながら音楽を聴きます。",
+    "en": "I listen to music while cooking.",
+    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
+  },
+  {
+    "ja": "彼は頻繁に新しいレストランを試します。",
+    "en": "He tries new restaurants often.",
+    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
+  },
+  {
+    "ja": "あなたは英語がとても上手に話しますね。",
+    "en": "You speak English really well.",
+    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
+  },
+  {
+    "ja": "私たちは寝る前に絵本を読みます。",
+    "en": "We read a picture book before bed.",
+    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
+  },
+  {
+    "ja": "彼女は一日に二度、犬を散歩させます。",
+    "en": "She walks her dog twice a day.",
+    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
+  },
+  {
+    "ja": "私は彼を知りません。",
+    "en": "I don't know him.",
+    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
+  },
+  {
+    "ja": "私はそうは思いません。",
+    "en": "I don't think so.",
+    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
+  },
+  {
+    "ja": "予約はしていません。",
+    "en": "We don't have a reservation.",
+    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
+  },
+  {
+    "ja": "彼は夕食後にテレビを見ません。",
+    "en": "He doesn't watch TV after dinner.",
+    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
+  },
+  {
+    "ja": "彼女は小さなことを気にしません。",
+    "en": "She doesn't worry about little things.",
+    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
+  },
+  {
+    "ja": "あなたは近くに住んでいますか？",
+    "en": "Do you live near here?",
+    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
+  },
+  {
+    "ja": "あなたは週末に働きますか？",
+    "en": "Do you work on weekends?",
+    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
+  },
+  {
+    "ja": "夏の予定は何かありますか？",
+    "en": "Do you have any plans for the summer?",
+    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
+  },
+  {
+    "ja": "彼は一人暮らしですか？",
+    "en": "Does he live alone?",
+    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
+  },
+  {
+    "ja": "彼女は熱がありますか？",
+    "en": "Does she have a fever?",
+    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
+  },
+  {
+    "ja": "彼女は週に一回英語のレッスンを受けますか？",
+    "en": "Does she take English lessons once a week?",
+    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
+  },
+  {
+    "ja": "私は新しい車を買う予定です。",
+    "en": "I'm going to buy a new car.",
+    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
+  },
+  {
+    "ja": "彼女は来月、パリを訪れる予定です。",
+    "en": "She's going to visit Paris next month.",
+    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
+  },
+  {
+    "ja": "彼は来年、転職する予定です。",
+    "en": "He is going to change his job next year.",
+    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
+  },
+  {
+    "ja": "私は青い方をいただきます。",
+    "en": "I'll take the blue one, please.",
+    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
+  },
+  {
+    "ja": "明日は晴れるだろうと思います。",
+    "en": "I think it'll be sunny tomorrow.",
+    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
+  },
+  {
+    "ja": "今夜は家にいるだけにしようと思います。",
+    "en": "I think I'll just stay home tonight.",
+    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
+  },
+  {
+    "ja": "彼女はこのプレゼントを気に入るだろう。",
+    "en": "She will love this present.",
+    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
+  },
+  {
+    "ja": "電車はもうすぐここに到着します。",
+    "en": "The train will be here in a minute.",
+    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
+  },
+  {
+    "ja": "私は今夜は映画を観ないつもりです。",
+    "en": "I'm not going to see a movie tonight.",
+    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
+  },
+  {
+    "ja": "私たちは二度と遅刻しません。",
+    "en": "We aren't going to be late again.",
+    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
+  },
+  {
+    "ja": "彼らはまだ引っ越しをする予定はない。",
+    "en": "They are not going to move yet.",
+    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
+  },
+  {
+    "ja": "今夜は外出しません。",
+    "en": "I won't go out tonight.",
+    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
+  },
+  {
+    "ja": "私はこの日を決して忘れないでしょう。",
+    "en": "I will never forget this day.",
+    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
+  },
+  {
+    "ja": "これを直すのは簡単ではないでしょう。",
+    "en": "It won't be easy to fix this.",
+    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
+  },
+  {
+    "ja": "あなたは今年旅行する予定ですか？",
+    "en": "Are you going to travel this year?",
+    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
+  },
+  {
+    "ja": "彼女はその会議に参加する予定ですか？",
+    "en": "Is she going to join the meeting?",
+    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
+  },
+  {
+    "ja": "明日は雨ですか？(予測）",
+    "en": "Will it rain tomorrow?",
+    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
+  },
+  {
+    "ja": "その店は明日開いていますか？",
+    "en": "Will the store be open tomorrow?",
+    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
+  },
+  {
+    "ja": "ロンドンではどこに滞在する予定ですか？",
+    "en": "Where will you stay in London?",
+    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
+  },
+  {
+    "ja": "彼は次に何をするつもりですか？",
+    "en": "What is he going to do next?",
+    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
+  },
+  {
+    "ja": "私は2週間前にその映画を観ました。",
+    "en": "I watched that movie two weeks ago.",
+    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
+  },
+  {
+    "ja": "私たちは昨日、祖父母を訪ねました。",
+    "en": "We visited my grandparents yesterday.",
+    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
+  },
+  {
+    "ja": "彼は月曜日に新しいプロジェクトを始めました。",
+    "en": "He started a new project on Monday.",
+    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
+  },
+  {
+    "ja": "それすっかり忘れてた！",
+    "en": "I totally forgot about it!",
+    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
+  },
+  {
+    "ja": "私はこのシャツをセールで買いました。",
+    "en": "I bought this shirt on sale.",
+    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
+  },
+  {
+    "ja": "私はスピーチの前に深呼吸をしました。",
+    "en": "I took a deep breath before the speech.",
+    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
+  },
+  {
+    "ja": "彼は事故が起こるのを見ました。",
+    "en": "He saw the accident happen.",
+    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
+  },
+  {
+    "ja": "彼らは遅く家に帰ってきました。",
+    "en": "They came back home late.",
+    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
+  },
+  {
+    "ja": "彼は椅子の下で鍵を見つけました。",
+    "en": "He found the keys under the chair.",
+    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
+  },
+  {
+    "ja": "それを知りませんでした。",
+    "en": "I didn't know that.",
+    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
+  },
+  {
+    "ja": "私は昨夜、パーティーに行きませんでした。",
+    "en": "I didn't go to the party last night.",
+    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
+  },
+  {
+    "ja": "彼らはその食べ物を全く好きではありませんでした。",
+    "en": "They didn't like the food at all.",
+    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
+  },
+  {
+    "ja": "彼は昨日、仕事に来ませんでした。",
+    "en": "He didn't come to work yesterday.",
+    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
+  },
+  {
+    "ja": "そのコンサートは時間通りに始まりませんでした。",
+    "en": "The concert didn't start on time.",
+    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
+  },
+  {
+    "ja": "私は何か重要なことを見逃しましたか？",
+    "en": "Did I miss anything important?",
+    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
+  },
+  {
+    "ja": "あなたは旅行を楽しみましたか？",
+    "en": "Did you enjoy your trip?",
+    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
+  },
+  {
+    "ja": "昨夜はよく眠れましたか？",
+    "en": "Did you sleep well last night?",
+    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
+  },
+  {
+    "ja": "彼女は傘をなくしましたか？",
+    "en": "Did she lose her umbrella?",
+    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
+  },
+  {
+    "ja": "彼は何か買いましたか？",
+    "en": "Did he buy anything?",
+    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
+  },
+  {
+    "ja": "彼女はいつオフィスを出ましたか？",
+    "en": "When did she leave the office?",
+    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
+  },
+  {
+    "ja": "これ、前にもやったことがあるよ。",
+    "en": "I've done this before.",
+    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
+  },
+  {
+    "ja": "カナダに行ったことがあります。",
+    "en": "I've been to Canada.",
+    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
+  },
+  {
+    "ja": "沖縄には何度も訪れたことがあります。",
+    "en": "I've visited Okinawa many times.",
+    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
+  },
+  {
+    "ja": "彼女は海外留学したことがあります。",
+    "en": "She has studied abroad.",
+    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
+  },
+  {
+    "ja": "彼は３回転職したことがあります。",
+    "en": "He changed jobs three times.",
+    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
+  },
+  {
+    "ja": "彼女は一度、フルマラソンを完走したことがあります。",
+    "en": "She's run a full marathon once.",
+    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
+  },
+  {
+    "ja": "彼は以前、そのホテルに泊まったことがあります。",
+    "en": "He's stayed at that hotel before.",
+    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
+  },
+  {
+    "ja": "彼女は海外でパスポートを失くした経験があります。",
+    "en": "She's lost her passport in a foreign country before.",
+    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
+  },
+  {
+    "ja": "一度もそこには行ったことがないよ。",
+    "en": "I’ve never been there.",
+    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
+  },
+  {
+    "ja": "そんなの一度も聞いたことないな。",
+    "en": "I've never heard of that.",
+    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
+  },
+  {
+    "ja": "彼は人生で一度も納豆を試したことがない。",
+    "en": "He's never tried natto in his life.",
+    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
+  },
+  {
+    "ja": "彼女は一度も仕事に遅刻したことがないんだ。",
+    "en": "She's never been late for work.",
+    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
+  },
+  {
+    "ja": "今までにメキシコ料理を食べたことはありますか？",
+    "en": "Have you ever tried Mexican food?",
+    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
+  },
+  {
+    "ja": "諦めたいと思ったことはありますか？",
+    "en": "Have you ever felt like giving up?",
+    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
+  },
+  {
+    "ja": "私たち、以前お会いしたことありましたか？",
+    "en": "Have we met before?",
+    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
+  },
+  {
+    "ja": "彼女は外国に住んだことがありますか？",
+    "en": "Has she ever lived in a foreign country?",
+    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
+  },
+  {
+    "ja": "この街で雪が降ったことはありますか？",
+    "en": "Has it ever snowed in this city?",
+    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
+  },
+  {
+    "ja": "どの国に行ったことがありますか？",
+    "en": "What countries have you been to?",
+    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
+  },
+  {
+    "ja": "彼女は何回京都を訪れたことがありますか？",
+    "en": "How many times has she visited Kyoto?",
+    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
+  },
+  {
+    "ja": "この経験から何を学びましたか？",
+    "en": "What have you learned from this experience?",
+    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
+  }
+];
 
     let currentQuestion = {};
     let isRecording = false, mediaRecorder = null, audioChunks = [];
