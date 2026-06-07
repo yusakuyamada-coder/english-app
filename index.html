@@ -19,10 +19,44 @@
     .val-better { color: var(--accent); font-weight: 700; margin-bottom: 12px; font-size: 17px; }
     .feedback { background: #f7f7f5; padding: 15px; border-radius: 10px; font-size: 14px; border-left: 5px solid var(--accent); line-height: 1.6; white-space: pre-wrap; }
     .controls { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-    .rec-btn { width: 80px; height: 80px; border-radius: 50%; border: none; background: var(--accent); color: white; cursor: pointer; font-size: 32px; box-shadow: 0 8px 20px rgba(29, 158, 117, 0.3); }
+    .rec-btn { width: 80px; height: 80px; border-radius: 50%; border: none; background: var(--accent); color: white; cursor: pointer; font-size: 32px; box-shadow: 0 8px 20px rgba(29, 158, 117, 0.3); transition: background 0.2s; }
     .rec-btn.recording { background: #E24B4A; animation: pulse 1.2s infinite; }
     .next-btn { background: none; border: 1px solid #ccc; color: #666; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 13px; background: white; }
     @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+    /* ── プログレスバー ── */
+    .progress-wrap {
+      width: 100%;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 0 4px;
+    }
+    .progress-wrap.show { display: flex; }
+    .progress-track {
+      width: 100%;
+      background: #e5e5e5;
+      border-radius: 99px;
+      height: 10px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 99px;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+    .progress-pct {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .progress-step {
+      font-size: 12px;
+      color: #888;
+    }
   </style>
 </head>
 <body>
@@ -42,11 +76,21 @@
     <div class="controls">
       <p id="statusText" style="font-weight:600; color:#666; font-size: 13px;">🎤 ボタンを押して英語で回答</p>
       <button class="rec-btn" id="recBtn" onclick="toggleRecord()">🎤</button>
+
+      <!-- プログレスバー -->
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress-pct" id="progressPct">0%</div>
+        <div class="progress-track">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="progress-step" id="progressStep">音声を受信中...</div>
+      </div>
+
       <button class="next-btn" onclick="setRandomQuestion()">別の問題 ➔</button>
     </div>
   </div>
 
-  <script>
+<script>
     // CSVから抽出した全140問のデータ
 const questionList = [
   {
@@ -753,6 +797,7 @@ const questionList = [
 
     let currentQuestion = {};
     let isRecording = false, mediaRecorder = null, audioChunks = [];
+    let progressTimer = null;
 
     function setRandomQuestion() {
       currentQuestion = questionList[Math.floor(Math.random() * questionList.length)];
@@ -760,21 +805,65 @@ const questionList = [
       document.getElementById('questionText').textContent = currentQuestion.ja;
       document.getElementById('resultCard').style.display = 'none';
       document.getElementById('statusText').textContent = '🎤 ボタンを押して英語で回答';
+      hideProgress();
     }
 
     setRandomQuestion();
 
+    // ── プログレスバー制御 ──────────────────────────────────────
+    const STEPS = [
+      { pct: 10, label: '音声を受信中...' },
+      { pct: 30, label: '音声を文字に変換中...' },
+      { pct: 55, label: '英語を解析中...' },
+      { pct: 75, label: 'フィードバックを生成中...' },
+      { pct: 90, label: 'もうすぐ完了...' },
+    ];
+
+    function showProgress() {
+      const wrap = document.getElementById('progressWrap');
+      wrap.classList.add('show');
+      let i = 0;
+      progressTimer = setInterval(() => {
+        if (i >= STEPS.length) { clearInterval(progressTimer); return; }
+        setProgress(STEPS[i].pct, STEPS[i].label);
+        i++;
+      }, 900);
+    }
+
+    function completeProgress() {
+      clearInterval(progressTimer);
+      setProgress(100, '完了！');
+      setTimeout(hideProgress, 800);
+    }
+
+    function hideProgress() {
+      clearInterval(progressTimer);
+      const wrap = document.getElementById('progressWrap');
+      wrap.classList.remove('show');
+      setProgress(0, '');
+    }
+
+    function setProgress(pct, label) {
+      document.getElementById('progressBar').style.width = pct + '%';
+      document.getElementById('progressPct').textContent = pct + '%';
+      document.getElementById('progressStep').textContent = label;
+    }
+
+    // ── 録音 ──────────────────────────────────────────────────────
     async function toggleRecord() {
       if (isRecording) {
         mediaRecorder.stop();
         isRecording = false;
         document.getElementById('recBtn').classList.remove('recording');
-        document.getElementById('statusText').textContent = 'AI分析中...';
+        document.getElementById('statusText').textContent = 'AI が分析中...';
         return;
       }
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder = new MediaRecorder(stream, {
+          mimeType: 'audio/webm;codecs=opus',
+          audioBitsPerSecond: 16000,
+        });
         audioChunks = [];
         mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
         mediaRecorder.onstop = async () => {
@@ -790,10 +879,22 @@ const questionList = [
         isRecording = true;
         document.getElementById('recBtn').classList.add('recording');
         document.getElementById('statusText').textContent = '話してください...';
+
+        // 15秒で自動停止
+        setTimeout(() => {
+          if (isRecording) {
+            mediaRecorder.stop();
+            isRecording = false;
+            document.getElementById('recBtn').classList.remove('recording');
+            document.getElementById('statusText').textContent = 'AI が分析中...';
+          }
+        }, 15000);
+
       } catch (e) { alert('マイクを許可してください'); }
     }
 
     async function process(base64) {
+      showProgress();
       const prompt = `あなたはプロの英語コーチです。
 生徒に「${currentQuestion.ja}」という日本語を、「${currentQuestion.pattern}」の型を使って英語で言わせる練習をさせています。
 以下のJSON形式でのみ回答してください: {"transcript":"聞き取り","improved":"自然な表現","score":0-100,"feedback":"【解説】型の説明と論理的なアドバイスを日本語で簡潔に"}`;
@@ -805,14 +906,14 @@ const questionList = [
           body: JSON.stringify({ base64Audio: base64, prompt: prompt })
         });
         const data = await res.json();
-        // レスポンスチェック追加
-if (!data.candidates || !data.candidates[0]) {
-  document.getElementById('statusText').innerHTML = 
-    `<span style="color:red">AIの応答がありませんでした。もう一度お試しください。</span>`
-  return
-}
+
+        if (!data.candidates || !data.candidates[0]) {
+          throw new Error('AIの応答がありませんでした。もう一度お試しください。');
+        }
+
         const result = JSON.parse(data.candidates[0].content.parts[0].text.match(/\{.*\}/s)[0]);
 
+        completeProgress();
         document.getElementById('resultCard').style.display = 'block';
         document.getElementById('scoreBadge').textContent = `Score: ${result.score}`;
         document.getElementById('userAns').textContent = result.transcript;
@@ -820,6 +921,7 @@ if (!data.candidates || !data.candidates[0]) {
         document.getElementById('feedbackText').textContent = result.feedback;
         document.getElementById('statusText').textContent = '添削完了！';
       } catch (e) {
+        hideProgress();
         document.getElementById('statusText').innerHTML = `<span style="color:red">エラー: ${e.message}</span>`;
       }
     }
