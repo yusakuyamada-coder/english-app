@@ -805,6 +805,12 @@ const questionList = [
           body: JSON.stringify({ base64Audio: base64, prompt: prompt })
         });
         const data = await res.json();
+        // レスポンスチェック追加
+if (!data.candidates || !data.candidates[0]) {
+  document.getElementById('statusText').innerHTML = 
+    `<span style="color:red">AIの応答がありませんでした。もう一度お試しください。</span>`
+  return
+}
         const result = JSON.parse(data.candidates[0].content.parts[0].text.match(/\{.*\}/s)[0]);
 
         document.getElementById('resultCard').style.display = 'block';
