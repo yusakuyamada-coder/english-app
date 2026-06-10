@@ -896,9 +896,12 @@ const questionList = [
     async function process(base64) {
       showProgress();
       const prompt = `あなたはプロの英語コーチです。
-生徒に「${currentQuestion.ja}」という日本語を、「${currentQuestion.pattern}」の型を使って英語で言わせる練習をさせています。
-以下のJSON形式でのみ回答してください: {"transcript":"聞き取り","improved":"自然な表現","score":0-100,"feedback":"【解説】型の説明と論理的なアドバイスを日本語で簡潔に"}`;
+生徒に「${currentQuestion.ja}」という日本語を英語で言わせる練習をさせています。
+正解例は「${currentQuestion.en}」です。
 
+以下のJSON形式でのみ回答してください:
+{"transcript":"聞き取った生徒の英語","improved":"${currentQuestion.en}","score":0-100,"feedback":"【解説】正解例と比較して日本語で簡潔にアドバイス"}`;
+      
       try {
         const res = await fetch('/api/correct', {
           method: 'POST',
