@@ -900,7 +900,7 @@ const questionList = [
 正解例は「${currentQuestion.en}」です。
 
 以下のJSON形式でのみ回答してください:
-{"transcript":"聞き取った生徒の英語","improved":"${currentQuestion.en}","score":0-100,"feedback":"【解説】正解例と比較して日本語で簡潔にアドバイス"}`;
+{"transcript":"聞き取った生徒の英語","improved":"${currentQuestion.en}","score":0-100,"feedback":"【解説】まず生徒の良かった点を一言褒めてから、正解例と比較して間違いをやさしく日本語で説明してください。最後に一言励ましの言葉を添えてください。"}`;
       
       try {
         const res = await fetch('/api/correct', {
