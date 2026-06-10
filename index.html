@@ -11,7 +11,6 @@
     body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0efe9; display: flex; justify-content: center; padding: 1rem; min-height: 100vh; }
     .container { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 16px; }
 
-    /* ── トップバー ── */
     .top-bar { background: white; border-radius: var(--radius); padding: 1rem 1.25rem; border: 0.5px solid #ddd; }
     .top-bar-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
     .challenge-label { font-size: 13px; font-weight: 700; color: var(--accent); }
@@ -19,35 +18,32 @@
     .progress-track { background: #e5e5e5; border-radius: 99px; height: 6px; overflow: hidden; }
     .progress-bar { height: 100%; background: var(--accent); border-radius: 99px; width: 0%; transition: width 0.4s ease; }
 
-    /* ── 問題カード ── */
     .question-card { background: white; border-radius: var(--radius); padding: 1.5rem; border: 2px solid var(--accent); text-align: center; }
     .pattern-tag { font-size: 11px; font-weight: 700; color: var(--accent); background: var(--accent-light); padding: 4px 12px; border-radius: 99px; display: inline-block; border: 1px solid var(--accent); margin-bottom: 12px; }
     .question-ja { font-size: 18px; font-weight: 700; color: var(--text); line-height: 1.6; }
 
-    /* ── 結果カード ── */
     .result-card { background: white; border-radius: var(--radius); padding: 1.5rem; border: 0.5px solid #ddd; display: none; }
     .score-badge { padding: 5px 14px; background: var(--accent); color: white; border-radius: 999px; font-weight: 700; font-size: 13px; display: inline-block; margin-bottom: 12px; }
     .label { font-size: 10px; font-weight: 700; color: #888; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.05em; }
     .val-you { color: #E24B4A; font-weight: 600; margin-bottom: 12px; font-size: 14px; line-height: 1.5; }
     .val-better { color: var(--accent); font-weight: 700; margin-bottom: 12px; font-size: 15px; line-height: 1.5; }
     .feedback { background: #f7f7f5; padding: 12px 14px; border-radius: 10px; font-size: 13px; border-left: 4px solid var(--accent); line-height: 1.7; white-space: pre-wrap; color: #333; }
-
-    /* ── スコアサマリー ── */
     .score-summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
     .score-box { background: #f0efe9; border-radius: 10px; padding: 12px; text-align: center; }
     .score-box .num { font-size: 26px; font-weight: 700; color: var(--accent); }
     .score-box .lbl { font-size: 11px; color: #888; margin-bottom: 4px; }
 
-    /* ── コントロール ── */
+    .retry-btn { width: 100%; padding: 11px; background: white; color: #888; border: 1px solid #ddd; border-radius: 99px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 10px; display: none; }
+    .retry-btn:hover { background: #f0efe9; }
+
     .controls { display: flex; flex-direction: column; align-items: center; gap: 12px; }
     .rec-btn { width: 80px; height: 80px; border-radius: 50%; border: none; background: var(--accent); color: white; cursor: pointer; font-size: 32px; box-shadow: 0 8px 20px rgba(29,158,117,0.3); transition: background 0.2s; }
     .rec-btn.recording { background: #E24B4A; animation: pulse 1.2s infinite; }
     .rec-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-    .next-btn { width: 100%; padding: 14px; background: var(--accent); color: white; border: none; border-radius: 99px; font-size: 15px; font-weight: 700; cursor: pointer; display: none; transition: background 0.2s; }
+    .next-btn { width: 100%; padding: 14px; background: var(--accent); color: white; border: none; border-radius: 99px; font-size: 15px; font-weight: 700; cursor: pointer; display: none; }
     .next-btn:hover { background: #178a63; }
     .restart-btn { width: 100%; padding: 14px; background: var(--accent); color: white; border: none; border-radius: 99px; font-size: 15px; font-weight: 700; cursor: pointer; display: none; }
 
-    /* ── プログレスバー（分析中） ── */
     .progress-wrap { width: 100%; display: none; flex-direction: column; align-items: center; gap: 10px; padding: 8px 0; }
     .progress-wrap.show { display: flex; }
     .analysis-track { width: 100%; background: #e5e5e5; border-radius: 99px; height: 10px; overflow: hidden; }
@@ -55,13 +51,11 @@
     .progress-pct { font-size: 24px; font-weight: 700; color: var(--accent); }
     .progress-step { font-size: 12px; color: #888; }
 
-    /* ── 最終結果 ── */
     .final-card { background: white; border-radius: var(--radius); padding: 1.5rem; border: 0.5px solid #ddd; display: none; text-align: center; }
     .final-title { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
     .final-sub { font-size: 13px; color: #888; margin-bottom: 16px; }
     .final-score-big { font-size: 56px; font-weight: 700; color: var(--accent); line-height: 1; margin-bottom: 4px; }
     .final-score-label { font-size: 13px; color: #888; margin-bottom: 20px; }
-    .pattern-breakdown { text-align: left; margin-top: 16px; }
     .pattern-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 0.5px solid #eee; font-size: 13px; }
     .pattern-row:last-child { border-bottom: none; }
     .pattern-name { color: #555; flex: 1; }
@@ -75,7 +69,6 @@
 <body>
 <div class="container">
 
-  <!-- トップバー -->
   <div class="top-bar" id="topBar">
     <div class="top-bar-row">
       <span class="challenge-label">10問チャレンジ</span>
@@ -86,13 +79,11 @@
     </div>
   </div>
 
-  <!-- 問題カード -->
   <div class="question-card" id="questionCard">
     <div id="patternTag" class="pattern-tag">...</div>
     <div id="questionText" class="question-ja">読み込み中...</div>
   </div>
 
-  <!-- 結果カード -->
   <div class="result-card fade-in" id="resultCard">
     <div id="scoreBadge" class="score-badge">Score: 0</div>
     <div class="label">Your Answer</div>
@@ -110,46 +101,35 @@
         <div class="num" id="avgScore">-</div>
       </div>
     </div>
+    <!-- やり直しボタン -->
+    <button class="retry-btn" id="retryBtn" onclick="retryQuestion()">この問題をもう一度やり直す 🔄</button>
   </div>
 
-  <!-- 最終結果カード -->
   <div class="final-card fade-in" id="finalCard">
     <div class="final-title">チャレンジ完了！ 🎉</div>
     <div class="final-sub">10問お疲れ様でした</div>
     <div class="final-score-big" id="finalScoreBig">-</div>
     <div class="final-score-label">平均スコア</div>
     <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:20px;">
-      <div class="score-box">
-        <div class="lbl">正解数（80点以上）</div>
-        <div class="num" id="finalCorrect">-</div>
-      </div>
-      <div class="score-box">
-        <div class="lbl">最高スコア</div>
-        <div class="num" id="finalBest">-</div>
-      </div>
+      <div class="score-box"><div class="lbl">正解数（80点以上）</div><div class="num" id="finalCorrect">-</div></div>
+      <div class="score-box"><div class="lbl">最高スコア</div><div class="num" id="finalBest">-</div></div>
     </div>
-    <div class="pattern-breakdown" id="patternBreakdown"></div>
+    <div id="patternBreakdown"></div>
   </div>
 
-  <!-- コントロール -->
   <div class="controls">
     <p id="statusText" style="font-weight:600;color:#666;font-size:13px;">🎤 ボタンを押して英語で回答</p>
     <button class="rec-btn" id="recBtn" onclick="toggleRecord()">🎤</button>
-
     <div class="progress-wrap" id="progressWrap">
       <div class="progress-pct" id="progressPct">0%</div>
-      <div class="analysis-track">
-        <div class="analysis-bar" id="analysisBar"></div>
-      </div>
+      <div class="analysis-track"><div class="analysis-bar" id="analysisBar"></div></div>
       <div class="progress-step" id="progressStep">音声を受信中...</div>
     </div>
-
     <button class="next-btn" id="nextBtn" onclick="nextQuestion()">次の問題へ ➔</button>
     <button class="restart-btn" id="restartBtn" onclick="restartChallenge()">もう一度チャレンジ 🔄</button>
   </div>
 
 </div>
-
 <script>
 const questionList = [
   {"ja":"こちらは私の友人、ケンです。","en":"This is my friend, Ken.","pattern":"「これ」！ (This is)"},
@@ -172,26 +152,26 @@ const questionList = [
   {"ja":"これは重要ですか？","en":"Is this important?","pattern":"「これ」！ (This is)"},
   {"ja":"これは多すぎますか？","en":"Is this too much?","pattern":"「これ」！ (This is)"},
   {"ja":"これは今開いていますか？","en":"Is this open now?","pattern":"「これ」！ (This is)"},
-  {"ja":"ただ見ているだけです。","en":"I'm just looking.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
-  {"ja":"トイレを探しています。","en":"I'm looking for the restroom.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
-  {"ja":"あなたは話すのが速すぎます。","en":"You're talking too fast.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
-  {"ja":"彼女はバスを待っています。","en":"She's waiting for the bus.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
-  {"ja":"今、雨が降っています。","en":"It's raining now.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
-  {"ja":"彼らは二階でNetflixを見ています。","en":"They're watching Netflix upstairs.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
-  {"ja":"赤ちゃんはぐっすり眠っています。","en":"The baby is sleeping soundly.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
-  {"ja":"私は今日は仕事をしていません。","en":"I'm not working today.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
-  {"ja":"あなたは私の話を聞いていません。","en":"You're not listening to me.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
-  {"ja":"彼はジャケットを着ていません。","en":"He's not wearing a jacket.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
-  {"ja":"彼女は今月、肉を食べていません。","en":"She's not eating meat this month.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
-  {"ja":"ここは雪が降っていません。","en":"It's not snowing here.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
-  {"ja":"私たちはもうロンドンには住んでいません。","en":"We're not living in London anymore.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
-  {"ja":"彼らはこのコンピューターを使っていません。","en":"They're not using this computer.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
-  {"ja":"私はあなたを邪魔していますか？","en":"Am I bothering you?","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
-  {"ja":"もう気分は良くなりましたか？","en":"Are you feeling better now?","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
-  {"ja":"今、あなたは彼女のことを考えていますか？","en":"Are you thinking about her now?","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
-  {"ja":"彼らは新しいアパートを探していますか？","en":"Are they looking for a new apartment?","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
-  {"ja":"彼は今夜、東京に行く予定ですか？","en":"Is he going to Tokyo tonight?","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
-  {"ja":"あなたは何を飲んでいるのですか？","en":"What are you drinking?","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
+  {"ja":"ただ見ているだけです。","en":"I'm just looking.","pattern":"今、まさにこれ中！ (I'm + V-ing)"},
+  {"ja":"トイレを探しています。","en":"I'm looking for the restroom.","pattern":"今、まさにこれ中！ (I'm + V-ing)"},
+  {"ja":"あなたは話すのが速すぎます。","en":"You're talking too fast.","pattern":"今、まさにこれ中！ (I'm + V-ing)"},
+  {"ja":"彼女はバスを待っています。","en":"She's waiting for the bus.","pattern":"今、まさにこれ中！ (I'm + V-ing)"},
+  {"ja":"今、雨が降っています。","en":"It's raining now.","pattern":"今、まさにこれ中！ (I'm + V-ing)"},
+  {"ja":"彼らは二階でNetflixを見ています。","en":"They're watching Netflix upstairs.","pattern":"今、まさにこれ中！ (I'm + V-ing)"},
+  {"ja":"赤ちゃんはぐっすり眠っています。","en":"The baby is sleeping soundly.","pattern":"今、まさにこれ中！ (I'm + V-ing)"},
+  {"ja":"私は今日は仕事をしていません。","en":"I'm not working today.","pattern":"今、まさにこれ中！ (I'm + V-ing)"},
+  {"ja":"あなたは私の話を聞いていません。","en":"You're not listening to me.","pattern":"今、まさにこれ中！ (I'm + V-ing)"},
+  {"ja":"彼はジャケットを着ていません。","en":"He's not wearing a jacket.","pattern":"今、まさにこれ中！ (I'm + V-ing)"},
+  {"ja":"彼女は今月、肉を食べていません。","en":"She's not eating meat this month.","pattern":"今、まさにこれ中！ (I'm + V-ing)"},
+  {"ja":"ここは雪が降っていません。","en":"It's not snowing here.","pattern":"今、まさにこれ中！ (I'm + V-ing)"},
+  {"ja":"私たちはもうロンドンには住んでいません。","en":"We're not living in London anymore.","pattern":"今、まさにこれ中！ (I'm + V-ing)"},
+  {"ja":"彼らはこのコンピューターを使っていません。","en":"They're not using this computer.","pattern":"今、まさにこれ中！ (I'm + V-ing)"},
+  {"ja":"私はあなたを邪魔していますか？","en":"Am I bothering you?","pattern":"今、まさにこれ中！ (I'm + V-ing)"},
+  {"ja":"もう気分は良くなりましたか？","en":"Are you feeling better now?","pattern":"今、まさにこれ中！ (I'm + V-ing)"},
+  {"ja":"今、あなたは彼女のことを考えていますか？","en":"Are you thinking about her now?","pattern":"今、まさにこれ中！ (I'm + V-ing)"},
+  {"ja":"彼らは新しいアパートを探していますか？","en":"Are they looking for a new apartment?","pattern":"今、まさにこれ中！ (I'm + V-ing)"},
+  {"ja":"彼は今夜、東京に行く予定ですか？","en":"Is he going to Tokyo tonight?","pattern":"今、まさにこれ中！ (I'm + V-ing)"},
+  {"ja":"あなたは何を飲んでいるのですか？","en":"What are you drinking?","pattern":"今、まさにこれ中！ (I'm + V-ing)"},
   {"ja":"コーヒーを飲みたい気分だ。","en":"I feel like drinking some coffee.","pattern":"〜な気分だよ！ (I feel like -ing)"},
   {"ja":"髪型を変えたい気分だ。","en":"I feel like changing my hairstyle.","pattern":"〜な気分だよ！ (I feel like -ing)"},
   {"ja":"何か新しいことを学びたい気分だ。","en":"I feel like learning something new.","pattern":"〜な気分だよ！ (I feel like -ing)"},
@@ -252,43 +232,26 @@ const questionList = [
   {"ja":"その店は明日開いていますか？","en":"Will the store be open tomorrow?","pattern":"未来は決めた！ (I'm going to / I will)"},
   {"ja":"ロンドンではどこに滞在する予定ですか？","en":"Where will you stay in London?","pattern":"未来は決めた！ (I'm going to / I will)"},
   {"ja":"彼は次に何をするつもりですか？","en":"What is he going to do next?","pattern":"未来は決めた！ (I'm going to / I will)"},
-  {"ja":"私は2週間前にその映画を観ました。","en":"I watched that movie two weeks ago.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
-  {"ja":"私たちは昨日、祖父母を訪ねました。","en":"We visited my grandparents yesterday.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
-  {"ja":"彼は月曜日に新しいプロジェクトを始めました。","en":"He started a new project on Monday.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
-  {"ja":"それすっかり忘れてた！","en":"I totally forgot about it!","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
-  {"ja":"私はこのシャツをセールで買いました。","en":"I bought this shirt on sale.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
-  {"ja":"私はスピーチの前に深呼吸をしました。","en":"I took a deep breath before the speech.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
-  {"ja":"彼は事故が起こるのを見ました。","en":"He saw the accident happen.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
-  {"ja":"彼らは遅く家に帰ってきました。","en":"They came back home late.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
-  {"ja":"彼は椅子の下で鍵を見つけました。","en":"He found the keys under the chair.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
-  {"ja":"それを知りませんでした。","en":"I didn't know that.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
-  {"ja":"私は昨夜、パーティーに行きませんでした。","en":"I didn't go to the party last night.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
-  {"ja":"彼らはその食べ物を全く好きではありませんでした。","en":"They didn't like the food at all.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
-  {"ja":"彼は昨日、仕事に来ませんでした。","en":"He didn't come to work yesterday.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
-  {"ja":"そのコンサートは時間通りに始まりませんでした。","en":"The concert didn't start on time.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
-  {"ja":"私は何か重要なことを見逃しましたか？","en":"Did I miss anything important?","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
-  {"ja":"あなたは旅行を楽しみましたか？","en":"Did you enjoy your trip?","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
-  {"ja":"昨夜はよく眠れましたか？","en":"Did you sleep well last night?","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
-  {"ja":"彼女は傘をなくしましたか？","en":"Did she lose her umbrella?","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
-  {"ja":"彼は何か買いましたか？","en":"Did he buy anything?","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
-  {"ja":"彼女はいつオフィスを出ましたか？","en":"When did she leave the office?","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
-  {"ja":"これ、前にもやったことがあるよ。","en":"I've done this before.","pattern":"もうやった？やったことある？ (I have + P.P.)"},
-  {"ja":"カナダに行ったことがあります。","en":"I've been to Canada.","pattern":"もうやった？やったことある？ (I have + P.P.)"},
-  {"ja":"沖縄には何度も訪れたことがあります。","en":"I've visited Okinawa many times.","pattern":"もうやった？やったことある？ (I have + P.P.)"},
-  {"ja":"彼女は海外留学したことがあります。","en":"She has studied abroad.","pattern":"もうやった？やったことある？ (I have + P.P.)"},
-  {"ja":"彼は３回転職したことがあります。","en":"He changed jobs three times.","pattern":"もうやった？やったことある？ (I have + P.P.)"},
-  {"ja":"一度もそこには行ったことがないよ。","en":"I've never been there.","pattern":"もうやった？やったことある？ (I have + P.P.)"},
-  {"ja":"そんなの一度も聞いたことないな。","en":"I've never heard of that.","pattern":"もうやった？やったことある？ (I have + P.P.)"},
-  {"ja":"彼は人生で一度も納豆を試したことがない。","en":"He's never tried natto in his life.","pattern":"もうやった？やったことある？ (I have + P.P.)"},
-  {"ja":"彼女は一度も仕事に遅刻したことがないんだ。","en":"She's never been late for work.","pattern":"もうやった？やったことある？ (I have + P.P.)"},
-  {"ja":"今までにメキシコ料理を食べたことはありますか？","en":"Have you ever tried Mexican food?","pattern":"もうやった？やったことある？ (I have + P.P.)"},
-  {"ja":"諦めたいと思ったことはありますか？","en":"Have you ever felt like giving up?","pattern":"もうやった？やったことある？ (I have + P.P.)"},
-  {"ja":"私たち、以前お会いしたことありましたか？","en":"Have we met before?","pattern":"もうやった？やったことある？ (I have + P.P.)"},
-  {"ja":"彼女は外国に住んだことがありますか？","en":"Has she ever lived in a foreign country?","pattern":"もうやった？やったことある？ (I have + P.P.)"},
-  {"ja":"この街で雪が降ったことはありますか？","en":"Has it ever snowed in this city?","pattern":"もうやった？やったことある？ (I have + P.P.)"},
-  {"ja":"どの国に行ったことがありますか？","en":"What countries have you been to?","pattern":"もうやった？やったことある？ (I have + P.P.)"},
-  {"ja":"彼女は何回京都を訪れたことがありますか？","en":"How many times has she visited Kyoto?","pattern":"もうやった？やったことある？ (I have + P.P.)"},
-  {"ja":"この経験から何を学びましたか？","en":"What have you learned from this experience?","pattern":"もうやった？やったことある？ (I have + P.P.)"}
+  {"ja":"私は2週間前にその映画を観ました。","en":"I watched that movie two weeks ago.","pattern":"あの時、こうなった！ (過去形)"},
+  {"ja":"私たちは昨日、祖父母を訪ねました。","en":"We visited my grandparents yesterday.","pattern":"あの時、こうなった！ (過去形)"},
+  {"ja":"それすっかり忘れてた！","en":"I totally forgot about it!","pattern":"あの時、こうなった！ (過去形)"},
+  {"ja":"私はこのシャツをセールで買いました。","en":"I bought this shirt on sale.","pattern":"あの時、こうなった！ (過去形)"},
+  {"ja":"彼は事故が起こるのを見ました。","en":"He saw the accident happen.","pattern":"あの時、こうなった！ (過去形)"},
+  {"ja":"それを知りませんでした。","en":"I didn't know that.","pattern":"あの時、こうなった！ (過去形)"},
+  {"ja":"私は昨夜、パーティーに行きませんでした。","en":"I didn't go to the party last night.","pattern":"あの時、こうなった！ (過去形)"},
+  {"ja":"彼は昨日、仕事に来ませんでした。","en":"He didn't come to work yesterday.","pattern":"あの時、こうなった！ (過去形)"},
+  {"ja":"あなたは旅行を楽しみましたか？","en":"Did you enjoy your trip?","pattern":"あの時、こうなった！ (過去形)"},
+  {"ja":"昨夜はよく眠れましたか？","en":"Did you sleep well last night?","pattern":"あの時、こうなった！ (過去形)"},
+  {"ja":"これ、前にもやったことがあるよ。","en":"I've done this before.","pattern":"もうやった？やったことある？ (現在完了)"},
+  {"ja":"カナダに行ったことがあります。","en":"I've been to Canada.","pattern":"もうやった？やったことある？ (現在完了)"},
+  {"ja":"沖縄には何度も訪れたことがあります。","en":"I've visited Okinawa many times.","pattern":"もうやった？やったことある？ (現在完了)"},
+  {"ja":"一度もそこには行ったことがないよ。","en":"I've never been there.","pattern":"もうやった？やったことある？ (現在完了)"},
+  {"ja":"そんなの一度も聞いたことないな。","en":"I've never heard of that.","pattern":"もうやった？やったことある？ (現在完了)"},
+  {"ja":"今までにメキシコ料理を食べたことはありますか？","en":"Have you ever tried Mexican food?","pattern":"もうやった？やったことある？ (現在完了)"},
+  {"ja":"諦めたいと思ったことはありますか？","en":"Have you ever felt like giving up?","pattern":"もうやった？やったことある？ (現在完了)"},
+  {"ja":"私たち、以前お会いしたことありましたか？","en":"Have we met before?","pattern":"もうやった？やったことある？ (現在完了)"},
+  {"ja":"彼女は外国に住んだことがありますか？","en":"Has she ever lived in a foreign country?","pattern":"もうやった？やったことある？ (現在完了)"},
+  {"ja":"この経験から何を学びましたか？","en":"What have you learned from this experience?","pattern":"もうやった？やったことある？ (現在完了)"}
 ];
 
 const TOTAL = 10;
@@ -296,21 +259,29 @@ let challengeQuestions = [];
 let currentIndex = 0;
 let scores = [];
 let patternScores = {};
+let pendingScore = null;
+let pendingResult = null;
 let isRecording = false, mediaRecorder = null, audioChunks = [];
 let progressTimer = null;
 
-// ── 初期化 ──────────────────────────────────────────────────────
 function startChallenge() {
   const shuffled = [...questionList].sort(() => Math.random() - 0.5);
   challengeQuestions = shuffled.slice(0, TOTAL);
   currentIndex = 0;
   scores = [];
   patternScores = {};
+  pendingScore = null;
+  pendingResult = null;
   document.getElementById('resultCard').style.display = 'none';
   document.getElementById('finalCard').style.display = 'none';
   document.getElementById('nextBtn').style.display = 'none';
   document.getElementById('restartBtn').style.display = 'none';
+  document.getElementById('retryBtn').style.display = 'none';
   document.getElementById('recBtn').disabled = false;
+  document.getElementById('recBtn').style.display = 'block';
+  document.getElementById('statusText').style.display = 'block';
+  document.getElementById('topBar').style.display = 'block';
+  document.getElementById('questionCard').style.display = 'block';
   showQuestion();
 }
 
@@ -322,13 +293,26 @@ function showQuestion() {
   document.getElementById('challengeBar').style.width = `${(currentIndex / TOTAL) * 100}%`;
   document.getElementById('resultCard').style.display = 'none';
   document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('retryBtn').style.display = 'none';
   document.getElementById('statusText').textContent = '🎤 ボタンを押して英語で回答';
+  document.getElementById('recBtn').disabled = false;
+  pendingScore = null;
+  pendingResult = null;
 }
 
 startChallenge();
 
-// ── 次の問題 ──────────────────────────────────────────────────
+// 次の問題へ → ここでスコアを確定記録
 function nextQuestion() {
+  if (pendingScore !== null) {
+    const q = challengeQuestions[currentIndex];
+    scores.push(pendingScore);
+    if (!patternScores[q.pattern]) patternScores[q.pattern] = { total: 0, count: 0 };
+    patternScores[q.pattern].total += pendingScore;
+    patternScores[q.pattern].count++;
+    pendingScore = null;
+    pendingResult = null;
+  }
   currentIndex++;
   if (currentIndex >= TOTAL) {
     showFinalResult();
@@ -337,12 +321,24 @@ function nextQuestion() {
   }
 }
 
-// ── 最終結果 ──────────────────────────────────────────────────
+// やり直し → スコアを記録せず同じ問題を再挑戦
+function retryQuestion() {
+  pendingScore = null;
+  pendingResult = null;
+  document.getElementById('resultCard').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('retryBtn').style.display = 'none';
+  document.getElementById('statusText').textContent = '🎤 ボタンを押して英語で回答';
+  document.getElementById('recBtn').disabled = false;
+}
+
 function showFinalResult() {
   document.getElementById('questionCard').style.display = 'none';
   document.getElementById('resultCard').style.display = 'none';
   document.getElementById('nextBtn').style.display = 'none';
   document.getElementById('topBar').style.display = 'none';
+  document.getElementById('recBtn').style.display = 'none';
+  document.getElementById('statusText').style.display = 'none';
 
   const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
   const correct = scores.filter(s => s >= 80).length;
@@ -352,18 +348,16 @@ function showFinalResult() {
   document.getElementById('finalCorrect').textContent = `${correct} / ${TOTAL}`;
   document.getElementById('finalBest').textContent = best;
 
-  // パターン別結果
   const breakdown = document.getElementById('patternBreakdown');
   breakdown.innerHTML = '<div style="font-size:13px;font-weight:700;color:#555;margin-bottom:8px;">パターン別スコア</div>';
   Object.entries(patternScores).forEach(([pattern, data]) => {
-    const avg = Math.round(data.total / data.count);
+    const pavg = Math.round(data.total / data.count);
     const row = document.createElement('div');
     row.className = 'pattern-row';
-    row.innerHTML = `<span class="pattern-name">${pattern}</span><span class="pattern-score">${avg}点 (${data.count}問)</span>`;
+    row.innerHTML = `<span class="pattern-name">${pattern}</span><span class="pattern-score">${pavg}点 (${data.count}問)</span>`;
     breakdown.appendChild(row);
   });
 
-  // メッセージ
   let msg = avg >= 90 ? '素晴らしい！完璧に近いです 🏆' :
             avg >= 75 ? 'よくできました！着実に上達しています ✨' :
             avg >= 60 ? 'いい調子です！練習を続けましょう 💪' :
@@ -375,21 +369,13 @@ function showFinalResult() {
 
   document.getElementById('finalCard').style.display = 'block';
   document.getElementById('restartBtn').style.display = 'block';
-  document.getElementById('recBtn').style.display = 'none';
-  document.getElementById('statusText').style.display = 'none';
-  document.getElementById('challengeBar').style.width = '100%';
 }
 
 function restartChallenge() {
-  document.getElementById('questionCard').style.display = 'block';
-  document.getElementById('topBar').style.display = 'block';
-  document.getElementById('recBtn').style.display = 'block';
-  document.getElementById('statusText').style.display = 'block';
-  document.getElementById('restartBtn').style.display = 'none';
   startChallenge();
 }
 
-// ── プログレスバー ─────────────────────────────────────────────
+// ── プログレスバー ──────────────────────────────────
 const STEPS = [
   { pct: 10, label: '音声を受信中...' },
   { pct: 30, label: '音声を文字に変換中...' },
@@ -423,7 +409,7 @@ function setProgress(pct, label) {
   document.getElementById('progressStep').textContent = label;
 }
 
-// ── 録音 ──────────────────────────────────────────────────────
+// ── 録音 ──────────────────────────────────────────
 async function toggleRecord() {
   if (isRecording) {
     mediaRecorder.stop();
@@ -443,7 +429,6 @@ async function toggleRecord() {
       if (e.data && e.data.size > 0) audioChunks.push(e.data);
     };
     mediaRecorder.onstop = async () => {
-      // 自動停止タイマーによる意図しない処理を防ぐ
       if (!audioChunks.length) return;
       const blob = new Blob(audioChunks, { type: 'audio/webm' });
       const base64 = await new Promise(r => {
@@ -457,20 +442,22 @@ async function toggleRecord() {
     isRecording = true;
     document.getElementById('recBtn').classList.add('recording');
     document.getElementById('statusText').textContent = '話してください...';
-// 15秒で自動停止（長すぎる録音を防ぐだけ）
+
+    // 15秒で自動停止（分析はしない）
     setTimeout(() => {
       if (isRecording) {
-        document.getElementById('statusText').textContent = '録音時間が長すぎます。もう一度お試しください。';
+        audioChunks = [];
         mediaRecorder.stop();
         isRecording = false;
         document.getElementById('recBtn').classList.remove('recording');
-        audioChunks = []; // タイムアウト時はリセットして処理しない
+        document.getElementById('statusText').textContent = '録音が長すぎます。もう一度お試しください。';
       }
     }, 15000);
+
   } catch (e) { alert('マイクを許可してください'); }
 }
 
-// ── API処理 ──────────────────────────────────────────────────
+// ── API処理 ──────────────────────────────────────
 async function processAnswer(base64) {
   const q = challengeQuestions[currentIndex];
   showProgress();
@@ -497,27 +484,29 @@ async function processAnswer(base64) {
     const result = JSON.parse(data.candidates[0].content.parts[0].text.match(/\{.*\}/s)[0]);
     const score = Number(result.score) || 0;
 
-    scores.push(score);
-    if (!patternScores[q.pattern]) patternScores[q.pattern] = { total: 0, count: 0 };
-    patternScores[q.pattern].total += score;
-    patternScores[q.pattern].count++;
+    // スコアは仮保存（「次の問題へ」を押したときに確定）
+    pendingScore = score;
+    pendingResult = result;
 
     completeProgress();
 
-    const correctCount = scores.filter(s => s >= 80).length;
-    const avgScore = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+    // 現在の暫定スコア表示
+    const tentativeScores = [...scores, score];
+    const correctCount = tentativeScores.filter(s => s >= 80).length;
+    const avgScore = Math.round(tentativeScores.reduce((a, b) => a + b, 0) / tentativeScores.length);
 
     document.getElementById('resultCard').style.display = 'block';
     document.getElementById('scoreBadge').textContent = `Score: ${score}`;
     document.getElementById('userAns').textContent = result.transcript;
     document.getElementById('betterAns').textContent = result.improved;
     document.getElementById('feedbackText').textContent = result.feedback;
-    document.getElementById('correctCount').textContent = `${correctCount} / ${scores.length}`;
+    document.getElementById('correctCount').textContent = `${correctCount} / ${tentativeScores.length}`;
     document.getElementById('avgScore').textContent = avgScore;
     document.getElementById('statusText').textContent = '添削完了！';
 
     document.getElementById('nextBtn').style.display = 'block';
     document.getElementById('nextBtn').textContent = currentIndex + 1 >= TOTAL ? '結果を見る 🏆' : `次の問題へ ➔ (${currentIndex + 2} / ${TOTAL})`;
+    document.getElementById('retryBtn').style.display = 'block';
     document.getElementById('recBtn').disabled = false;
 
   } catch (e) {
