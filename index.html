@@ -439,8 +439,12 @@ async function toggleRecord() {
       audioBitsPerSecond: 16000,
     });
     audioChunks = [];
-    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+    mediaRecorder.ondataavailable = e => {
+      if (e.data && e.data.size > 0) audioChunks.push(e.data);
+    };
     mediaRecorder.onstop = async () => {
+      // 自動停止タイマーによる意図しない処理を防ぐ
+      if (!audioChunks.length) return;
       const blob = new Blob(audioChunks, { type: 'audio/webm' });
       const base64 = await new Promise(r => {
         const rd = new FileReader();
@@ -453,12 +457,14 @@ async function toggleRecord() {
     isRecording = true;
     document.getElementById('recBtn').classList.add('recording');
     document.getElementById('statusText').textContent = '話してください...';
+// 15秒で自動停止（長すぎる録音を防ぐだけ）
     setTimeout(() => {
       if (isRecording) {
+        document.getElementById('statusText').textContent = '録音時間が長すぎます。もう一度お試しください。';
         mediaRecorder.stop();
         isRecording = false;
         document.getElementById('recBtn').classList.remove('recording');
-        document.getElementById('statusText').textContent = 'AI が分析中...';
+        audioChunks = []; // タイムアウト時はリセットして処理しない
       }
     }, 15000);
   } catch (e) { alert('マイクを許可してください'); }
