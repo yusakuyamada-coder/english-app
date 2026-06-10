@@ -3,931 +3,523 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>English Coach - Pattern 140</title>
+  <title>発話くん - 10問チャレンジ</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     :root { --accent: #1D9E75; --accent-light: #E1F5EE; --bg: #ffffff; --text: #1a1a18; --radius: 16px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0efe9; display: flex; justify-content: center; padding: 1rem; min-height: 100vh; }
-    .container { width: 100%; max-width: 500px; }
-    .question-card { background: var(--bg); border: 2px solid var(--accent); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-    .pattern-tag { font-size: 11px; font-weight: bold; color: var(--accent); background: var(--accent-light); padding: 4px 12px; border-radius: 99px; margin-bottom: 12px; display: inline-block; border: 1px solid var(--accent); }
-    .question-ja { font-size: 18px; font-weight: 700; color: var(--text); line-height: 1.6; }
-    .result-card { background: white; border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-    .score-badge { padding: 6px 16px; background: var(--accent); color: white; border-radius: 999px; font-weight: 700; margin-bottom: 1rem; display: inline-block; }
-    .label { font-size: 10px; font-weight: bold; color: #666; text-transform: uppercase; margin-bottom: 4px; }
-    .val-you { color: #E24B4A; font-weight: 600; margin-bottom: 12px; font-size: 15px; }
-    .val-better { color: var(--accent); font-weight: 700; margin-bottom: 12px; font-size: 17px; }
-    .feedback { background: #f7f7f5; padding: 15px; border-radius: 10px; font-size: 14px; border-left: 5px solid var(--accent); line-height: 1.6; white-space: pre-wrap; }
-    .controls { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-    .rec-btn { width: 80px; height: 80px; border-radius: 50%; border: none; background: var(--accent); color: white; cursor: pointer; font-size: 32px; box-shadow: 0 8px 20px rgba(29, 158, 117, 0.3); transition: background 0.2s; }
-    .rec-btn.recording { background: #E24B4A; animation: pulse 1.2s infinite; }
-    .next-btn { background: none; border: 1px solid #ccc; color: #666; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 13px; background: white; }
-    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    .container { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 16px; }
 
-    /* ── プログレスバー ── */
-    .progress-wrap {
-      width: 100%;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      padding: 16px 0 4px;
-    }
+    /* ── トップバー ── */
+    .top-bar { background: white; border-radius: var(--radius); padding: 1rem 1.25rem; border: 0.5px solid #ddd; }
+    .top-bar-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .challenge-label { font-size: 13px; font-weight: 700; color: var(--accent); }
+    .question-counter { font-size: 12px; color: #888; background: #f0efe9; padding: 3px 10px; border-radius: 99px; }
+    .progress-track { background: #e5e5e5; border-radius: 99px; height: 6px; overflow: hidden; }
+    .progress-bar { height: 100%; background: var(--accent); border-radius: 99px; width: 0%; transition: width 0.4s ease; }
+
+    /* ── 問題カード ── */
+    .question-card { background: white; border-radius: var(--radius); padding: 1.5rem; border: 2px solid var(--accent); text-align: center; }
+    .pattern-tag { font-size: 11px; font-weight: 700; color: var(--accent); background: var(--accent-light); padding: 4px 12px; border-radius: 99px; display: inline-block; border: 1px solid var(--accent); margin-bottom: 12px; }
+    .question-ja { font-size: 18px; font-weight: 700; color: var(--text); line-height: 1.6; }
+
+    /* ── 結果カード ── */
+    .result-card { background: white; border-radius: var(--radius); padding: 1.5rem; border: 0.5px solid #ddd; display: none; }
+    .score-badge { padding: 5px 14px; background: var(--accent); color: white; border-radius: 999px; font-weight: 700; font-size: 13px; display: inline-block; margin-bottom: 12px; }
+    .label { font-size: 10px; font-weight: 700; color: #888; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.05em; }
+    .val-you { color: #E24B4A; font-weight: 600; margin-bottom: 12px; font-size: 14px; line-height: 1.5; }
+    .val-better { color: var(--accent); font-weight: 700; margin-bottom: 12px; font-size: 15px; line-height: 1.5; }
+    .feedback { background: #f7f7f5; padding: 12px 14px; border-radius: 10px; font-size: 13px; border-left: 4px solid var(--accent); line-height: 1.7; white-space: pre-wrap; color: #333; }
+
+    /* ── スコアサマリー ── */
+    .score-summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+    .score-box { background: #f0efe9; border-radius: 10px; padding: 12px; text-align: center; }
+    .score-box .num { font-size: 26px; font-weight: 700; color: var(--accent); }
+    .score-box .lbl { font-size: 11px; color: #888; margin-bottom: 4px; }
+
+    /* ── コントロール ── */
+    .controls { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .rec-btn { width: 80px; height: 80px; border-radius: 50%; border: none; background: var(--accent); color: white; cursor: pointer; font-size: 32px; box-shadow: 0 8px 20px rgba(29,158,117,0.3); transition: background 0.2s; }
+    .rec-btn.recording { background: #E24B4A; animation: pulse 1.2s infinite; }
+    .rec-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .next-btn { width: 100%; padding: 14px; background: var(--accent); color: white; border: none; border-radius: 99px; font-size: 15px; font-weight: 700; cursor: pointer; display: none; transition: background 0.2s; }
+    .next-btn:hover { background: #178a63; }
+    .restart-btn { width: 100%; padding: 14px; background: var(--accent); color: white; border: none; border-radius: 99px; font-size: 15px; font-weight: 700; cursor: pointer; display: none; }
+
+    /* ── プログレスバー（分析中） ── */
+    .progress-wrap { width: 100%; display: none; flex-direction: column; align-items: center; gap: 10px; padding: 8px 0; }
     .progress-wrap.show { display: flex; }
-    .progress-track {
-      width: 100%;
-      background: #e5e5e5;
-      border-radius: 99px;
-      height: 10px;
-      overflow: hidden;
-    }
-    .progress-bar {
-      height: 100%;
-      background: var(--accent);
-      border-radius: 99px;
-      width: 0%;
-      transition: width 0.4s ease;
-    }
-    .progress-pct {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--accent);
-    }
-    .progress-step {
-      font-size: 12px;
-      color: #888;
-    }
+    .analysis-track { width: 100%; background: #e5e5e5; border-radius: 99px; height: 10px; overflow: hidden; }
+    .analysis-bar { height: 100%; background: var(--accent); border-radius: 99px; width: 0%; transition: width 0.4s ease; }
+    .progress-pct { font-size: 24px; font-weight: 700; color: var(--accent); }
+    .progress-step { font-size: 12px; color: #888; }
+
+    /* ── 最終結果 ── */
+    .final-card { background: white; border-radius: var(--radius); padding: 1.5rem; border: 0.5px solid #ddd; display: none; text-align: center; }
+    .final-title { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .final-sub { font-size: 13px; color: #888; margin-bottom: 16px; }
+    .final-score-big { font-size: 56px; font-weight: 700; color: var(--accent); line-height: 1; margin-bottom: 4px; }
+    .final-score-label { font-size: 13px; color: #888; margin-bottom: 20px; }
+    .pattern-breakdown { text-align: left; margin-top: 16px; }
+    .pattern-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 0.5px solid #eee; font-size: 13px; }
+    .pattern-row:last-child { border-bottom: none; }
+    .pattern-name { color: #555; flex: 1; }
+    .pattern-score { font-weight: 700; color: var(--accent); }
+
+    @keyframes pulse { 0%{transform:scale(1)} 50%{transform:scale(1.1)} 100%{transform:scale(1)} }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    .fade-in { animation: fadeIn 0.3s ease; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="question-card">
-      <div id="patternTag" class="pattern-tag">...</div>
-      <div id="questionText" class="question-ja">問題を読み込んでいます</div>
-    </div>
-    <div id="resultCard" class="result-card">
-      <div id="scoreBadge" class="score-badge">Score: 0</div>
-      <div class="label">Your Answer:</div>
-      <div id="userAns" class="val-you"></div>
-      <div class="label">Correct Example:</div>
-      <div id="betterAns" class="val-better"></div>
-      <div id="feedbackText" class="feedback"></div>
-    </div>
-    <div class="controls">
-      <p id="statusText" style="font-weight:600; color:#666; font-size: 13px;">🎤 ボタンを押して英語で回答</p>
-      <button class="rec-btn" id="recBtn" onclick="toggleRecord()">🎤</button>
+<div class="container">
 
-      <!-- プログレスバー -->
-      <div class="progress-wrap" id="progressWrap">
-        <div class="progress-pct" id="progressPct">0%</div>
-        <div class="progress-track">
-          <div class="progress-bar" id="progressBar"></div>
-        </div>
-        <div class="progress-step" id="progressStep">音声を受信中...</div>
-      </div>
-
-      <button class="next-btn" onclick="setRandomQuestion()">別の問題 ➔</button>
+  <!-- トップバー -->
+  <div class="top-bar" id="topBar">
+    <div class="top-bar-row">
+      <span class="challenge-label">10問チャレンジ</span>
+      <span class="question-counter" id="questionCounter">1 / 10問</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-bar" id="challengeBar"></div>
     </div>
   </div>
 
+  <!-- 問題カード -->
+  <div class="question-card" id="questionCard">
+    <div id="patternTag" class="pattern-tag">...</div>
+    <div id="questionText" class="question-ja">読み込み中...</div>
+  </div>
+
+  <!-- 結果カード -->
+  <div class="result-card fade-in" id="resultCard">
+    <div id="scoreBadge" class="score-badge">Score: 0</div>
+    <div class="label">Your Answer</div>
+    <div id="userAns" class="val-you"></div>
+    <div class="label">Correct Answer</div>
+    <div id="betterAns" class="val-better"></div>
+    <div id="feedbackText" class="feedback"></div>
+    <div class="score-summary">
+      <div class="score-box">
+        <div class="lbl">正解数</div>
+        <div class="num" id="correctCount">0 / 0</div>
+      </div>
+      <div class="score-box">
+        <div class="lbl">平均スコア</div>
+        <div class="num" id="avgScore">-</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 最終結果カード -->
+  <div class="final-card fade-in" id="finalCard">
+    <div class="final-title">チャレンジ完了！ 🎉</div>
+    <div class="final-sub">10問お疲れ様でした</div>
+    <div class="final-score-big" id="finalScoreBig">-</div>
+    <div class="final-score-label">平均スコア</div>
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:20px;">
+      <div class="score-box">
+        <div class="lbl">正解数（80点以上）</div>
+        <div class="num" id="finalCorrect">-</div>
+      </div>
+      <div class="score-box">
+        <div class="lbl">最高スコア</div>
+        <div class="num" id="finalBest">-</div>
+      </div>
+    </div>
+    <div class="pattern-breakdown" id="patternBreakdown"></div>
+  </div>
+
+  <!-- コントロール -->
+  <div class="controls">
+    <p id="statusText" style="font-weight:600;color:#666;font-size:13px;">🎤 ボタンを押して英語で回答</p>
+    <button class="rec-btn" id="recBtn" onclick="toggleRecord()">🎤</button>
+
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-pct" id="progressPct">0%</div>
+      <div class="analysis-track">
+        <div class="analysis-bar" id="analysisBar"></div>
+      </div>
+      <div class="progress-step" id="progressStep">音声を受信中...</div>
+    </div>
+
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">次の問題へ ➔</button>
+    <button class="restart-btn" id="restartBtn" onclick="restartChallenge()">もう一度チャレンジ 🔄</button>
+  </div>
+
+</div>
+
 <script>
-    // CSVから抽出した全140問のデータ
 const questionList = [
-  {
-    "ja": "こちらは私の友人、ケンです。",
-    "en": "This is my friend, Ken.",
-    "pattern": "「これ」！ (This is)"
-  },
-  {
-    "ja": "このピザは美味しいです。",
-    "en": "This pizza is delicious.",
-    "pattern": "「これ」！ (This is)"
-  },
-  {
-    "ja": "これは私の席です。",
-    "en": "This is my seat.",
-    "pattern": "「これ」！ (This is)"
-  },
-  {
-    "ja": "この話は面白いです。",
-    "en": "This story is interesting.",
-    "pattern": "「これ」！ (This is)"
-  },
-  {
-    "ja": "これは私の番号です。",
-    "en": "This is my number.",
-    "pattern": "「これ」！ (This is)"
-  },
-  {
-    "ja": "この犬はとてもかわいい！",
-    "en": "This dog is so cute!",
-    "pattern": "「これ」！ (This is)"
-  },
-  {
-    "ja": "これは東京にある人気のカフェです。",
-    "en": "This is a popular cafe in Tokyo.",
-    "pattern": "「これ」！ (This is)"
-  },
-  {
-    "ja": "これは私のものではありません。",
-    "en": "This isn't mine.",
-    "pattern": "「これ」！ (This is)"
-  },
-  {
-    "ja": "これはあなたのせいではありません。",
-    "en": "This isn't your fault.",
-    "pattern": "「これ」！ (This is)"
-  },
-  {
-    "ja": "これは正しくありません。（間違っています。）",
-    "en": "This isn't right.",
-    "pattern": "「これ」！ (This is)"
-  },
-  {
-    "ja": "これは熱くありません。（ぬるいです。）",
-    "en": "This isn't hot.",
-    "pattern": "「これ」！ (This is)"
-  },
-  {
-    "ja": "これは終わっていません。（未完成です。）",
-    "en": "This isn't finished.",
-    "pattern": "「これ」！ (This is)"
-  },
-  {
-    "ja": "これは問題ありません。",
-    "en": "This isn't a problem.",
-    "pattern": "「これ」！ (This is)"
-  },
-  {
-    "ja": "これはあなたのものですか？",
-    "en": "Is this yours?",
-    "pattern": "「これ」！ (This is)"
-  },
-  {
-    "ja": "写真に写っているのはあなたですか？",
-    "en": "Is this you in the picture?",
-    "pattern": "「これ」！ (This is)"
-  },
-  {
-    "ja": "これは彼のLINE IDですか？",
-    "en": "Is this his LINE ID?",
-    "pattern": "「これ」！ (This is)"
-  },
-  {
-    "ja": "これは私のコーヒーですか？",
-    "en": "Is this my coffee?",
-    "pattern": "「これ」！ (This is)"
-  },
-  {
-    "ja": "これは重要ですか？",
-    "en": "Is this important?",
-    "pattern": "「これ」！ (This is)"
-  },
-  {
-    "ja": "これは多すぎますか？",
-    "en": "Is this too much?",
-    "pattern": "「これ」！ (This is)"
-  },
-  {
-    "ja": "これは今開いていますか？",
-    "en": "Is this open now?",
-    "pattern": "「これ」！ (This is)"
-  },
-  {
-    "ja": "ただ見ているだけです。",
-    "en": "I'm just looking.",
-    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
-  },
-  {
-    "ja": "トイレを探しています。",
-    "en": "I'm looking for the restroom.",
-    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
-  },
-  {
-    "ja": "あなたは話すのが速すぎます。",
-    "en": "You're talking too fast.",
-    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
-  },
-  {
-    "ja": "彼女はバスを待っています。",
-    "en": "She's waiting for the bus.",
-    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
-  },
-  {
-    "ja": "今、雨が降っています。",
-    "en": "It's raining now.",
-    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
-  },
-  {
-    "ja": "彼らは二階でNetflixを見ています。",
-    "en": "They're watching Netflix upstairs.",
-    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
-  },
-  {
-    "ja": "赤ちゃんはぐっすり眠っています。",
-    "en": "The baby is sleeping soundly.",
-    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
-  },
-  {
-    "ja": "私は今日は仕事をしていません。",
-    "en": "I'm not working today.",
-    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
-  },
-  {
-    "ja": "あなたは私の話を聞いていません。",
-    "en": "You're not listening to me.",
-    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
-  },
-  {
-    "ja": "彼はジャケットを着ていません。",
-    "en": "He's not wearing a jacket.",
-    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
-  },
-  {
-    "ja": "彼女は今月、肉を食べていません。",
-    "en": "She's not eating meat this month.",
-    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
-  },
-  {
-    "ja": "ここは雪が降っていません。",
-    "en": "It's not snowing here.",
-    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
-  },
-  {
-    "ja": "私たちはもうロンドンには住んでいません。",
-    "en": "We're not living in London anymore.",
-    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
-  },
-  {
-    "ja": "彼らはこのコンピューターを使っていません。",
-    "en": "They're not using this computer.",
-    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
-  },
-  {
-    "ja": "私はあなたを邪魔していますか？/ご迷惑ですか？",
-    "en": "Am I bothering you?",
-    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
-  },
-  {
-    "ja": "もう気分は良くなりましたか？",
-    "en": "Are you feeling better now?",
-    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
-  },
-  {
-    "ja": "今、あなたは彼女のことを考えていますか？",
-    "en": "Are you thinking about her now?",
-    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
-  },
-  {
-    "ja": "彼らは新しいアパートを探していますか？",
-    "en": "Are they looking for a new apartment?",
-    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
-  },
-  {
-    "ja": "彼は今夜、東京に行く予定ですか？",
-    "en": "Is he going to Tokyo tonight?",
-    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
-  },
-  {
-    "ja": "あなたは何を飲んでいるのですか？",
-    "en": "What are you drinking?",
-    "pattern": "今、まさにこれ中！⭐️ (I'm + V-ing)"
-  },
-  {
-    "ja": "コーヒーを飲みたい気分だ。",
-    "en": "I feel like drinking some coffee.",
-    "pattern": "〜な気分だよ！ (I feel like -ing)"
-  },
-  {
-    "ja": "髪型を変えたい気分だ。",
-    "en": "I feel like changing my hairstyle.",
-    "pattern": "〜な気分だよ！ (I feel like -ing)"
-  },
-  {
-    "ja": "何か新しいことを学びたい気分だ。",
-    "en": "I feel like learning something new.",
-    "pattern": "〜な気分だよ！ (I feel like -ing)"
-  },
-  {
-    "ja": "買い物をしたい気分だ。",
-    "en": "I feel like going shoping.",
-    "pattern": "〜な気分だよ！ (I feel like -ing)"
-  },
-  {
-    "ja": "ビーチでまったりしたい気分だ。",
-    "en": "I feel like chilling on the beach.",
-    "pattern": "〜な気分だよ！ (I feel like -ing)"
-  },
-  {
-    "ja": "誰でも時々、諦めたい気分になる。",
-    "en": "Everyone feels like giving up sometimes.",
-    "pattern": "〜な気分だよ！ (I feel like -ing)"
-  },
-  {
-    "ja": "今は時間を無駄にしているような気がする。",
-    "en": "It feels like I'm wasting my time now.",
-    "pattern": "〜な気分だよ！ (I feel like -ing)"
-  },
-  {
-    "ja": "そのことについては話したくない気分だ。",
-    "en": "I don't feel like talking about it.",
-    "pattern": "〜な気分だよ！ (I feel like -ing)"
-  },
-  {
-    "ja": "今日は家にいたい気分じゃない。",
-    "en": "I don't feel like staying home today.",
-    "pattern": "〜な気分だよ！ (I feel like -ing)"
-  },
-  {
-    "ja": "彼は今日、料理をする気分じゃない。",
-    "en": "He doesn't feel like cooking today.",
-    "pattern": "〜な気分だよ！ (I feel like -ing)"
-  },
-  {
-    "ja": "彼女は誰にも会う気分じゃない。",
-    "en": "She doesn't feel like seeing anyone.",
-    "pattern": "〜な気分だよ！ (I feel like -ing)"
-  },
-  {
-    "ja": "ピザを食べたい気分ですか？",
-    "en": "Do you feel like getting pizza?",
-    "pattern": "〜な気分だよ！ (I feel like -ing)"
-  },
-  {
-    "ja": "あなたも運動したい気分ですか？",
-    "en": "Do you feel like working out too?",
-    "pattern": "〜な気分だよ！ (I feel like -ing)"
-  },
-  {
-    "ja": "昨日、ラーメンが食べたい気分だった。",
-    "en": "I felt like having ramen yesterday.",
-    "pattern": "〜な気分だよ！ (I feel like -ing)"
-  },
-  {
-    "ja": "先週は家にいたい気分だった。",
-    "en": "We felt like staying home last week.",
-    "pattern": "〜な気分だよ！ (I feel like -ing)"
-  },
-  {
-    "ja": "どこに行きたい気分ですか？",
-    "en": "Where do you feel like going?",
-    "pattern": "〜な気分だよ！ (I feel like -ing)"
-  },
-  {
-    "ja": "少し休みたい気分じゃないの？",
-    "en": "Don't you feel like resting a bit?",
-    "pattern": "〜な気分だよ！ (I feel like -ing)"
-  },
-  {
-    "ja": "それは踊りたいような気分にさせる",
-    "en": "It makes me feel like dancing.",
-    "pattern": "〜な気分だよ！ (I feel like -ing)"
-  },
-  {
-    "ja": "何がそんなにあなたを帰りたい気持ちにさせるの？",
-    "en": "What makes you feel like going home so much?",
-    "pattern": "〜な気分だよ！ (I feel like -ing)"
-  },
-  {
-    "ja": "もうすでに夏みたいに感じる。",
-    "en": "It feels like summer already.",
-    "pattern": "〜な気分だよ！ (I feel like -ing)"
-  },
-  {
-    "ja": "私は早く起きます。",
-    "en": "I wake up early.",
-    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
-  },
-  {
-    "ja": "私は花粉症です",
-    "en": "I have allergies.",
-    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
-  },
-  {
-    "ja": "私は仕事にバスで行きます。",
-    "en": "I take the bus to work.",
-    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
-  },
-  {
-    "ja": "私はたいてい11時前に寝ます。",
-    "en": "I usually go to bed before eleven.",
-    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
-  },
-  {
-    "ja": "私は料理をしながら音楽を聴きます。",
-    "en": "I listen to music while cooking.",
-    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
-  },
-  {
-    "ja": "彼は頻繁に新しいレストランを試します。",
-    "en": "He tries new restaurants often.",
-    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
-  },
-  {
-    "ja": "あなたは英語がとても上手に話しますね。",
-    "en": "You speak English really well.",
-    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
-  },
-  {
-    "ja": "私たちは寝る前に絵本を読みます。",
-    "en": "We read a picture book before bed.",
-    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
-  },
-  {
-    "ja": "彼女は一日に二度、犬を散歩させます。",
-    "en": "She walks her dog twice a day.",
-    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
-  },
-  {
-    "ja": "私は彼を知りません。",
-    "en": "I don't know him.",
-    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
-  },
-  {
-    "ja": "私はそうは思いません。",
-    "en": "I don't think so.",
-    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
-  },
-  {
-    "ja": "予約はしていません。",
-    "en": "We don't have a reservation.",
-    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
-  },
-  {
-    "ja": "彼は夕食後にテレビを見ません。",
-    "en": "He doesn't watch TV after dinner.",
-    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
-  },
-  {
-    "ja": "彼女は小さなことを気にしません。",
-    "en": "She doesn't worry about little things.",
-    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
-  },
-  {
-    "ja": "あなたは近くに住んでいますか？",
-    "en": "Do you live near here?",
-    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
-  },
-  {
-    "ja": "あなたは週末に働きますか？",
-    "en": "Do you work on weekends?",
-    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
-  },
-  {
-    "ja": "夏の予定は何かありますか？",
-    "en": "Do you have any plans for the summer?",
-    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
-  },
-  {
-    "ja": "彼は一人暮らしですか？",
-    "en": "Does he live alone?",
-    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
-  },
-  {
-    "ja": "彼女は熱がありますか？",
-    "en": "Does she have a fever?",
-    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
-  },
-  {
-    "ja": "彼女は週に一回英語のレッスンを受けますか？",
-    "en": "Does she take English lessons once a week?",
-    "pattern": "いつもの私！　⭐️ (I + 動詞の原形)"
-  },
-  {
-    "ja": "私は新しい車を買う予定です。",
-    "en": "I'm going to buy a new car.",
-    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
-  },
-  {
-    "ja": "彼女は来月、パリを訪れる予定です。",
-    "en": "She's going to visit Paris next month.",
-    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
-  },
-  {
-    "ja": "彼は来年、転職する予定です。",
-    "en": "He is going to change his job next year.",
-    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
-  },
-  {
-    "ja": "私は青い方をいただきます。",
-    "en": "I'll take the blue one, please.",
-    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
-  },
-  {
-    "ja": "明日は晴れるだろうと思います。",
-    "en": "I think it'll be sunny tomorrow.",
-    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
-  },
-  {
-    "ja": "今夜は家にいるだけにしようと思います。",
-    "en": "I think I'll just stay home tonight.",
-    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
-  },
-  {
-    "ja": "彼女はこのプレゼントを気に入るだろう。",
-    "en": "She will love this present.",
-    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
-  },
-  {
-    "ja": "電車はもうすぐここに到着します。",
-    "en": "The train will be here in a minute.",
-    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
-  },
-  {
-    "ja": "私は今夜は映画を観ないつもりです。",
-    "en": "I'm not going to see a movie tonight.",
-    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
-  },
-  {
-    "ja": "私たちは二度と遅刻しません。",
-    "en": "We aren't going to be late again.",
-    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
-  },
-  {
-    "ja": "彼らはまだ引っ越しをする予定はない。",
-    "en": "They are not going to move yet.",
-    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
-  },
-  {
-    "ja": "今夜は外出しません。",
-    "en": "I won't go out tonight.",
-    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
-  },
-  {
-    "ja": "私はこの日を決して忘れないでしょう。",
-    "en": "I will never forget this day.",
-    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
-  },
-  {
-    "ja": "これを直すのは簡単ではないでしょう。",
-    "en": "It won't be easy to fix this.",
-    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
-  },
-  {
-    "ja": "あなたは今年旅行する予定ですか？",
-    "en": "Are you going to travel this year?",
-    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
-  },
-  {
-    "ja": "彼女はその会議に参加する予定ですか？",
-    "en": "Is she going to join the meeting?",
-    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
-  },
-  {
-    "ja": "明日は雨ですか？(予測）",
-    "en": "Will it rain tomorrow?",
-    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
-  },
-  {
-    "ja": "その店は明日開いていますか？",
-    "en": "Will the store be open tomorrow?",
-    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
-  },
-  {
-    "ja": "ロンドンではどこに滞在する予定ですか？",
-    "en": "Where will you stay in London?",
-    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
-  },
-  {
-    "ja": "彼は次に何をするつもりですか？",
-    "en": "What is he going to do next?",
-    "pattern": "未来は決めた！⭐️ (I'm going to / I will)"
-  },
-  {
-    "ja": "私は2週間前にその映画を観ました。",
-    "en": "I watched that movie two weeks ago.",
-    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
-  },
-  {
-    "ja": "私たちは昨日、祖父母を訪ねました。",
-    "en": "We visited my grandparents yesterday.",
-    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
-  },
-  {
-    "ja": "彼は月曜日に新しいプロジェクトを始めました。",
-    "en": "He started a new project on Monday.",
-    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
-  },
-  {
-    "ja": "それすっかり忘れてた！",
-    "en": "I totally forgot about it!",
-    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
-  },
-  {
-    "ja": "私はこのシャツをセールで買いました。",
-    "en": "I bought this shirt on sale.",
-    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
-  },
-  {
-    "ja": "私はスピーチの前に深呼吸をしました。",
-    "en": "I took a deep breath before the speech.",
-    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
-  },
-  {
-    "ja": "彼は事故が起こるのを見ました。",
-    "en": "He saw the accident happen.",
-    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
-  },
-  {
-    "ja": "彼らは遅く家に帰ってきました。",
-    "en": "They came back home late.",
-    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
-  },
-  {
-    "ja": "彼は椅子の下で鍵を見つけました。",
-    "en": "He found the keys under the chair.",
-    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
-  },
-  {
-    "ja": "それを知りませんでした。",
-    "en": "I didn't know that.",
-    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
-  },
-  {
-    "ja": "私は昨夜、パーティーに行きませんでした。",
-    "en": "I didn't go to the party last night.",
-    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
-  },
-  {
-    "ja": "彼らはその食べ物を全く好きではありませんでした。",
-    "en": "They didn't like the food at all.",
-    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
-  },
-  {
-    "ja": "彼は昨日、仕事に来ませんでした。",
-    "en": "He didn't come to work yesterday.",
-    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
-  },
-  {
-    "ja": "そのコンサートは時間通りに始まりませんでした。",
-    "en": "The concert didn't start on time.",
-    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
-  },
-  {
-    "ja": "私は何か重要なことを見逃しましたか？",
-    "en": "Did I miss anything important?",
-    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
-  },
-  {
-    "ja": "あなたは旅行を楽しみましたか？",
-    "en": "Did you enjoy your trip?",
-    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
-  },
-  {
-    "ja": "昨夜はよく眠れましたか？",
-    "en": "Did you sleep well last night?",
-    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
-  },
-  {
-    "ja": "彼女は傘をなくしましたか？",
-    "en": "Did she lose her umbrella?",
-    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
-  },
-  {
-    "ja": "彼は何か買いましたか？",
-    "en": "Did he buy anything?",
-    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
-  },
-  {
-    "ja": "彼女はいつオフィスを出ましたか？",
-    "en": "When did she leave the office?",
-    "pattern": "あの時、こうなった！⭐️ (I + 動詞の過去形)"
-  },
-  {
-    "ja": "これ、前にもやったことがあるよ。",
-    "en": "I've done this before.",
-    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
-  },
-  {
-    "ja": "カナダに行ったことがあります。",
-    "en": "I've been to Canada.",
-    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
-  },
-  {
-    "ja": "沖縄には何度も訪れたことがあります。",
-    "en": "I've visited Okinawa many times.",
-    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
-  },
-  {
-    "ja": "彼女は海外留学したことがあります。",
-    "en": "She has studied abroad.",
-    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
-  },
-  {
-    "ja": "彼は３回転職したことがあります。",
-    "en": "He changed jobs three times.",
-    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
-  },
-  {
-    "ja": "彼女は一度、フルマラソンを完走したことがあります。",
-    "en": "She's run a full marathon once.",
-    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
-  },
-  {
-    "ja": "彼は以前、そのホテルに泊まったことがあります。",
-    "en": "He's stayed at that hotel before.",
-    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
-  },
-  {
-    "ja": "彼女は海外でパスポートを失くした経験があります。",
-    "en": "She's lost her passport in a foreign country before.",
-    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
-  },
-  {
-    "ja": "一度もそこには行ったことがないよ。",
-    "en": "I’ve never been there.",
-    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
-  },
-  {
-    "ja": "そんなの一度も聞いたことないな。",
-    "en": "I've never heard of that.",
-    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
-  },
-  {
-    "ja": "彼は人生で一度も納豆を試したことがない。",
-    "en": "He's never tried natto in his life.",
-    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
-  },
-  {
-    "ja": "彼女は一度も仕事に遅刻したことがないんだ。",
-    "en": "She's never been late for work.",
-    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
-  },
-  {
-    "ja": "今までにメキシコ料理を食べたことはありますか？",
-    "en": "Have you ever tried Mexican food?",
-    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
-  },
-  {
-    "ja": "諦めたいと思ったことはありますか？",
-    "en": "Have you ever felt like giving up?",
-    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
-  },
-  {
-    "ja": "私たち、以前お会いしたことありましたか？",
-    "en": "Have we met before?",
-    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
-  },
-  {
-    "ja": "彼女は外国に住んだことがありますか？",
-    "en": "Has she ever lived in a foreign country?",
-    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
-  },
-  {
-    "ja": "この街で雪が降ったことはありますか？",
-    "en": "Has it ever snowed in this city?",
-    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
-  },
-  {
-    "ja": "どの国に行ったことがありますか？",
-    "en": "What countries have you been to?",
-    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
-  },
-  {
-    "ja": "彼女は何回京都を訪れたことがありますか？",
-    "en": "How many times has she visited Kyoto?",
-    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
-  },
-  {
-    "ja": "この経験から何を学びましたか？",
-    "en": "What have you learned from this experience?",
-    "pattern": "もうやった？やったことある？⭐️ (I have + P.P. / I've never... / Have you ever...?)"
-  }
+  {"ja":"こちらは私の友人、ケンです。","en":"This is my friend, Ken.","pattern":"「これ」！ (This is)"},
+  {"ja":"このピザは美味しいです。","en":"This pizza is delicious.","pattern":"「これ」！ (This is)"},
+  {"ja":"これは私の席です。","en":"This is my seat.","pattern":"「これ」！ (This is)"},
+  {"ja":"この話は面白いです。","en":"This story is interesting.","pattern":"「これ」！ (This is)"},
+  {"ja":"これは私の番号です。","en":"This is my number.","pattern":"「これ」！ (This is)"},
+  {"ja":"この犬はとてもかわいい！","en":"This dog is so cute!","pattern":"「これ」！ (This is)"},
+  {"ja":"これは東京にある人気のカフェです。","en":"This is a popular cafe in Tokyo.","pattern":"「これ」！ (This is)"},
+  {"ja":"これは私のものではありません。","en":"This isn't mine.","pattern":"「これ」！ (This is)"},
+  {"ja":"これはあなたのせいではありません。","en":"This isn't your fault.","pattern":"「これ」！ (This is)"},
+  {"ja":"これは正しくありません。","en":"This isn't right.","pattern":"「これ」！ (This is)"},
+  {"ja":"これは熱くありません。","en":"This isn't hot.","pattern":"「これ」！ (This is)"},
+  {"ja":"これは終わっていません。","en":"This isn't finished.","pattern":"「これ」！ (This is)"},
+  {"ja":"これは問題ありません。","en":"This isn't a problem.","pattern":"「これ」！ (This is)"},
+  {"ja":"これはあなたのものですか？","en":"Is this yours?","pattern":"「これ」！ (This is)"},
+  {"ja":"写真に写っているのはあなたですか？","en":"Is this you in the picture?","pattern":"「これ」！ (This is)"},
+  {"ja":"これは彼のLINE IDですか？","en":"Is this his LINE ID?","pattern":"「これ」！ (This is)"},
+  {"ja":"これは私のコーヒーですか？","en":"Is this my coffee?","pattern":"「これ」！ (This is)"},
+  {"ja":"これは重要ですか？","en":"Is this important?","pattern":"「これ」！ (This is)"},
+  {"ja":"これは多すぎますか？","en":"Is this too much?","pattern":"「これ」！ (This is)"},
+  {"ja":"これは今開いていますか？","en":"Is this open now?","pattern":"「これ」！ (This is)"},
+  {"ja":"ただ見ているだけです。","en":"I'm just looking.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
+  {"ja":"トイレを探しています。","en":"I'm looking for the restroom.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
+  {"ja":"あなたは話すのが速すぎます。","en":"You're talking too fast.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
+  {"ja":"彼女はバスを待っています。","en":"She's waiting for the bus.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
+  {"ja":"今、雨が降っています。","en":"It's raining now.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
+  {"ja":"彼らは二階でNetflixを見ています。","en":"They're watching Netflix upstairs.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
+  {"ja":"赤ちゃんはぐっすり眠っています。","en":"The baby is sleeping soundly.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
+  {"ja":"私は今日は仕事をしていません。","en":"I'm not working today.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
+  {"ja":"あなたは私の話を聞いていません。","en":"You're not listening to me.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
+  {"ja":"彼はジャケットを着ていません。","en":"He's not wearing a jacket.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
+  {"ja":"彼女は今月、肉を食べていません。","en":"She's not eating meat this month.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
+  {"ja":"ここは雪が降っていません。","en":"It's not snowing here.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
+  {"ja":"私たちはもうロンドンには住んでいません。","en":"We're not living in London anymore.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
+  {"ja":"彼らはこのコンピューターを使っていません。","en":"They're not using this computer.","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
+  {"ja":"私はあなたを邪魔していますか？","en":"Am I bothering you?","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
+  {"ja":"もう気分は良くなりましたか？","en":"Are you feeling better now?","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
+  {"ja":"今、あなたは彼女のことを考えていますか？","en":"Are you thinking about her now?","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
+  {"ja":"彼らは新しいアパートを探していますか？","en":"Are they looking for a new apartment?","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
+  {"ja":"彼は今夜、東京に行く予定ですか？","en":"Is he going to Tokyo tonight?","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
+  {"ja":"あなたは何を飲んでいるのですか？","en":"What are you drinking?","pattern":"今、まさにこれ中！⭐️ (I'm + V-ing)"},
+  {"ja":"コーヒーを飲みたい気分だ。","en":"I feel like drinking some coffee.","pattern":"〜な気分だよ！ (I feel like -ing)"},
+  {"ja":"髪型を変えたい気分だ。","en":"I feel like changing my hairstyle.","pattern":"〜な気分だよ！ (I feel like -ing)"},
+  {"ja":"何か新しいことを学びたい気分だ。","en":"I feel like learning something new.","pattern":"〜な気分だよ！ (I feel like -ing)"},
+  {"ja":"買い物をしたい気分だ。","en":"I feel like going shopping.","pattern":"〜な気分だよ！ (I feel like -ing)"},
+  {"ja":"ビーチでまったりしたい気分だ。","en":"I feel like chilling on the beach.","pattern":"〜な気分だよ！ (I feel like -ing)"},
+  {"ja":"誰でも時々、諦めたい気分になる。","en":"Everyone feels like giving up sometimes.","pattern":"〜な気分だよ！ (I feel like -ing)"},
+  {"ja":"今は時間を無駄にしているような気がする。","en":"It feels like I'm wasting my time now.","pattern":"〜な気分だよ！ (I feel like -ing)"},
+  {"ja":"そのことについては話したくない気分だ。","en":"I don't feel like talking about it.","pattern":"〜な気分だよ！ (I feel like -ing)"},
+  {"ja":"今日は家にいたい気分じゃない。","en":"I don't feel like staying home today.","pattern":"〜な気分だよ！ (I feel like -ing)"},
+  {"ja":"彼は今日、料理をする気分じゃない。","en":"He doesn't feel like cooking today.","pattern":"〜な気分だよ！ (I feel like -ing)"},
+  {"ja":"彼女は誰にも会う気分じゃない。","en":"She doesn't feel like seeing anyone.","pattern":"〜な気分だよ！ (I feel like -ing)"},
+  {"ja":"ピザを食べたい気分ですか？","en":"Do you feel like getting pizza?","pattern":"〜な気分だよ！ (I feel like -ing)"},
+  {"ja":"あなたも運動したい気分ですか？","en":"Do you feel like working out too?","pattern":"〜な気分だよ！ (I feel like -ing)"},
+  {"ja":"昨日、ラーメンが食べたい気分だった。","en":"I felt like having ramen yesterday.","pattern":"〜な気分だよ！ (I feel like -ing)"},
+  {"ja":"先週は家にいたい気分だった。","en":"We felt like staying home last week.","pattern":"〜な気分だよ！ (I feel like -ing)"},
+  {"ja":"どこに行きたい気分ですか？","en":"Where do you feel like going?","pattern":"〜な気分だよ！ (I feel like -ing)"},
+  {"ja":"少し休みたい気分じゃないの？","en":"Don't you feel like resting a bit?","pattern":"〜な気分だよ！ (I feel like -ing)"},
+  {"ja":"それは踊りたいような気分にさせる","en":"It makes me feel like dancing.","pattern":"〜な気分だよ！ (I feel like -ing)"},
+  {"ja":"何がそんなにあなたを帰りたい気持ちにさせるの？","en":"What makes you feel like going home so much?","pattern":"〜な気分だよ！ (I feel like -ing)"},
+  {"ja":"もうすでに夏みたいに感じる。","en":"It feels like summer already.","pattern":"〜な気分だよ！ (I feel like -ing)"},
+  {"ja":"私は早く起きます。","en":"I wake up early.","pattern":"いつもの私！ (I + 動詞の原形)"},
+  {"ja":"私は花粉症です","en":"I have allergies.","pattern":"いつもの私！ (I + 動詞の原形)"},
+  {"ja":"私は仕事にバスで行きます。","en":"I take the bus to work.","pattern":"いつもの私！ (I + 動詞の原形)"},
+  {"ja":"私はたいてい11時前に寝ます。","en":"I usually go to bed before eleven.","pattern":"いつもの私！ (I + 動詞の原形)"},
+  {"ja":"私は料理をしながら音楽を聴きます。","en":"I listen to music while cooking.","pattern":"いつもの私！ (I + 動詞の原形)"},
+  {"ja":"彼は頻繁に新しいレストランを試します。","en":"He tries new restaurants often.","pattern":"いつもの私！ (I + 動詞の原形)"},
+  {"ja":"あなたは英語がとても上手に話しますね。","en":"You speak English really well.","pattern":"いつもの私！ (I + 動詞の原形)"},
+  {"ja":"私たちは寝る前に絵本を読みます。","en":"We read a picture book before bed.","pattern":"いつもの私！ (I + 動詞の原形)"},
+  {"ja":"彼女は一日に二度、犬を散歩させます。","en":"She walks her dog twice a day.","pattern":"いつもの私！ (I + 動詞の原形)"},
+  {"ja":"私は彼を知りません。","en":"I don't know him.","pattern":"いつもの私！ (I + 動詞の原形)"},
+  {"ja":"私はそうは思いません。","en":"I don't think so.","pattern":"いつもの私！ (I + 動詞の原形)"},
+  {"ja":"予約はしていません。","en":"We don't have a reservation.","pattern":"いつもの私！ (I + 動詞の原形)"},
+  {"ja":"彼は夕食後にテレビを見ません。","en":"He doesn't watch TV after dinner.","pattern":"いつもの私！ (I + 動詞の原形)"},
+  {"ja":"彼女は小さなことを気にしません。","en":"She doesn't worry about little things.","pattern":"いつもの私！ (I + 動詞の原形)"},
+  {"ja":"あなたは近くに住んでいますか？","en":"Do you live near here?","pattern":"いつもの私！ (I + 動詞の原形)"},
+  {"ja":"あなたは週末に働きますか？","en":"Do you work on weekends?","pattern":"いつもの私！ (I + 動詞の原形)"},
+  {"ja":"夏の予定は何かありますか？","en":"Do you have any plans for the summer?","pattern":"いつもの私！ (I + 動詞の原形)"},
+  {"ja":"彼は一人暮らしですか？","en":"Does he live alone?","pattern":"いつもの私！ (I + 動詞の原形)"},
+  {"ja":"彼女は熱がありますか？","en":"Does she have a fever?","pattern":"いつもの私！ (I + 動詞の原形)"},
+  {"ja":"彼女は週に一回英語のレッスンを受けますか？","en":"Does she take English lessons once a week?","pattern":"いつもの私！ (I + 動詞の原形)"},
+  {"ja":"私は新しい車を買う予定です。","en":"I'm going to buy a new car.","pattern":"未来は決めた！ (I'm going to / I will)"},
+  {"ja":"彼女は来月、パリを訪れる予定です。","en":"She's going to visit Paris next month.","pattern":"未来は決めた！ (I'm going to / I will)"},
+  {"ja":"彼は来年、転職する予定です。","en":"He is going to change his job next year.","pattern":"未来は決めた！ (I'm going to / I will)"},
+  {"ja":"私は青い方をいただきます。","en":"I'll take the blue one, please.","pattern":"未来は決めた！ (I'm going to / I will)"},
+  {"ja":"明日は晴れるだろうと思います。","en":"I think it'll be sunny tomorrow.","pattern":"未来は決めた！ (I'm going to / I will)"},
+  {"ja":"今夜は家にいるだけにしようと思います。","en":"I think I'll just stay home tonight.","pattern":"未来は決めた！ (I'm going to / I will)"},
+  {"ja":"彼女はこのプレゼントを気に入るだろう。","en":"She will love this present.","pattern":"未来は決めた！ (I'm going to / I will)"},
+  {"ja":"電車はもうすぐここに到着します。","en":"The train will be here in a minute.","pattern":"未来は決めた！ (I'm going to / I will)"},
+  {"ja":"私は今夜は映画を観ないつもりです。","en":"I'm not going to see a movie tonight.","pattern":"未来は決めた！ (I'm going to / I will)"},
+  {"ja":"私たちは二度と遅刻しません。","en":"We aren't going to be late again.","pattern":"未来は決めた！ (I'm going to / I will)"},
+  {"ja":"彼らはまだ引っ越しをする予定はない。","en":"They are not going to move yet.","pattern":"未来は決めた！ (I'm going to / I will)"},
+  {"ja":"今夜は外出しません。","en":"I won't go out tonight.","pattern":"未来は決めた！ (I'm going to / I will)"},
+  {"ja":"私はこの日を決して忘れないでしょう。","en":"I will never forget this day.","pattern":"未来は決めた！ (I'm going to / I will)"},
+  {"ja":"これを直すのは簡単ではないでしょう。","en":"It won't be easy to fix this.","pattern":"未来は決めた！ (I'm going to / I will)"},
+  {"ja":"あなたは今年旅行する予定ですか？","en":"Are you going to travel this year?","pattern":"未来は決めた！ (I'm going to / I will)"},
+  {"ja":"彼女はその会議に参加する予定ですか？","en":"Is she going to join the meeting?","pattern":"未来は決めた！ (I'm going to / I will)"},
+  {"ja":"明日は雨ですか？","en":"Will it rain tomorrow?","pattern":"未来は決めた！ (I'm going to / I will)"},
+  {"ja":"その店は明日開いていますか？","en":"Will the store be open tomorrow?","pattern":"未来は決めた！ (I'm going to / I will)"},
+  {"ja":"ロンドンではどこに滞在する予定ですか？","en":"Where will you stay in London?","pattern":"未来は決めた！ (I'm going to / I will)"},
+  {"ja":"彼は次に何をするつもりですか？","en":"What is he going to do next?","pattern":"未来は決めた！ (I'm going to / I will)"},
+  {"ja":"私は2週間前にその映画を観ました。","en":"I watched that movie two weeks ago.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
+  {"ja":"私たちは昨日、祖父母を訪ねました。","en":"We visited my grandparents yesterday.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
+  {"ja":"彼は月曜日に新しいプロジェクトを始めました。","en":"He started a new project on Monday.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
+  {"ja":"それすっかり忘れてた！","en":"I totally forgot about it!","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
+  {"ja":"私はこのシャツをセールで買いました。","en":"I bought this shirt on sale.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
+  {"ja":"私はスピーチの前に深呼吸をしました。","en":"I took a deep breath before the speech.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
+  {"ja":"彼は事故が起こるのを見ました。","en":"He saw the accident happen.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
+  {"ja":"彼らは遅く家に帰ってきました。","en":"They came back home late.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
+  {"ja":"彼は椅子の下で鍵を見つけました。","en":"He found the keys under the chair.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
+  {"ja":"それを知りませんでした。","en":"I didn't know that.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
+  {"ja":"私は昨夜、パーティーに行きませんでした。","en":"I didn't go to the party last night.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
+  {"ja":"彼らはその食べ物を全く好きではありませんでした。","en":"They didn't like the food at all.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
+  {"ja":"彼は昨日、仕事に来ませんでした。","en":"He didn't come to work yesterday.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
+  {"ja":"そのコンサートは時間通りに始まりませんでした。","en":"The concert didn't start on time.","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
+  {"ja":"私は何か重要なことを見逃しましたか？","en":"Did I miss anything important?","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
+  {"ja":"あなたは旅行を楽しみましたか？","en":"Did you enjoy your trip?","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
+  {"ja":"昨夜はよく眠れましたか？","en":"Did you sleep well last night?","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
+  {"ja":"彼女は傘をなくしましたか？","en":"Did she lose her umbrella?","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
+  {"ja":"彼は何か買いましたか？","en":"Did he buy anything?","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
+  {"ja":"彼女はいつオフィスを出ましたか？","en":"When did she leave the office?","pattern":"あの時、こうなった！ (I + 動詞の過去形)"},
+  {"ja":"これ、前にもやったことがあるよ。","en":"I've done this before.","pattern":"もうやった？やったことある？ (I have + P.P.)"},
+  {"ja":"カナダに行ったことがあります。","en":"I've been to Canada.","pattern":"もうやった？やったことある？ (I have + P.P.)"},
+  {"ja":"沖縄には何度も訪れたことがあります。","en":"I've visited Okinawa many times.","pattern":"もうやった？やったことある？ (I have + P.P.)"},
+  {"ja":"彼女は海外留学したことがあります。","en":"She has studied abroad.","pattern":"もうやった？やったことある？ (I have + P.P.)"},
+  {"ja":"彼は３回転職したことがあります。","en":"He changed jobs three times.","pattern":"もうやった？やったことある？ (I have + P.P.)"},
+  {"ja":"一度もそこには行ったことがないよ。","en":"I've never been there.","pattern":"もうやった？やったことある？ (I have + P.P.)"},
+  {"ja":"そんなの一度も聞いたことないな。","en":"I've never heard of that.","pattern":"もうやった？やったことある？ (I have + P.P.)"},
+  {"ja":"彼は人生で一度も納豆を試したことがない。","en":"He's never tried natto in his life.","pattern":"もうやった？やったことある？ (I have + P.P.)"},
+  {"ja":"彼女は一度も仕事に遅刻したことがないんだ。","en":"She's never been late for work.","pattern":"もうやった？やったことある？ (I have + P.P.)"},
+  {"ja":"今までにメキシコ料理を食べたことはありますか？","en":"Have you ever tried Mexican food?","pattern":"もうやった？やったことある？ (I have + P.P.)"},
+  {"ja":"諦めたいと思ったことはありますか？","en":"Have you ever felt like giving up?","pattern":"もうやった？やったことある？ (I have + P.P.)"},
+  {"ja":"私たち、以前お会いしたことありましたか？","en":"Have we met before?","pattern":"もうやった？やったことある？ (I have + P.P.)"},
+  {"ja":"彼女は外国に住んだことがありますか？","en":"Has she ever lived in a foreign country?","pattern":"もうやった？やったことある？ (I have + P.P.)"},
+  {"ja":"この街で雪が降ったことはありますか？","en":"Has it ever snowed in this city?","pattern":"もうやった？やったことある？ (I have + P.P.)"},
+  {"ja":"どの国に行ったことがありますか？","en":"What countries have you been to?","pattern":"もうやった？やったことある？ (I have + P.P.)"},
+  {"ja":"彼女は何回京都を訪れたことがありますか？","en":"How many times has she visited Kyoto?","pattern":"もうやった？やったことある？ (I have + P.P.)"},
+  {"ja":"この経験から何を学びましたか？","en":"What have you learned from this experience?","pattern":"もうやった？やったことある？ (I have + P.P.)"}
 ];
 
-    let currentQuestion = {};
-    let isRecording = false, mediaRecorder = null, audioChunks = [];
-    let progressTimer = null;
+const TOTAL = 10;
+let challengeQuestions = [];
+let currentIndex = 0;
+let scores = [];
+let patternScores = {};
+let isRecording = false, mediaRecorder = null, audioChunks = [];
+let progressTimer = null;
 
-    function setRandomQuestion() {
-      currentQuestion = questionList[Math.floor(Math.random() * questionList.length)];
-      document.getElementById('patternTag').textContent = currentQuestion.pattern;
-      document.getElementById('questionText').textContent = currentQuestion.ja;
-      document.getElementById('resultCard').style.display = 'none';
-      document.getElementById('statusText').textContent = '🎤 ボタンを押して英語で回答';
-      hideProgress();
-    }
+// ── 初期化 ──────────────────────────────────────────────────────
+function startChallenge() {
+  const shuffled = [...questionList].sort(() => Math.random() - 0.5);
+  challengeQuestions = shuffled.slice(0, TOTAL);
+  currentIndex = 0;
+  scores = [];
+  patternScores = {};
+  document.getElementById('resultCard').style.display = 'none';
+  document.getElementById('finalCard').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('restartBtn').style.display = 'none';
+  document.getElementById('recBtn').disabled = false;
+  showQuestion();
+}
 
-    setRandomQuestion();
+function showQuestion() {
+  const q = challengeQuestions[currentIndex];
+  document.getElementById('patternTag').textContent = q.pattern;
+  document.getElementById('questionText').textContent = q.ja;
+  document.getElementById('questionCounter').textContent = `${currentIndex + 1} / ${TOTAL}問`;
+  document.getElementById('challengeBar').style.width = `${(currentIndex / TOTAL) * 100}%`;
+  document.getElementById('resultCard').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('statusText').textContent = '🎤 ボタンを押して英語で回答';
+}
 
-    // ── プログレスバー制御 ──────────────────────────────────────
-    const STEPS = [
-      { pct: 10, label: '音声を受信中...' },
-      { pct: 30, label: '音声を文字に変換中...' },
-      { pct: 55, label: '英語を解析中...' },
-      { pct: 75, label: 'フィードバックを生成中...' },
-      { pct: 90, label: 'もうすぐ完了...' },
-    ];
+startChallenge();
 
-    function showProgress() {
-      const wrap = document.getElementById('progressWrap');
-      wrap.classList.add('show');
-      let i = 0;
-      progressTimer = setInterval(() => {
-        if (i >= STEPS.length) { clearInterval(progressTimer); return; }
-        setProgress(STEPS[i].pct, STEPS[i].label);
-        i++;
-      }, 900);
-    }
+// ── 次の問題 ──────────────────────────────────────────────────
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex >= TOTAL) {
+    showFinalResult();
+  } else {
+    showQuestion();
+  }
+}
 
-    function completeProgress() {
-      clearInterval(progressTimer);
-      setProgress(100, '完了！');
-      setTimeout(hideProgress, 800);
-    }
+// ── 最終結果 ──────────────────────────────────────────────────
+function showFinalResult() {
+  document.getElementById('questionCard').style.display = 'none';
+  document.getElementById('resultCard').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('topBar').style.display = 'none';
 
-    function hideProgress() {
-      clearInterval(progressTimer);
-      const wrap = document.getElementById('progressWrap');
-      wrap.classList.remove('show');
-      setProgress(0, '');
-    }
+  const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+  const correct = scores.filter(s => s >= 80).length;
+  const best = Math.max(...scores);
 
-    function setProgress(pct, label) {
-      document.getElementById('progressBar').style.width = pct + '%';
-      document.getElementById('progressPct').textContent = pct + '%';
-      document.getElementById('progressStep').textContent = label;
-    }
+  document.getElementById('finalScoreBig').textContent = avg;
+  document.getElementById('finalCorrect').textContent = `${correct} / ${TOTAL}`;
+  document.getElementById('finalBest').textContent = best;
 
-    // ── 録音 ──────────────────────────────────────────────────────
-    async function toggleRecord() {
+  // パターン別結果
+  const breakdown = document.getElementById('patternBreakdown');
+  breakdown.innerHTML = '<div style="font-size:13px;font-weight:700;color:#555;margin-bottom:8px;">パターン別スコア</div>';
+  Object.entries(patternScores).forEach(([pattern, data]) => {
+    const avg = Math.round(data.total / data.count);
+    const row = document.createElement('div');
+    row.className = 'pattern-row';
+    row.innerHTML = `<span class="pattern-name">${pattern}</span><span class="pattern-score">${avg}点 (${data.count}問)</span>`;
+    breakdown.appendChild(row);
+  });
+
+  // メッセージ
+  let msg = avg >= 90 ? '素晴らしい！完璧に近いです 🏆' :
+            avg >= 75 ? 'よくできました！着実に上達しています ✨' :
+            avg >= 60 ? 'いい調子です！練習を続けましょう 💪' :
+                        '次回はもっと良くなります！諦めないで 🌱';
+  const msgEl = document.createElement('div');
+  msgEl.style.cssText = 'background:#E1F5EE;border-radius:10px;padding:12px;font-size:13px;color:#0F6E56;font-weight:600;margin-top:16px;text-align:center;';
+  msgEl.textContent = msg;
+  breakdown.appendChild(msgEl);
+
+  document.getElementById('finalCard').style.display = 'block';
+  document.getElementById('restartBtn').style.display = 'block';
+  document.getElementById('recBtn').style.display = 'none';
+  document.getElementById('statusText').style.display = 'none';
+  document.getElementById('challengeBar').style.width = '100%';
+}
+
+function restartChallenge() {
+  document.getElementById('questionCard').style.display = 'block';
+  document.getElementById('topBar').style.display = 'block';
+  document.getElementById('recBtn').style.display = 'block';
+  document.getElementById('statusText').style.display = 'block';
+  document.getElementById('restartBtn').style.display = 'none';
+  startChallenge();
+}
+
+// ── プログレスバー ─────────────────────────────────────────────
+const STEPS = [
+  { pct: 10, label: '音声を受信中...' },
+  { pct: 30, label: '音声を文字に変換中...' },
+  { pct: 55, label: '英語を解析中...' },
+  { pct: 75, label: 'フィードバックを生成中...' },
+  { pct: 90, label: 'もうすぐ完了...' },
+];
+
+function showProgress() {
+  document.getElementById('progressWrap').classList.add('show');
+  let i = 0;
+  progressTimer = setInterval(() => {
+    if (i >= STEPS.length) { clearInterval(progressTimer); return; }
+    setProgress(STEPS[i].pct, STEPS[i].label);
+    i++;
+  }, 900);
+}
+
+function completeProgress() {
+  clearInterval(progressTimer);
+  setProgress(100, '完了！');
+  setTimeout(() => {
+    document.getElementById('progressWrap').classList.remove('show');
+    setProgress(0, '');
+  }, 600);
+}
+
+function setProgress(pct, label) {
+  document.getElementById('analysisBar').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressStep').textContent = label;
+}
+
+// ── 録音 ──────────────────────────────────────────────────────
+async function toggleRecord() {
+  if (isRecording) {
+    mediaRecorder.stop();
+    isRecording = false;
+    document.getElementById('recBtn').classList.remove('recording');
+    document.getElementById('statusText').textContent = 'AI が分析中...';
+    return;
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder = new MediaRecorder(stream, {
+      mimeType: 'audio/webm;codecs=opus',
+      audioBitsPerSecond: 16000,
+    });
+    audioChunks = [];
+    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+    mediaRecorder.onstop = async () => {
+      const blob = new Blob(audioChunks, { type: 'audio/webm' });
+      const base64 = await new Promise(r => {
+        const rd = new FileReader();
+        rd.onload = () => r(rd.result.split(',')[1]);
+        rd.readAsDataURL(blob);
+      });
+      processAnswer(base64);
+    };
+    mediaRecorder.start();
+    isRecording = true;
+    document.getElementById('recBtn').classList.add('recording');
+    document.getElementById('statusText').textContent = '話してください...';
+    setTimeout(() => {
       if (isRecording) {
         mediaRecorder.stop();
         isRecording = false;
         document.getElementById('recBtn').classList.remove('recording');
         document.getElementById('statusText').textContent = 'AI が分析中...';
-        return;
       }
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream, {
-          mimeType: 'audio/webm;codecs=opus',
-          audioBitsPerSecond: 16000,
-        });
-        audioChunks = [];
-        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-        mediaRecorder.onstop = async () => {
-          const blob = new Blob(audioChunks, { type: 'audio/webm' });
-          const base64 = await new Promise(r => {
-            const rd = new FileReader();
-            rd.onload = () => r(rd.result.split(',')[1]);
-            rd.readAsDataURL(blob);
-          });
-          process(base64);
-        };
-        mediaRecorder.start();
-        isRecording = true;
-        document.getElementById('recBtn').classList.add('recording');
-        document.getElementById('statusText').textContent = '話してください...';
+    }, 15000);
+  } catch (e) { alert('マイクを許可してください'); }
+}
 
-        // 15秒で自動停止
-        setTimeout(() => {
-          if (isRecording) {
-            mediaRecorder.stop();
-            isRecording = false;
-            document.getElementById('recBtn').classList.remove('recording');
-            document.getElementById('statusText').textContent = 'AI が分析中...';
-          }
-        }, 15000);
+// ── API処理 ──────────────────────────────────────────────────
+async function processAnswer(base64) {
+  const q = challengeQuestions[currentIndex];
+  showProgress();
+  document.getElementById('recBtn').disabled = true;
 
-      } catch (e) { alert('マイクを許可してください'); }
-    }
-
-    async function process(base64) {
-      showProgress();
-      const prompt = `あなたはプロの英語コーチです。
-生徒に「${currentQuestion.ja}」という日本語を英語で言わせる練習をさせています。
-正解例は「${currentQuestion.en}」です。
-
+  const prompt = `あなたはプロの英語コーチです。
+生徒に「${q.ja}」という日本語を英語で言わせる練習をさせています。
+正解例は「${q.en}」です。
 以下のJSON形式でのみ回答してください:
-{"transcript":"聞き取った生徒の英語","improved":"${currentQuestion.en}","score":0-100,"feedback":"【解説】まず生徒の良かった点を一言褒めてから、正解例と比較して間違いをやさしく日本語で説明してください。最後に一言励ましの言葉を添えてください。"}`;
-      
-      try {
-        const res = await fetch('/api/correct', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ base64Audio: base64, prompt: prompt })
-        });
-        const data = await res.json();
+{"transcript":"聞き取った生徒の英語","improved":"${q.en}","score":0-100,"feedback":"まず生徒の良かった点を一言褒めてから、正解例と比較して間違いをやさしく日本語で説明してください。最後に一言励ましの言葉を添えてください。"}`;
 
-        if (!data.candidates || !data.candidates[0]) {
-          throw new Error('AIの応答がありませんでした。もう一度お試しください。');
-        }
+  try {
+    const res = await fetch('/api/correct', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ base64Audio: base64, prompt })
+    });
+    const data = await res.json();
 
-        const result = JSON.parse(data.candidates[0].content.parts[0].text.match(/\{.*\}/s)[0]);
-
-        completeProgress();
-        document.getElementById('resultCard').style.display = 'block';
-        document.getElementById('scoreBadge').textContent = `Score: ${result.score}`;
-        document.getElementById('userAns').textContent = result.transcript;
-        document.getElementById('betterAns').textContent = result.improved;
-        document.getElementById('feedbackText').textContent = result.feedback;
-        document.getElementById('statusText').textContent = '添削完了！';
-      } catch (e) {
-        hideProgress();
-        document.getElementById('statusText').innerHTML = `<span style="color:red">エラー: ${e.message}</span>`;
-      }
+    if (!data.candidates || !data.candidates[0]) {
+      throw new Error('AIの応答がありませんでした。もう一度お試しください。');
     }
-  </script>
+
+    const result = JSON.parse(data.candidates[0].content.parts[0].text.match(/\{.*\}/s)[0]);
+    const score = Number(result.score) || 0;
+
+    scores.push(score);
+    if (!patternScores[q.pattern]) patternScores[q.pattern] = { total: 0, count: 0 };
+    patternScores[q.pattern].total += score;
+    patternScores[q.pattern].count++;
+
+    completeProgress();
+
+    const correctCount = scores.filter(s => s >= 80).length;
+    const avgScore = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+
+    document.getElementById('resultCard').style.display = 'block';
+    document.getElementById('scoreBadge').textContent = `Score: ${score}`;
+    document.getElementById('userAns').textContent = result.transcript;
+    document.getElementById('betterAns').textContent = result.improved;
+    document.getElementById('feedbackText').textContent = result.feedback;
+    document.getElementById('correctCount').textContent = `${correctCount} / ${scores.length}`;
+    document.getElementById('avgScore').textContent = avgScore;
+    document.getElementById('statusText').textContent = '添削完了！';
+
+    document.getElementById('nextBtn').style.display = 'block';
+    document.getElementById('nextBtn').textContent = currentIndex + 1 >= TOTAL ? '結果を見る 🏆' : `次の問題へ ➔ (${currentIndex + 2} / ${TOTAL})`;
+    document.getElementById('recBtn').disabled = false;
+
+  } catch (e) {
+    completeProgress();
+    document.getElementById('statusText').innerHTML = `<span style="color:red">エラー: ${e.message}</span>`;
+    document.getElementById('recBtn').disabled = false;
+  }
+}
+</script>
 </body>
 </html>
