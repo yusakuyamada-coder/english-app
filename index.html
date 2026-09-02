@@ -490,7 +490,7 @@ async function toggleRecord() {
     document.getElementById('recBtn').classList.add('recording');
     document.getElementById('statusText').textContent = '話してください...';
 
-    // 15秒で自動停止（分析はしない）
+    // 30秒で自動停止（分析はしない）
     setTimeout(() => {
       if (isRecording) {
         audioChunks = [];
@@ -499,7 +499,7 @@ async function toggleRecord() {
         document.getElementById('recBtn').classList.remove('recording');
         document.getElementById('statusText').textContent = '録音が長すぎます。もう一度お試しください。';
       }
-    }, 15000);
+    }, 30000);
 
   } catch (e) { alert('マイクを許可してください'); }
 }
