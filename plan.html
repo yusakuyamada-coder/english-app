@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>あなただけの1週間プラン｜msc</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FDEC97; --card:#FFFFFF; --ink:#23284A; --muted:#5A5F7D;
+  --blue:#4862AC; --pale:#D6DFF2; --coral:#E0623B; --pink:#EC8FB6; --green:#5DB572; --sun:#F4C34A;
+  --on-strong:#FFFFFF;
+  color-scheme: light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1E2445; --card:#2A3260; --ink:#F6F1DC; --muted:#B8BDD8;
+    --blue:#8EA4E8; --pale:#38427C; --coral:#F2865F; --pink:#F2A6C6; --green:#7FCB90; --sun:#F4C34A;
+    --on-strong:#1E2445; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1E2445; --card:#2A3260; --ink:#F6F1DC; --muted:#B8BDD8;
+  --blue:#8EA4E8; --pale:#38427C; --coral:#F2865F; --pink:#F2A6C6; --green:#7FCB90; --sun:#F4C34A;
+  --on-strong:#1E2445; color-scheme: dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);overflow-x:hidden;
+  font-family:"M PLUS Rounded 1c","Hiragino Maru Gothic ProN","Hiragino Sans",system-ui,sans-serif;
+  font-weight:500;line-height:1.85;letter-spacing:.06em;font-size:16px}
+button{font:inherit;letter-spacing:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.wrap{position:relative;max-width:760px;margin:0 auto;padding:48px 20px 96px}
+
+/* decorations */
+.deco{position:absolute;pointer-events:none}
+.d-ast{width:40px;color:var(--coral);left:-6px;top:520px}
+.d-flower{width:56px;right:4px;top:600px}
+.d-burst{width:58px;color:var(--blue);left:10px;bottom:40px}
+.d-squig{width:34px;color:var(--sun);right:24px;bottom:120px}
+.d-green{width:36px;color:var(--green);right:-4px;bottom:30px}
+
+/* octagon card + tilted label (from the brand page) */
+.oct{position:relative;background:var(--card);
+  clip-path:polygon(5% 0,94% 0,100% 11%,99% 86%,92% 100%,7% 100%,0 89%,1% 10%);
+  padding:72px 32px 52px}
+.tag{position:relative;z-index:2;display:inline-block;margin:0 0 -30px 6px}
+.tag .en{display:inline-block;background:var(--pale);color:var(--coral);font-family:"DM Serif Display",Georgia,serif;
+  font-size:40px;line-height:1;padding:12px 22px 14px;transform:rotate(-6deg);letter-spacing:.02em}
+.tag .ja{display:block;width:max-content;background:var(--coral);color:#fff;font-size:14px;font-weight:700;padding:4px 18px;margin:-6px 0 0 54px}
+.rocket{position:absolute;right:-6px;top:-34px;width:96px;z-index:3}
+
+.hero h1{font-size:clamp(26px,6vw,36px);line-height:1.7;font-weight:800;margin:0 0 18px}
+.hero h1 em{font-style:normal;color:var(--coral)}
+.hero p{color:var(--blue);font-weight:700;margin:0 0 30px;max-width:30em}
+.btn{border:0;border-radius:999px;padding:15px 34px;background:var(--coral);color:#fff;font-weight:800;font-size:17px;
+  box-shadow:0 5px 0 color-mix(in srgb,var(--coral) 60%,#000);transition:transform .12s, box-shadow .12s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 color-mix(in srgb,var(--coral) 60%,#000)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.ghost{background:transparent;color:var(--blue);box-shadow:none;padding:15px 6px}
+
+.bubble{position:relative;display:inline-block;border:2px solid var(--blue);background:var(--card);color:var(--blue);
+  font-weight:700;padding:10px 20px;margin:28px 0 0 44px;font-size:15px}
+.bubble::before{content:"";position:absolute;left:-12px;top:50%;width:12px;height:12px;background:var(--card);
+  border-left:2px solid var(--blue);border-bottom:2px solid var(--blue);transform:translateY(-50%) rotate(45deg) translate(4px,-4px)}
+
+/* quiz */
+.quizcard{padding-top:56px}
+.steps{display:flex;gap:6px;margin:0 0 22px;flex-wrap:wrap}
+.steps i{width:22px;height:22px;border-radius:50%;background:var(--pale)}
+.steps i.on{background:var(--coral)}
+.steps i.now{background:var(--blue)}
+.q h2{font-size:clamp(21px,5vw,26px);line-height:1.6;margin:0 0 4px;font-weight:800}
+.q .hint{color:var(--muted);font-size:14px;margin:0 0 22px;min-height:1em}
+.opts{display:grid;gap:12px;margin:0 0 30px}
+.opts.cols{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.opt{text-align:left;background:var(--card);color:var(--ink);border:2px solid var(--blue);border-radius:16px;
+  padding:14px 18px;font-size:16px;line-height:1.6;font-weight:700;transition:transform .15s}
+.opt small{display:block;font-weight:500;font-size:13px;color:var(--muted);margin-top:4px;letter-spacing:.03em}
+.opt[aria-pressed="true"]{background:var(--coral);border-color:var(--coral);color:#fff;transform:rotate(-1.2deg) scale(1.01)}
+.opt[aria-pressed="true"] small{color:#fff}
+textarea{width:100%;min-height:120px;border:2px solid var(--blue);border-radius:16px;padding:14px;font:inherit;
+  background:var(--card);color:var(--ink);resize:vertical;margin:0 0 30px}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:12px}
+
+/* loading */
+.loading{text-align:center;padding:30px 0 10px}
+.loading svg{width:110px;animation:fly 1.6s ease-in-out infinite}
+@keyframes fly{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(6px,-12px) rotate(4deg)}}
+.loading p{color:var(--blue);font-weight:700}
+
+/* result */
+.plan h2{font-size:clamp(26px,6vw,36px);line-height:1.55;margin:0 0 8px;font-weight:800}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 4px}
+.chip{background:var(--blue);color:var(--on-strong);border-radius:999px;font-size:13px;font-weight:700;padding:3px 14px}
+.msg{margin:22px 0 0;color:var(--ink)}
+.notice{background:var(--card);border:2px dashed var(--coral);border-radius:14px;padding:12px 18px;margin:28px 0 0;font-size:14px}
+
+.days{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:26px 22px;margin:56px 0 0}
+.day{position:relative;padding:34px 22px 22px;border-radius:6px}
+.day:nth-child(odd){transform:rotate(-1.6deg)}
+.day:nth-child(even){transform:rotate(1.4deg)}
+.day .lbl{position:absolute;top:-16px;left:16px;background:var(--card);color:var(--coral);
+  font-family:"DM Serif Display",Georgia,serif;font-size:24px;line-height:1;padding:7px 14px 9px;transform:rotate(-4deg);letter-spacing:.02em;
+  box-shadow:0 0 0 2px var(--coral) inset}
+.day h3{font-size:18px;margin:0 0 8px;line-height:1.55;font-weight:800}
+.day ul{margin:0;padding-left:1.1em;font-size:15px;line-height:1.75}
+.day li{margin:3px 0}
+.c-coral{background:var(--coral);color:#fff}
+.c-blue{background:var(--blue);color:var(--on-strong)}
+.c-pale{background:var(--pale);color:var(--ink)}
+.c-pink{background:var(--pink);color:#23284A}
+.c-white{background:var(--card);color:var(--ink)}
+.c-sun{background:var(--sun);color:#23284A}
+
+.tips{position:relative;margin:64px auto 0;max-width:520px;background:var(--blue);color:var(--on-strong);
+  padding:30px 32px;transform:rotate(-2deg)}
+.tips h3{margin:0 0 8px;font-size:19px}
+.tips ul{margin:0;padding-left:1.1em}
+.end{text-align:center;margin:56px 0 0}
+.fine{font-size:13px;color:var(--muted);margin:16px 0 0}
+[hidden]{display:none!important}
+
+@media (max-width:560px){
+  .oct{padding:64px 22px 44px}
+  .rocket{width:72px;right:-4px;top:-24px}
+  .bubble{margin-left:20px}
+  .d-ast,.d-flower{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .loading svg{animation:none}
+  .opt,.btn{transition:none}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+<!-- decorations -->
+<svg class="deco d-ast" viewBox="0 0 40 40" aria-hidden="true"><g stroke="currentColor" stroke-width="5" stroke-linecap="round"><path d="M20 4v32M4 20h32M8 8l24 24M32 8L8 32"/></g></svg>
+<svg class="deco d-flower" viewBox="0 0 60 60" aria-hidden="true"><path fill="var(--pink)" d="M30 4c6 0 7 10 11 12s14-2 15 4-9 8-9 13 7 12 2 16-11-4-17-4-12 9-17 5 1-12-1-17S0 26 3 20s12-1 16-4 5-12 11-12z"/><path d="M23 26l3 3m0-3l-3 3M34 26l3 3m0-3l-3 3M24 35q6 5 12 0" stroke="var(--sun)" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+<svg class="deco d-burst" viewBox="0 0 60 60" aria-hidden="true"><g stroke="currentColor" stroke-width="6" stroke-linecap="round"><path d="M30 4v52M4 30h52M11 11l38 38M49 11L11 49M18 6l24 48M6 42l48-24"/></g><circle cx="30" cy="30" r="6" fill="var(--pink)"/></svg>
+<svg class="deco d-squig" viewBox="0 0 34 60" aria-hidden="true"><path d="M8 4q18 4 8 14t8 14q10 10-8 14t10 12" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/></svg>
+<svg class="deco d-green" viewBox="0 0 40 40" aria-hidden="true"><g stroke="currentColor" stroke-width="7" stroke-linecap="round"><path d="M20 5v30M7 13l26 14M33 13L7 27"/></g></svg>
+
+<template id="rocketTpl">
+<svg viewBox="0 0 100 100" aria-hidden="true">
+  <g transform="rotate(35 50 50)">
+    <path d="M42 70 Q50 98 58 70 Q54 86 50 92 Q46 86 42 70z" fill="var(--coral)"/>
+    <path d="M45 70 Q50 88 55 70z" fill="var(--pink)"/>
+    <path d="M38 52 L26 70 L40 64z M62 52 L74 70 L60 64z" fill="var(--green)"/>
+    <path d="M50 6 Q66 24 62 68 L38 68 Q34 24 50 6z" fill="var(--blue)"/>
+    <path d="M50 6 Q58 14 60 22 L40 22 Q42 14 50 6z" fill="var(--coral)"/>
+    <circle cx="50" cy="38" r="7" fill="var(--sun)"/>
+  </g>
+</svg>
+</template>
+
+<section id="intro">
+  <div class="tag"><span class="en">MY PLAN</span><span class="ja">あなただけの1週間プラン</span></div>
+  <div class="oct hero">
+    <span class="rocket" data-rocket></span>
+    <h1>英語を、<br>あなたの毎日に<br><em>ぴったりのかたち</em>で。</h1>
+    <p>8つの質問に答えると、選んだコースを使った7日間のプランが届きます。2分ほどで終わります。</p>
+    <button class="btn" id="start">はじめる</button>
+  </div>
+  <div class="bubble">まずは7日間、いっしょに一歩ふみ出してみよう</div>
+</section>
+
+<section id="quiz" hidden>
+  <div class="tag"><span class="en">Q.</span><span class="ja" id="qnum">質問 1 / 8</span></div>
+  <div class="oct quizcard">
+    <div class="steps" id="steps" aria-hidden="true"></div>
+    <div class="q" id="qbox"></div>
+    <div class="nav">
+      <button class="btn ghost" id="back">戻る</button>
+      <button class="btn" id="next" disabled>次へ</button>
+    </div>
+  </div>
+</section>
+
+<section id="result" hidden aria-live="polite"></section>
+
+</main>
+
+<script>
+/* =========================================================
+   設定
+   ========================================================= */
+// 本番（Vercelなど）では "/api/plan" を指定するとGeminiで生成します。
+// 空のままだと、claude.ai上のプレビューではClaudeで生成します。
+const AI_ENDPOINT = "/api/plan";
+
+// 編集ポイント①：コース（会員が自分で選びます）
+const COURSES = [
+  { name:"日常Vlogコース",
+    short:"ネイティブの日常会話をシャドーイングで",
+    about:"日常のVlog動画を教材に、ネイティブの自然な会話表現をシャドーイングで身につけるコース。" },
+  { name:"大人のやり直し英語55",
+    short:"中学英語の基礎を55のレッスンでやり直す",
+    about:"中学英語の基礎を、短いレッスン55本でやり直すコース。文法と基本表現を音読・シャドーイングで定着させる。" }
+];
+
+// 編集ポイント②：質問
+const QUESTIONS = [
+  { id:"course", q:"今回取り組むコースを選んでね", type:"course" },
+  { id:"goal", q:"英語で、いちばんやりたいことは？", type:"single",
+    opts:["日常会話や旅行で話したい","海外ドラマや動画を字幕なしで楽しみたい","仕事で使えるようになりたい","とにかく基礎からやり直したい"] },
+  { id:"level", q:"今の英語力に近いのは？", type:"single",
+    opts:["中学英語があやしい","中学英語はだいたいわかる","簡単なやりとりならできる","日常会話はあまり困らない"] },
+  { id:"time", q:"1日に英語に使えそうな時間は？", type:"single",
+    opts:["10分くらい","15〜20分","30分くらい","1時間以上"] },
+  { id:"when", q:"取り組みやすい時間帯は？", type:"single",
+    opts:["朝","通勤や家事のすきま時間","夜、寝る前","日によってバラバラ"] },
+  { id:"block", q:"今まで英語が続かなかった、いちばんの理由は？", hint:"いちばん近いものをひとつ選んでね", type:"single",
+    opts:["何をやればいいかわからなくなる","忙しくて時間がとれなくなる","成長を感じられず飽きてしまう","完璧にやろうとして疲れてしまう"] },
+  { id:"weak", q:"ニガテだと感じるものは？", hint:"いくつでも選べます", type:"multi",
+    opts:["聞き取り","発音","単語・表現","文法","話そうとすると言葉が出てこない"] },
+  { id:"free", q:"最後に、今の状況やゴールを自由に教えてね", hint:"例：子どもが寝たあとしか時間がない／来年の旅行で注文を自分でしたい（空欄でもOK）", type:"text" }
+];
+const MINUTES = [10,20,30,60];
+
+/* ========================================================= */
+const $ = id => document.getElementById(id);
+const answers = {}; let step = 0; let samplePromise;
+document.querySelectorAll("[data-rocket]").forEach(n => n.append($("rocketTpl").content.cloneNode(true)));
+if (window.claude && claude.use) samplePromise = claude.use("sample");
+
+$("start").onclick = () => { $("intro").hidden = true; $("quiz").hidden = false; render(); window.scrollTo(0,0); };
+$("back").onclick = () => { if (step === 0){ $("quiz").hidden = true; $("intro").hidden = false; return; } step--; render(); };
+$("next").onclick = () => { if (step < QUESTIONS.length - 1){ step++; render(); } else finish(); };
+
+function render(){
+  const Q = QUESTIONS[step];
+  $("qnum").textContent = `質問 ${step+1} / ${QUESTIONS.length}`;
+  $("steps").innerHTML = QUESTIONS.map((_,i)=>`<i class="${i<step?'on':i===step?'now':''}"></i>`).join("");
+  const box = $("qbox"); box.innerHTML = "";
+  box.append(el("h2",null,Q.q), el("p","hint",Q.hint||""));
+
+  if (Q.type === "text"){
+    const t = document.createElement("textarea"); t.value = answers.free || ""; t.maxLength = 400;
+    t.setAttribute("aria-label", Q.q); t.oninput = () => answers.free = t.value; box.append(t);
+    $("next").disabled = false;
+  } else {
+    const wrap = el("div", Q.type==="course" ? "opts cols" : "opts");
+    const list = Q.type==="course" ? COURSES : Q.opts;
+    list.forEach((o,i) => {
+      const b = el("button","opt");
+      if (Q.type==="course"){ b.append(document.createTextNode(o.name), el("small",null,o.short)); }
+      else b.textContent = o;
+      const cur = answers[Q.id];
+      b.setAttribute("aria-pressed", Q.type==="multi" ? (cur||[]).includes(i) : cur===i);
+      b.onclick = () => {
+        if (Q.type==="multi"){ const s=new Set(answers[Q.id]||[]); s.has(i)?s.delete(i):s.add(i); answers[Q.id]=[...s]; render(); }
+        else { answers[Q.id]=i; render(); setTimeout(()=>$("next").click(), 220); }
+      };
+      wrap.append(b);
+    });
+    box.append(wrap);
+    $("next").disabled = Q.type==="multi" ? !(answers[Q.id]||[]).length : answers[Q.id]===undefined;
+  }
+  $("next").textContent = step === QUESTIONS.length-1 ? "プランをつくる" : "次へ";
+  $("back").textContent = step === 0 ? "はじめに戻る" : "戻る";
+}
+
+function payload(){
+  const r = {};
+  QUESTIONS.slice(1).forEach(Q => {
+    if (Q.type==="text") r[Q.q] = (answers.free||"").trim() || "（記入なし）";
+    else if (Q.type==="multi") r[Q.q] = (answers[Q.id]||[]).map(i=>Q.opts[i]).join("、");
+    else r[Q.q] = Q.opts[answers[Q.id]];
+  });
+  const c = COURSES[answers.course];
+  return { answers:r, course:c.name, courseAbout:c.about, minutes:MINUTES[answers.time] };
+}
+
+/* プロンプト（api/plan.js にも同じものがあります。変えるときは両方を） */
+function buildPrompt(p){
+  return `あなたは英語学習コミュニティ「msc（maho shadowing club）」の学習コーチです。
+mscは「英語を通して、自分の可能性を広げるきっかけをつくる」場所。シャドーイングを中心に、忙しい大人が無理なく続けられる学習を大切にしています。
+以下の会員の回答とルールに従って、この人だけの「7日間の学習プラン」を日本語で作ってください。
+
+# 会員の回答
+${JSON.stringify(p.answers, null, 2)}
+
+# ルール
+- 使う教材は会員が選んだ「${p.course}」だけ。（${p.courseAbout}）
+- 1日の学習時間はおよそ${p.minutes}分。7日目は振り返りの日にして軽めでもよい
+- 「続かなかった理由」への具体的な対策を、7日間の流れに組み込む
+- ニガテ分野と取り組みやすい時間帯を反映する
+- 存在しない教材・アプリ・レッスン番号を作らない
+- 明るく前向きで、ワクワクする口調。上から目線にしない。絵文字は使わない
+
+# 出力形式（JSONのみ。前置きやコードブロックは不要）
+{
+  "title": "この人の1週間を表す、わくわくする短い見出し（20字以内）",
+  "message": "この人へのメッセージ。回答内容に触れながら2〜3文",
+  "days": [{"theme": "その日のテーマ（12字以内）", "tasks": ["具体的な取り組み（1文）"]}],
+  "tips": ["続けるためのコツ"]
+}
+daysは必ず7つ、各日のtasksは2〜3個。tipsは2〜3個。`;
+}
+
+async function generate(p){
+  if (AI_ENDPOINT){
+    const r = await fetch(AI_ENDPOINT, { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(p) });
+    if (!r.ok) throw { code:"server" };
+    const data = await r.json();
+    // Geminiの生の応答（candidates形式）がそのまま返ってきた場合にも対応
+    if (data && data.candidates){
+      const text = (data.candidates[0]?.content?.parts || []).map(x => x.text || "").join("");
+      return JSON.parse(text.match(/\{.*\}/s)[0]);
+    }
+    return data;
+  }
+  const sample = samplePromise ? await samplePromise : null;
+  if (!sample) throw { code:"unavailable" };
+  return await sample.json(buildPrompt(p), { modelTier:"default" });
+}
+
+async function finish(){
+  $("quiz").hidden = true;
+  const res = $("result"); res.hidden = false; res.innerHTML = "";
+  const tag = el("div","tag"); tag.append(el("span","en","Wait!"), el("span","ja","プランをつくっています"));
+  const card = el("div","oct"); const ld = el("div","loading");
+  ld.append($("rocketTpl").content.cloneNode(true), el("p",null,"あなたの回答から、7日間を組み立て中…"), el("p","fine","30秒ほどかかることがあります"));
+  card.append(ld); res.append(tag, card); window.scrollTo(0,0);
+
+  const p = payload();
+  try { show(await generate(p), p); }
+  catch(e){
+    const msg = e && e.code==="not_granted" ? "AIの利用が許可されなかったので、基本プランを表示しています。"
+              : e && e.code==="rate_limited" ? "混み合っているので、基本プランを表示しています。少し時間をおいて作り直せます。"
+              : "AIのプラン作成がうまくいかなかったので、基本プランを表示しています。";
+    show(fallback(p), p, msg);
+  }
+}
+
+function fallback(p){
+  return {
+    title:"7日間で「毎日ひらく」をつくろう",
+    message:"回答をもとに、無理なく続けられる基本プランを用意しました。まずは毎日コースをひらくことだけを目標にしてみてください。",
+    days:["まずは聞いてみる","声に出して読む","音読をもう一度","シャドーイング初挑戦","お気に入りを見つける","もう一歩なめらかに","1週間のふり返り"]
+      .map(t=>({ theme:t, tasks:[`${p.course}のレッスンを1本進める`,"できたらカレンダーに印をつける"] })),
+    tips:["時間がない日は1本聞くだけでもOK","できたことを1行メモしておく"]
+  };
+}
+
+function el(tag, cls, text){ const e=document.createElement(tag); if(cls) e.className=cls; if(text!=null) e.textContent=text; return e; }
+
+function show(plan, p, notice){
+  const res = $("result"); res.innerHTML = "";
+  const tag = el("div","tag"); tag.append(el("span","en","MY PLAN"), el("span","ja","あなただけの1週間プラン"));
+  const card = el("div","oct plan");
+  const rk = el("span","rocket"); rk.append($("rocketTpl").content.cloneNode(true)); card.append(rk);
+  card.append(el("h2",null,plan.title||"あなたの7日間プラン"));
+  const meta = el("div","meta"); meta.append(el("span","chip",p.course), el("span","chip",`1日 約${p.minutes}分`)); card.append(meta);
+  card.append(el("p","msg",plan.message||""));
+  if (notice) card.append(el("p","notice",notice));
+  res.append(tag, card);
+
+  const colors = ["c-coral","c-white","c-blue","c-pale","c-pink","c-sun","c-coral"];
+  const grid = el("div","days");
+  (plan.days||[]).slice(0,7).forEach((d,i)=>{
+    const c = el("article","day "+colors[i%colors.length]);
+    c.append(el("span","lbl",`Day ${i+1}`), el("h3",null,d.theme||""));
+    const ul = el("ul"); (d.tasks||[]).forEach(t=>ul.append(el("li",null,t))); c.append(ul);
+    grid.append(c);
+  });
+  res.append(grid);
+
+  if ((plan.tips||[]).length){
+    const t = el("div","tips"); t.append(el("h3",null,"続けるためのコツ"));
+    const ul = el("ul"); plan.tips.forEach(x=>ul.append(el("li",null,x))); t.append(ul); res.append(t);
+  }
+  const end = el("div","end");
+  const again = el("button","btn","もう一度つくる");
+  again.onclick = () => { step=0; for(const k in answers) delete answers[k]; res.hidden=true; $("intro").hidden=false; window.scrollTo(0,0); };
+  end.append(again, el("p","fine","このプランは回答をもとにAIが作成したものです。合わないと感じたら、いつでも作り直してください。"));
+  res.append(end);
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
