@@ -102,7 +102,7 @@ textarea{width:100%;min-height:120px;border:2px solid var(--blue);border-radius:
 .msg{margin:22px 0 0;color:var(--ink)}
 .notice{background:var(--card);border:2px dashed var(--coral);border-radius:14px;padding:12px 18px;margin:28px 0 0;font-size:14px}
 
-.days{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:26px 22px;margin:56px 0 0}
+.days{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:26px 22px;margin:36px 0 0}
 .day{position:relative;padding:34px 22px 22px;border-radius:6px}
 .day:nth-child(odd){transform:rotate(-1.6deg)}
 .day:nth-child(even){transform:rotate(1.4deg)}
@@ -125,6 +125,25 @@ textarea{width:100%;min-height:120px;border:2px solid var(--blue);border-radius:
 .tips ul{margin:0;padding-left:1.1em}
 .end{text-align:center;margin:56px 0 0}
 .fine{font-size:13px;color:var(--muted);margin:16px 0 0}
+.tag.sect{margin-top:64px}
+.tag.sect .en{font-size:32px}
+.routine-card{padding-top:60px}
+.routine{list-style:none;margin:0;padding:0;counter-reset:s}
+.routine li{position:relative;counter-increment:s;padding:0 0 22px 52px;margin:0 0 22px;border-bottom:2px dotted var(--pale)}
+.routine li:last-child{border-bottom:0;margin-bottom:8px}
+.routine li::before{content:counter(s);position:absolute;left:0;top:0;width:36px;height:36px;border-radius:50%;
+  background:var(--coral);color:#fff;font-weight:800;display:grid;place-items:center;font-size:17px;letter-spacing:0}
+.r-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.r-step{font-size:19px;font-weight:800}
+.r-min{background:var(--pale);color:var(--blue);border-radius:999px;font-size:13px;font-weight:700;padding:1px 12px}
+.r-how{margin:6px 0 0;line-height:1.9}
+.minimum{display:flex;flex-direction:column;gap:2px;background:var(--sun);color:#23284A;padding:16px 22px;margin:20px 0 0;transform:rotate(-1.5deg)}
+.minimum strong{font-size:14px}
+.days.phases{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.day .range{margin:0;font-size:13px;font-weight:700;opacity:.85}
+.day .goal{margin:6px 0 10px;font-weight:700;line-height:1.7}
+.day .focus{margin:0;font-size:15px;line-height:1.8}
+.day .focus strong{display:block;font-size:13px;opacity:.85}
 [hidden]{display:none!important}
 
 @media (max-width:560px){
@@ -167,7 +186,7 @@ textarea{width:100%;min-height:120px;border:2px solid var(--blue);border-radius:
   <div class="oct hero">
     <span class="rocket" data-rocket></span>
     <h1>英語を、<br>あなたの毎日に<br><em>ぴったりのかたち</em>で。</h1>
-    <p>8つの質問に答えると、選んだコースを使った7日間のプランが届きます。2分ほどで終わります。</p>
+    <p>8つの質問に答えると、選んだコースの「1日のやり方」と7日間の進め方が届きます。2分ほどで終わります。</p>
     <button class="btn" id="start">はじめる</button>
   </div>
   <div class="bubble">まずは7日間、いっしょに一歩ふみ出してみよう</div>
@@ -219,173 +238,3 @@ const QUESTIONS = [
   { id:"when", q:"取り組みやすい時間帯は？", type:"single",
     opts:["朝","通勤や家事のすきま時間","夜、寝る前","日によってバラバラ"] },
   { id:"block", q:"今まで英語が続かなかった、いちばんの理由は？", hint:"いちばん近いものをひとつ選んでね", type:"single",
-    opts:["何をやればいいかわからなくなる","忙しくて時間がとれなくなる","成長を感じられず飽きてしまう","完璧にやろうとして疲れてしまう"] },
-  { id:"weak", q:"ニガテだと感じるものは？", hint:"いくつでも選べます", type:"multi",
-    opts:["聞き取り","発音","単語・表現","文法","話そうとすると言葉が出てこない"] },
-  { id:"free", q:"最後に、今の状況やゴールを自由に教えてね", hint:"例：子どもが寝たあとしか時間がない／来年の旅行で注文を自分でしたい（空欄でもOK）", type:"text" }
-];
-const MINUTES = [10,20,30,60];
-
-/* ========================================================= */
-const $ = id => document.getElementById(id);
-const answers = {}; let step = 0; let samplePromise;
-document.querySelectorAll("[data-rocket]").forEach(n => n.append($("rocketTpl").content.cloneNode(true)));
-if (window.claude && claude.use) samplePromise = claude.use("sample");
-
-$("start").onclick = () => { $("intro").hidden = true; $("quiz").hidden = false; render(); window.scrollTo(0,0); };
-$("back").onclick = () => { if (step === 0){ $("quiz").hidden = true; $("intro").hidden = false; return; } step--; render(); };
-$("next").onclick = () => { if (step < QUESTIONS.length - 1){ step++; render(); } else finish(); };
-
-function render(){
-  const Q = QUESTIONS[step];
-  $("qnum").textContent = `質問 ${step+1} / ${QUESTIONS.length}`;
-  $("steps").innerHTML = QUESTIONS.map((_,i)=>`<i class="${i<step?'on':i===step?'now':''}"></i>`).join("");
-  const box = $("qbox"); box.innerHTML = "";
-  box.append(el("h2",null,Q.q), el("p","hint",Q.hint||""));
-
-  if (Q.type === "text"){
-    const t = document.createElement("textarea"); t.value = answers.free || ""; t.maxLength = 400;
-    t.setAttribute("aria-label", Q.q); t.oninput = () => answers.free = t.value; box.append(t);
-    $("next").disabled = false;
-  } else {
-    const wrap = el("div", Q.type==="course" ? "opts cols" : "opts");
-    const list = Q.type==="course" ? COURSES : Q.opts;
-    list.forEach((o,i) => {
-      const b = el("button","opt");
-      if (Q.type==="course"){ b.append(document.createTextNode(o.name), el("small",null,o.short)); }
-      else b.textContent = o;
-      const cur = answers[Q.id];
-      b.setAttribute("aria-pressed", Q.type==="multi" ? (cur||[]).includes(i) : cur===i);
-      b.onclick = () => {
-        if (Q.type==="multi"){ const s=new Set(answers[Q.id]||[]); s.has(i)?s.delete(i):s.add(i); answers[Q.id]=[...s]; render(); }
-        else { answers[Q.id]=i; render(); setTimeout(()=>$("next").click(), 220); }
-      };
-      wrap.append(b);
-    });
-    box.append(wrap);
-    $("next").disabled = Q.type==="multi" ? !(answers[Q.id]||[]).length : answers[Q.id]===undefined;
-  }
-  $("next").textContent = step === QUESTIONS.length-1 ? "プランをつくる" : "次へ";
-  $("back").textContent = step === 0 ? "はじめに戻る" : "戻る";
-}
-
-function payload(){
-  const r = {};
-  QUESTIONS.slice(1).forEach(Q => {
-    if (Q.type==="text") r[Q.q] = (answers.free||"").trim() || "（記入なし）";
-    else if (Q.type==="multi") r[Q.q] = (answers[Q.id]||[]).map(i=>Q.opts[i]).join("、");
-    else r[Q.q] = Q.opts[answers[Q.id]];
-  });
-  const c = COURSES[answers.course];
-  return { answers:r, course:c.name, courseAbout:c.about, minutes:MINUTES[answers.time] };
-}
-
-/* プロンプト（api/plan.js にも同じものがあります。変えるときは両方を） */
-function buildPrompt(p){
-  return `あなたは英語学習コミュニティ「msc（maho shadowing club）」の学習コーチです。
-mscは「英語を通して、自分の可能性を広げるきっかけをつくる」場所。シャドーイングを中心に、忙しい大人が無理なく続けられる学習を大切にしています。
-以下の会員の回答とルールに従って、この人だけの「7日間の学習プラン」を日本語で作ってください。
-
-# 会員の回答
-${JSON.stringify(p.answers, null, 2)}
-
-# ルール
-- 使う教材は会員が選んだ「${p.course}」だけ。（${p.courseAbout}）
-- 1日の学習時間はおよそ${p.minutes}分。7日目は振り返りの日にして軽めでもよい
-- 「続かなかった理由」への具体的な対策を、7日間の流れに組み込む
-- ニガテ分野と取り組みやすい時間帯を反映する
-- 存在しない教材・アプリ・レッスン番号を作らない
-- 明るく前向きで、ワクワクする口調。上から目線にしない。絵文字は使わない
-
-# 出力形式（JSONのみ。前置きやコードブロックは不要）
-{
-  "title": "この人の1週間を表す、わくわくする短い見出し（20字以内）",
-  "message": "この人へのメッセージ。回答内容に触れながら2〜3文",
-  "days": [{"theme": "その日のテーマ（12字以内）", "tasks": ["具体的な取り組み（1文）"]}],
-  "tips": ["続けるためのコツ"]
-}
-daysは必ず7つ、各日のtasksは2〜3個。tipsは2〜3個。`;
-}
-
-async function generate(p){
-  if (AI_ENDPOINT){
-    const r = await fetch(AI_ENDPOINT, { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(p) });
-    if (!r.ok) throw { code:"server" };
-    const data = await r.json();
-    // Geminiの生の応答（candidates形式）がそのまま返ってきた場合にも対応
-    if (data && data.candidates){
-      const text = (data.candidates[0]?.content?.parts || []).map(x => x.text || "").join("");
-      return JSON.parse(text.match(/\{.*\}/s)[0]);
-    }
-    return data;
-  }
-  const sample = samplePromise ? await samplePromise : null;
-  if (!sample) throw { code:"unavailable" };
-  return await sample.json(buildPrompt(p), { modelTier:"default" });
-}
-
-async function finish(){
-  $("quiz").hidden = true;
-  const res = $("result"); res.hidden = false; res.innerHTML = "";
-  const tag = el("div","tag"); tag.append(el("span","en","Wait!"), el("span","ja","プランをつくっています"));
-  const card = el("div","oct"); const ld = el("div","loading");
-  ld.append($("rocketTpl").content.cloneNode(true), el("p",null,"あなたの回答から、7日間を組み立て中…"), el("p","fine","30秒ほどかかることがあります"));
-  card.append(ld); res.append(tag, card); window.scrollTo(0,0);
-
-  const p = payload();
-  try { show(await generate(p), p); }
-  catch(e){
-    const msg = e && e.code==="not_granted" ? "AIの利用が許可されなかったので、基本プランを表示しています。"
-              : e && e.code==="rate_limited" ? "混み合っているので、基本プランを表示しています。少し時間をおいて作り直せます。"
-              : "AIのプラン作成がうまくいかなかったので、基本プランを表示しています。";
-    show(fallback(p), p, msg);
-  }
-}
-
-function fallback(p){
-  return {
-    title:"7日間で「毎日ひらく」をつくろう",
-    message:"回答をもとに、無理なく続けられる基本プランを用意しました。まずは毎日コースをひらくことだけを目標にしてみてください。",
-    days:["まずは聞いてみる","声に出して読む","音読をもう一度","シャドーイング初挑戦","お気に入りを見つける","もう一歩なめらかに","1週間のふり返り"]
-      .map(t=>({ theme:t, tasks:[`${p.course}のレッスンを1本進める`,"できたらカレンダーに印をつける"] })),
-    tips:["時間がない日は1本聞くだけでもOK","できたことを1行メモしておく"]
-  };
-}
-
-function el(tag, cls, text){ const e=document.createElement(tag); if(cls) e.className=cls; if(text!=null) e.textContent=text; return e; }
-
-function show(plan, p, notice){
-  const res = $("result"); res.innerHTML = "";
-  const tag = el("div","tag"); tag.append(el("span","en","MY PLAN"), el("span","ja","あなただけの1週間プラン"));
-  const card = el("div","oct plan");
-  const rk = el("span","rocket"); rk.append($("rocketTpl").content.cloneNode(true)); card.append(rk);
-  card.append(el("h2",null,plan.title||"あなたの7日間プラン"));
-  const meta = el("div","meta"); meta.append(el("span","chip",p.course), el("span","chip",`1日 約${p.minutes}分`)); card.append(meta);
-  card.append(el("p","msg",plan.message||""));
-  if (notice) card.append(el("p","notice",notice));
-  res.append(tag, card);
-
-  const colors = ["c-coral","c-white","c-blue","c-pale","c-pink","c-sun","c-coral"];
-  const grid = el("div","days");
-  (plan.days||[]).slice(0,7).forEach((d,i)=>{
-    const c = el("article","day "+colors[i%colors.length]);
-    c.append(el("span","lbl",`Day ${i+1}`), el("h3",null,d.theme||""));
-    const ul = el("ul"); (d.tasks||[]).forEach(t=>ul.append(el("li",null,t))); c.append(ul);
-    grid.append(c);
-  });
-  res.append(grid);
-
-  if ((plan.tips||[]).length){
-    const t = el("div","tips"); t.append(el("h3",null,"続けるためのコツ"));
-    const ul = el("ul"); plan.tips.forEach(x=>ul.append(el("li",null,x))); t.append(ul); res.append(t);
-  }
-  const end = el("div","end");
-  const again = el("button","btn","もう一度つくる");
-  again.onclick = () => { step=0; for(const k in answers) delete answers[k]; res.hidden=true; $("intro").hidden=false; window.scrollTo(0,0); };
-  end.append(again, el("p","fine","このプランは回答をもとにAIが作成したものです。合わないと感じたら、いつでも作り直してください。"));
-  res.append(end);
-  window.scrollTo(0,0);
-}
-</script>
-</body>
-</html>
