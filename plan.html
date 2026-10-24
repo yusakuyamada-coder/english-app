@@ -139,7 +139,11 @@ textarea{width:100%;min-height:120px;border:2px solid var(--blue);border-radius:
 .r-how{margin:6px 0 0;line-height:1.9}
 .minimum{display:flex;flex-direction:column;gap:2px;background:var(--sun);color:#23284A;padding:16px 22px;margin:20px 0 0;transform:rotate(-1.5deg)}
 .minimum strong{font-size:14px}
-.days.phases{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.ph-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 4px}
+.ph-days{font-weight:800;font-size:15px;padding:4px 14px;border-radius:999px}
+.ph-name{margin:0;font-size:22px;font-weight:800;line-height:1.5}
+.ph-goal{margin:0 0 24px;color:var(--blue);font-weight:700}
+.minimum.solo{max-width:560px;margin:48px auto 0}
 .day .range{margin:0;font-size:13px;font-weight:700;opacity:.85}
 .day .goal{margin:6px 0 10px;font-weight:700;line-height:1.7}
 .day .focus{margin:0;font-size:15px;line-height:1.8}
@@ -186,10 +190,10 @@ textarea{width:100%;min-height:120px;border:2px solid var(--blue);border-radius:
   <div class="oct hero">
     <span class="rocket" data-rocket></span>
     <h1>英語を、<br>あなたの毎日に<br><em>ぴったりのかたち</em>で。</h1>
-    <p>8つの質問に答えると、選んだコースの「1日のやり方」と7日間の進め方が届きます。2分ほどで終わります。</p>
+    <p>8つの質問に答えると、選んだコースの曜日ごとのメニューを「どうやるか」まで深掘りした1週間プランが届きます。2分ほどで終わります。</p>
     <button class="btn" id="start">はじめる</button>
   </div>
-  <div class="bubble">まずは7日間、いっしょに一歩ふみ出してみよう</div>
+  <div class="bubble">まずは1週間、いっしょに一歩ふみ出してみよう</div>
 </section>
 
 <section id="quiz" hidden>
@@ -217,16 +221,16 @@ textarea{width:100%;min-height:120px;border:2px solid var(--blue);border-radius:
 const AI_ENDPOINT = "/api/plan";
 
 // 編集ポイント①：コース（会員が自分で選びます）
-// menu に曜日ごとのメニューを書くと、AIがそれに沿ったやり方を提案します（api/plan.js の COURSE_INFO も同じ内容に）
+// menu は曜日ごとのアプリのメニュー。AIはこの順番どおりにやり方を提案します（api/plan.js の COURSE_INFO も同じ内容に）
 const COURSES = [
   { name:"大人のやり直し英語55",
     short:"55の英語の型を1週間に1つずつ。文法も発音もこれからの人に",
     about:"日常英語に必要な55の英語の型（パターン）を、1週間に1つずつ、55週（約1年）かけて身につけるコース。文法も発音もあいまいな初心者向け。アプリで月〜日の曜日ごとにその日のメニューが決まっていて、1日約15分。主な教材：①mahoの文法解説ラジオ（ラジオ風に楽しく、型の使い方・動詞の使い分け・ネイティブ表現を学ぶ）②55の型でシャドーイング（イラスト付き、1文からできる）③リズムで学ぶ単語（日常英語に必要な2000語をリズムに乗せ、体を動かしながら覚える。発音や強弱も同時に身につく）④イメージして発話する瞬間英作文（その週の型の表現を、絵を見て状況をつかみ、すぐに英語で言う）⑤応用英作文（その週の型を使って、まだ習っていない表現を絵を見て即興で組み立てる）。各回は独立していて、できなかった週があっても次の月曜から新しい型で再スタートできる。アプリには常に最新20パターンが表示されるので、やり残しを気にせず進めてよい。",
-    menu:"" },
+    menu:[{"days": "月・火", "items": ["mahoの文法解説ラジオ", "文字ありシャドーイング", "リズム単語"]}, {"days": "水・木", "items": ["文字なしシャドーイング", "リズム単語（日本語のみ）", "瞬間英作文前半"]}, {"days": "金・土・日", "items": ["文字なしシャドーイング", "瞬間英作文後半", "応用英作文"]}] },
   { name:"日常Vlogコース",
     short:"ネイティブのVlog英語で、聞く力と話す力を伸ばしたい人に",
     about:"ネイティブの日常Vlogの英語を教材に、そのまま使える日常表現を身につけるコース。文法はある程度わかっていて、リスニング力と発話力を伸ばしたい人向け。アプリで月〜日の曜日ごとにその日のメニューが決まっていて、1日約15分。特徴：①I・You・Weで始まるシンプルな文が中心で、覚えたフレーズがそのまま日常会話で使える ②単語ではなくチャンク（英語のかたまり）で覚え、リズムに乗せて耳と口に残す ③4コマイラストを見て、覚えたチャンクを瞬時に組み合わせ、目の前の出来事を説明する練習 ④ネイティブ同士のリアルな発音・音のつながり（リンキング）の音声を真似してシャドーイング。初心者は再生速度を下げて挑戦するのがおすすめ。",
-    menu:"" }
+    menu:[{"days": "月・火", "items": ["ネイティブ英語のヒアリング", "発音矯正＆フレーズ解説ラジオ", "文字ありシャドーイング", "リズムチャンク"]}, {"days": "水・木", "items": ["文字ありシャドーイング", "リズムチャンク（日本語のみ）"]}, {"days": "金・土・日", "items": ["文字なしシャドーイング", "リズムチャンク（日本語のみ）", "4コマ英作文", "ネイティブ速度シャドーイング"]}] }
 ];
 const COMMON = "mscの共通の仕組み：その日の学習を報告するオリジナルSNS（仲間の頑張りが見える）、担当講師への質問コーナー（質問し放題）。";
 
@@ -307,35 +311,38 @@ function payload(){
 function buildPrompt(p){
   return `あなたは英語学習コミュニティ「msc（maho shadowing club）」の学習コーチです。
 mscは「英語を通して、自分の可能性を広げるきっかけをつくる」場所。シャドーイングを中心に、忙しい大人が無理なく続けられる学習を大切にしています。
-以下の会員の回答とルールに従って、この人が「今日からすぐ真似できる」7日間の学習プランを日本語で作ってください。
+以下の会員の回答とルールに従って、この人が「今日からすぐ真似できる」1週間の学習プランを日本語で作ってください。
 
 # 会員が選んだコース：${p.course}
 ${p.courseAbout}
 ${p.common}
-${p.menu ? "曜日ごとのメニュー：\n" + p.menu : ""}
+
+# このコースの曜日ごとのメニュー（アプリで決まっている。1日約15分）
+${p.menu.map(b => "・" + b.days + "：" + b.items.join("／")).join("\n")}
+メニューの補足：「（日本語のみ）」は日本語だけが流れるので、それを聞いて英語を自分で思い出して言う練習。「文字あり」はスクリプトを見ながら、「文字なし」はスクリプトを見ずに行うシャドーイング。
 
 # 会員の回答
 ${JSON.stringify(p.answers, null, 2)}
 
 # ルール
-- 新しい教材や勉強法を足すのではなく、コースで毎日決まっている約15分のメニューを「どうやると効果が上がるか」を深掘りする。コースの説明にない教材・アプリ・レッスン番号は作らない
-- 「1日のやり方」は合計約${p.minutes}分。3〜5ステップに分け、各ステップの分数の合計を${p.minutes}分にする。15分を超える時間は、その日の教材の復習（同じ音声でもう1周シャドーイングする、言えなかった文だけ繰り返す など）に使う。15分より短い場合は、その日のメニューのどこを優先するかを示す
-- 各ステップのやり方は、読んだらそのまま真似できるくらい具体的に書く（例：何回聞くか、スクリプトやイラストをいつ見るか、再生速度、声の大きさ、どこで止めるか）
-- 7日間は3つのフェーズに分ける：フェーズ1＝Day1〜2、フェーズ2＝Day3〜5、フェーズ3＝Day6〜7。1日のやり方は同じまま、フェーズごとに「特に意識すること・変えること」を書く
+- 1週間をメニューに合わせて3つのフェーズに分ける：フェーズ1＝月・火、フェーズ2＝水・木、フェーズ3＝金・土・日。phasesは必ずこの順の3つ
+- 各フェーズのstepsは、そのフェーズのメニューの教材をメニューの順番どおりに並べ、stepにはメニューの教材名をそのまま書く。メニューにない教材・アプリ・レッスン番号は作らない
+- 各フェーズのstepsの分数の合計は約${p.minutes}分。15分を超える場合は、最後に「復習」ステップを1つ足して、その日の教材の復習（同じ音声でもう1周、言えなかった文だけ繰り返す など）に使う。15分より短い場合は、優先する教材を先に置き、時間が足りない日は後ろの教材を省略してよいとhowに書く
+- howは、読んだらそのまま真似できるくらい具体的に書く（例：何回聞くか、スクリプトやイラストをいつ見るか、再生速度、声の大きさ、どこで止めるか、何ができたらOKか）。ニガテ分野と回答した部分は特にていねいに
+- 今日が何曜日でも、その曜日のフェーズから始めてよいことが伝わるようにする
 - 「続かなかった理由」への対策を、忙しい日の最低ラインとコツに反映する。学習報告SNS・質問コーナー・できない週があっても再スタートできる仕組みなど、mscの仕組みを自然に活かす
-- ニガテ分野と取り組みやすい時間帯を反映する
+- 取り組みやすい時間帯を反映する
 - 明るく前向きで、ワクワクする口調。上から目線にしない。絵文字は使わない
 
 # 出力形式（JSONのみ。前置きやコードブロックは不要）
 {
   "title": "この人の1週間を表す、わくわくする短い見出し（20字以内）",
   "message": "この人へのメッセージ。回答内容に触れながら2〜3文",
-  "routine": [{"minutes": 数値, "step": "ステップ名（10字以内）", "how": "具体的なやり方（1〜2文）"}],
-  "phases": [{"name": "フェーズ名（8字以内）", "goal": "このフェーズのゴール（1文）", "focus": "1日のやり方の中で特に意識すること・変えること（1〜2文）"}],
+  "phases": [{"name": "フェーズ名（8字以内）", "goal": "このフェーズのゴール（1文）", "steps": [{"minutes": 数値, "step": "教材名", "how": "具体的なやり方（1〜2文）"}]}],
   "minimum": "忙しい日はこれだけでOK、という最低ライン（1文）",
   "tips": ["続けるためのコツ"]
 }
-routineは3〜5個、phasesは必ず3つ、tipsは2〜3個。`;
+phasesは必ず3つ、tipsは2〜3個。`;
 }
 
 async function generate(p){
@@ -360,7 +367,7 @@ async function finish(){
   const res = $("result"); res.hidden = false; res.innerHTML = "";
   const tag = el("div","tag"); tag.append(el("span","en","Wait!"), el("span","ja","プランをつくっています"));
   const card = el("div","oct"); const ld = el("div","loading");
-  ld.append($("rocketTpl").content.cloneNode(true), el("p",null,"あなたの回答から、7日間を組み立て中…"), el("p","fine","30秒ほどかかることがあります"));
+  ld.append($("rocketTpl").content.cloneNode(true), el("p",null,"あなたの回答から、1週間を組み立て中…"), el("p","fine","30秒ほどかかることがあります"));
   card.append(ld); res.append(tag, card); window.scrollTo(0,0);
 
   const p = payload();
@@ -373,23 +380,28 @@ async function finish(){
   }
 }
 
+function howFor(item){
+  if (item.includes("日本語のみ")) return "日本語を聞いたら、答えが流れる前に英語を自分で言ってみます。言えなくても気にせず、次で言えればOK。";
+  if (item.includes("文字なし")) return "スクリプトを見ずに、音声のすぐ後ろを追いかけて声に出します。聞き取れないところは口パクでもOK。";
+  if (item.includes("文字あり")) return "スクリプトを見ながら、音声のすぐ後ろを追いかけて声に出します。むずかしければ再生速度を下げましょう。";
+  if (item.includes("ネイティブ速度")) return "速度を下げずに、ネイティブの速さのままついていきます。全部言えなくても、リズムに乗れたらOK。";
+  if (item.includes("ラジオ")) return "ラジオを聞きながら、今週の表現のポイントを1つだけメモします。";
+  if (item.includes("ヒアリング")) return "まずは何も見ずに聞いて、聞き取れた単語を頭の中で拾います。";
+  if (item.includes("英作文")) return "絵を見て状況をつかみ、答えを見る前に自分で英語を言ってから確認します。";
+  if (item.includes("リズム")) return "リズムに乗って、体を動かしながら声に出して真似します。";
+  return "アプリで今日の教材を開いて取り組みます。";
+}
 function fallback(p){
-  const m = p.minutes, a = Math.max(2,Math.round(m*0.25)), b = Math.max(3,Math.round(m*0.45)), c = m - a - b;
+  const names = ["インプット","声に出す","使ってみる"], goals = ["今週の表現を知る","スクリプトなしで口を慣らす","自分で英語を組み立てる"];
   return {
-    title:"7日間で「毎日ひらく」をつくろう",
-    message:"回答をもとに、無理なく続けられる基本プランを用意しました。毎日同じ流れで進めるので、迷わずに始められます。",
-    routine:[
-      {minutes:a, step:"まず聞く", how:`アプリで今日の曜日をタップし、${p.course}のその日の教材を開きます。まずは何も見ずに1回通して聞きます。`},
-      {minutes:b, step:"音読する", how:"スクリプトを見ながら、1文ずつ止めて声に出して読みます。意味がわからない表現だけ確認します。"},
-      {minutes:c, step:"シャドーイング", how:"スクリプトを閉じて、音声のすぐ後ろを追いかけるように声に出します。聞き取れないところは口パクでもOK。"}
-    ],
-    phases:[
-      {name:"慣れる", goal:"毎日コースをひらく習慣をつくる", focus:"完璧さは気にせず、最後まで通すことだけを目標に。"},
-      {name:"深める", goal:"音読をなめらかにする", focus:"音読の時間を少し長めにして、リズムと区切りを意識します。"},
-      {name:"仕上げる", goal:"シャドーイングで音についていく", focus:"お気に入りの1文を選んで、何も見ずに言えるまで繰り返します。"}
-    ],
-    minimum:"忙しい日は、その日の教材を1回聞いて、学習報告SNSに「聞いた！」と書くだけでOK。",
-    tips:["できた日はカレンダーに印をつける","同じ時間帯に取り組むと習慣になりやすい"]
+    title:"今週は曜日メニューを楽しもう",
+    message:"回答をもとに、無理なく続けられる基本プランを用意しました。アプリで今日の曜日を開いて、同じ曜日のやり方を見ながら進めてください。",
+    phases: p.menu.map((b,i)=>{
+      const n = b.items.length, base = Math.floor(p.minutes/n), extra = p.minutes - base*n;
+      return { name:names[i], goal:goals[i], steps:b.items.map((it,k)=>({ minutes: base + (k===0?extra:0), step: it, how: howFor(it) })) };
+    }),
+    minimum:"忙しい日は、その日の最初の教材だけやって、学習報告SNSに「できた！」と書くだけでOK。",
+    tips:["今日が何曜日でも、その曜日のメニューから始めてOK","できた日は学習報告SNSで仲間とシェアしよう"]
   };
 }
 
@@ -400,38 +412,32 @@ function show(plan, p, notice){
   const tag = el("div","tag"); tag.append(el("span","en","MY PLAN"), el("span","ja","あなただけの1週間プラン"));
   const card = el("div","oct plan");
   const rk = el("span","rocket"); rk.append($("rocketTpl").content.cloneNode(true)); card.append(rk);
-  card.append(el("h2",null,plan.title||"あなたの7日間プラン"));
+  card.append(el("h2",null,plan.title||"あなたの1週間プラン"));
   const meta = el("div","meta"); meta.append(el("span","chip",p.course), el("span","chip",`1日 約${p.minutes}分`)); card.append(meta);
   card.append(el("p","msg",plan.message||""));
   if (notice) card.append(el("p","notice",notice));
   res.append(tag, card);
 
-  // 1日のやり方
-  const t2 = el("div","tag sect"); t2.append(el("span","en","How to"), el("span","ja","毎日の1回分のやり方"));
-  const rc = el("div","oct routine-card");
-  const ol = el("ol","routine");
-  (plan.routine||[]).forEach(r=>{
-    const li = el("li");
-    const head = el("div","r-head"); head.append(el("span","r-step",r.step||""), el("span","r-min",`${r.minutes}分`));
-    li.append(head, el("p","r-how",r.how||""));
-    ol.append(li);
-  });
-  rc.append(ol);
-  if (plan.minimum){ const mn = el("div","minimum"); mn.append(el("strong",null,"忙しい日はこれだけ"), el("span",null,plan.minimum)); rc.append(mn); }
-  res.append(t2, rc);
-
-  // 3フェーズ
-  const t3 = el("div","tag sect"); t3.append(el("span","en","7 days"), el("span","ja","7日間の進め方"));
-  res.append(t3);
-  const colors = ["c-coral","c-blue","c-pink"], ranges = ["Day 1〜2","Day 3〜5","Day 6〜7"];
-  const grid = el("div","days phases");
+  // 曜日ブロックごとのやり方
+  const colors = ["c-coral","c-blue","c-pink"];
   (plan.phases||[]).slice(0,3).forEach((ph,i)=>{
-    const c = el("article","day "+colors[i]);
-    c.append(el("span","lbl",`Phase ${i+1}`), el("p","range",ranges[i]), el("h3",null,ph.name||""), el("p","goal",ph.goal||""));
-    const f = el("p","focus"); f.append(el("strong",null,"意識すること"), document.createTextNode(ph.focus||"")); c.append(f);
-    grid.append(c);
+    const days = (p.menu[i] && p.menu[i].days) || "";
+    const t = el("div","tag sect"); t.append(el("span","en",`Phase ${i+1}`), el("span","ja",days));
+    const rc = el("div","oct routine-card");
+    const head = el("div","ph-head");
+    head.append(el("span","ph-days "+colors[i], days), el("h3","ph-name",ph.name||""));
+    rc.append(head, el("p","ph-goal",ph.goal||""));
+    const ol = el("ol","routine");
+    (ph.steps||[]).forEach(r=>{
+      const li = el("li");
+      const hd = el("div","r-head"); hd.append(el("span","r-step",r.step||""), el("span","r-min",`${r.minutes}分`));
+      li.append(hd, el("p","r-how",r.how||""));
+      ol.append(li);
+    });
+    rc.append(ol);
+    res.append(t, rc);
   });
-  res.append(grid);
+  if (plan.minimum){ const mn = el("div","minimum solo"); mn.append(el("strong",null,"忙しい日はこれだけ"), el("span",null,plan.minimum)); res.append(mn); }
 
   if ((plan.tips||[]).length){
     const t = el("div","tips"); t.append(el("h3",null,"続けるためのコツ"));
