@@ -148,6 +148,32 @@ textarea{width:100%;min-height:120px;border:2px solid var(--blue);border-radius:
 .day .goal{margin:6px 0 10px;font-weight:700;line-height:1.7}
 .day .focus{margin:0;font-size:15px;line-height:1.8}
 .day .focus strong{display:block;font-size:13px;opacity:.85}
+.opts.row{grid-template-columns:repeat(auto-fill,minmax(64px,1fr))}
+.opts.row .opt{text-align:center;padding:12px 6px}
+.typecard{position:relative;max-width:560px;margin:56px auto 0;background:var(--coral);color:#fff;padding:30px 32px;transform:rotate(1.6deg);border-radius:4px}
+.type-lbl{margin:0;font-weight:700;font-size:14px;opacity:.9}
+.type-name{margin:2px 0 10px;font-size:clamp(24px,6vw,32px);font-weight:800;line-height:1.4}
+.type-desc{margin:0;line-height:1.9}
+.goal-card{padding:60px 32px 44px}
+.goal-text{margin:0;font-size:clamp(19px,4.6vw,23px);font-weight:800;line-height:1.7;color:var(--ink);
+  background:linear-gradient(transparent 62%, color-mix(in srgb,var(--sun) 70%,transparent) 62%);display:inline}
+.r-why{margin:6px 0 0;color:var(--blue);font-weight:700;line-height:1.8}
+.light{background:var(--pale);color:var(--ink);padding:16px 22px;margin:8px 0 0;border-radius:8px}
+.light strong{display:block;font-size:14px;margin-bottom:4px}
+.light p{margin:4px 0 0;font-size:15px;line-height:1.8}
+.week{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:40px 0 0}
+.wk{background:var(--card);border:2px solid var(--blue);border-radius:14px;padding:14px 18px}
+.wk.busy{background:var(--pale);border-style:dashed}
+.wk-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.wk-day{font-family:"DM Serif Display",Georgia,serif;font-size:26px;color:var(--coral);line-height:1}
+.wk-min{font-size:12px;font-weight:700;background:var(--blue);color:var(--on-strong);border-radius:999px;padding:1px 10px}
+.wk.busy .wk-min{background:var(--sun);color:#23284A}
+.wk-when{margin:8px 0 2px;font-size:13px;color:var(--muted);font-weight:700}
+.wk-todo{margin:0;font-size:15px;line-height:1.75}
+.it{padding:10px 0;border-top:1px dashed color-mix(in srgb,var(--on-strong) 40%,transparent)}
+.it:first-of-type{border-top:0}
+.it-if{margin:0;font-weight:700}
+.it-then{margin:2px 0 0}
 [hidden]{display:none!important}
 
 @media (max-width:560px){
@@ -190,14 +216,14 @@ textarea{width:100%;min-height:120px;border:2px solid var(--blue);border-radius:
   <div class="oct hero">
     <span class="rocket" data-rocket></span>
     <h1>英語を、<br>あなたの毎日に<br><em>ぴったりのかたち</em>で。</h1>
-    <p>8つの質問に答えると、選んだコースの曜日ごとのメニューを「どうやるか」まで深掘りした1週間プランが届きます。2分ほどで終わります。</p>
+    <p>10の質問に答えると、あなたのタイプ・今週のゴール・あなたの主役メニュー・あなたの1週間がわかるプランが届きます。3分ほどで終わります。</p>
     <button class="btn" id="start">はじめる</button>
   </div>
   <div class="bubble">まずは1週間、いっしょに一歩ふみ出してみよう</div>
 </section>
 
 <section id="quiz" hidden>
-  <div class="tag"><span class="en">Q.</span><span class="ja" id="qnum">質問 1 / 8</span></div>
+  <div class="tag"><span class="en">Q.</span><span class="ja" id="qnum">質問 1 / 10</span></div>
   <div class="oct quizcard">
     <div class="steps" id="steps" aria-hidden="true"></div>
     <div class="q" id="qbox"></div>
@@ -239,19 +265,24 @@ const QUESTIONS = [
   { id:"course", q:"今回取り組むコースを選んでね", type:"course" },
   { id:"goal", q:"英語で、いちばんやりたいことは？", type:"single",
     opts:["日常会話や旅行で話したい","海外ドラマや動画を字幕なしで楽しみたい","仕事で使えるようになりたい","とにかく基礎からやり直したい"] },
+  { id:"scene", q:"英語が話せたら、まずどんな場面で使いたい？", hint:"例：ハワイのカフェで自分で注文したい／英語の会議で一言発言したい（空欄でもOK）", type:"text" },
   { id:"level", q:"今の英語力に近いのは？", type:"single",
     opts:["中学英語があやしい","中学英語はだいたいわかる","簡単なやりとりならできる","日常会話はあまり困らない"] },
   { id:"time", q:"毎日のメニュー（約15分）に使えそうな時間は？", type:"single",
     opts:["15分ならとれる","15分＋5〜10分くらいとれる","30分以上とれる","15分とれない日も多い"] },
   { id:"when", q:"取り組みやすい時間帯は？", type:"single",
     opts:["朝","通勤や家事のすきま時間","夜、寝る前","日によってバラバラ"] },
+  { id:"busy", q:"1週間のうち、特に忙しい曜日は？", hint:"いくつでも選べます", type:"multi",
+    opts:["月","火","水","木","金","土","日","特になし"], row:true },
   { id:"block", q:"今まで英語が続かなかった、いちばんの理由は？", hint:"いちばん近いものをひとつ選んでね", type:"single",
     opts:["何をやればいいかわからなくなる","忙しくて時間がとれなくなる","成長を感じられず飽きてしまう","完璧にやろうとして疲れてしまう"] },
   { id:"weak", q:"ニガテだと感じるものは？", hint:"いくつでも選べます", type:"multi",
     opts:["聞き取り","発音","単語・表現","文法","話そうとすると言葉が出てこない"] },
-  { id:"free", q:"最後に、今の状況やゴールを自由に教えてね", hint:"例：子どもが寝たあとしか時間がない／来年の旅行で注文を自分でしたい（空欄でもOK）", type:"text" }
+  { id:"free", q:"最後に、今の生活や気持ちを自由に教えてね", hint:"例：子どもが寝たあとしか時間がない／前に3日で挫折したから今度こそ続けたい（空欄でもOK）", type:"text" }
 ];
 const MINUTES = [15,25,30,10];
+const DAYS = ["月","火","水","木","金","土","日"];
+const dayBlock = d => d==="月"||d==="火" ? 0 : d==="水"||d==="木" ? 1 : 2;
 
 /* ========================================================= */
 const $ = id => document.getElementById(id);
@@ -271,11 +302,11 @@ function render(){
   box.append(el("h2",null,Q.q), el("p","hint",Q.hint||""));
 
   if (Q.type === "text"){
-    const t = document.createElement("textarea"); t.value = answers.free || ""; t.maxLength = 400;
-    t.setAttribute("aria-label", Q.q); t.oninput = () => answers.free = t.value; box.append(t);
+    const t = document.createElement("textarea"); t.value = answers[Q.id] || ""; t.maxLength = 300;
+    t.setAttribute("aria-label", Q.q); t.oninput = () => answers[Q.id] = t.value; box.append(t);
     $("next").disabled = false;
   } else {
-    const wrap = el("div", Q.type==="course" ? "opts cols" : "opts");
+    const wrap = el("div", Q.type==="course" ? "opts cols" : Q.row ? "opts row" : "opts");
     const list = Q.type==="course" ? COURSES : Q.opts;
     list.forEach((o,i) => {
       const b = el("button","opt");
@@ -284,7 +315,12 @@ function render(){
       const cur = answers[Q.id];
       b.setAttribute("aria-pressed", Q.type==="multi" ? (cur||[]).includes(i) : cur===i);
       b.onclick = () => {
-        if (Q.type==="multi"){ const s=new Set(answers[Q.id]||[]); s.has(i)?s.delete(i):s.add(i); answers[Q.id]=[...s]; render(); }
+        if (Q.type==="multi"){
+          const none = Q.opts.indexOf("特になし");
+          let s = new Set(answers[Q.id]||[]);
+          if (s.has(i)) s.delete(i); else { s.add(i); if (i===none) s = new Set([i]); else s.delete(none); }
+          answers[Q.id]=[...s]; render();
+        }
         else { answers[Q.id]=i; render(); setTimeout(()=>$("next").click(), 220); }
       };
       wrap.append(b);
@@ -299,19 +335,22 @@ function render(){
 function payload(){
   const r = {};
   QUESTIONS.slice(1).forEach(Q => {
-    if (Q.type==="text") r[Q.q] = (answers.free||"").trim() || "（記入なし）";
+    if (Q.type==="text") r[Q.q] = (answers[Q.id]||"").trim() || "（記入なし）";
     else if (Q.type==="multi") r[Q.q] = (answers[Q.id]||[]).map(i=>Q.opts[i]).join("、");
     else r[Q.q] = Q.opts[answers[Q.id]];
   });
   const c = COURSES[answers.course];
-  return { answers:r, course:c.name, courseAbout:c.about, common:COMMON, menu:c.menu, minutes:MINUTES[answers.time] };
+  const busy = (answers.busy||[]).map(i=>QUESTIONS.find(q=>q.id==="busy").opts[i]).filter(d=>DAYS.includes(d));
+  const weak = (answers.weak||[]).map(i=>QUESTIONS.find(q=>q.id==="weak").opts[i]);
+  return { answers:r, course:c.name, courseAbout:c.about, common:COMMON, menu:c.menu, minutes:MINUTES[answers.time],
+           _busy:busy, _weak:weak, _block:answers.block, _when:QUESTIONS.find(q=>q.id==="when").opts[answers.when] };
 }
 
 /* プロンプト（api/plan.js にも同じものがあります。変えるときは両方を） */
 function buildPrompt(p){
   return `あなたは英語学習コミュニティ「msc（maho shadowing club）」の学習コーチです。
 mscは「英語を通して、自分の可能性を広げるきっかけをつくる」場所。シャドーイングを中心に、忙しい大人が無理なく続けられる学習を大切にしています。
-以下の会員の回答とルールに従って、この人が「今日からすぐ真似できる」1週間の学習プランを日本語で作ってください。
+この会員のためだけの「1週間プラン」を作ってください。コースの紹介ではなく、この人の目標・ニガテ・生活・つまずき方から組み立てることが何より大事です。誰にでも当てはまる文章は書かないでください。
 
 # 会員が選んだコース：${p.course}
 ${p.courseAbout}
@@ -319,30 +358,34 @@ ${p.common}
 
 # このコースの曜日ごとのメニュー（アプリで決まっている。1日約15分）
 ${p.menu.map(b => "・" + b.days + "：" + b.items.join("／")).join("\n")}
-メニューの補足：「（日本語のみ）」は日本語だけが流れるので、それを聞いて英語を自分で思い出して言う練習。「文字あり」はスクリプトを見ながら、「文字なし」はスクリプトを見ずに行うシャドーイング。
+補足：「（日本語のみ）」は日本語を聞いて英語を自分で思い出して言う練習。「文字あり」はスクリプトを見ながら、「文字なし」は見ずに行うシャドーイング。
 
 # 会員の回答
 ${JSON.stringify(p.answers, null, 2)}
+使える時間の目安：1日約${p.minutes}分
 
-# ルール
-- 1週間をメニューに合わせて3つのフェーズに分ける：フェーズ1＝月・火、フェーズ2＝水・木、フェーズ3＝金・土・日。phasesは必ずこの順の3つ
-- 各フェーズのstepsは、そのフェーズのメニューの教材をメニューの順番どおりに並べ、stepにはメニューの教材名をそのまま書く。メニューにない教材・アプリ・レッスン番号は作らない
-- 各フェーズのstepsの分数の合計は約${p.minutes}分。15分を超える場合は、最後に「復習」ステップを1つ足して、その日の教材の復習（同じ音声でもう1周、言えなかった文だけ繰り返す など）に使う。15分より短い場合は、優先する教材を先に置き、時間が足りない日は後ろの教材を省略してよいとhowに書く
-- howは、読んだらそのまま真似できるくらい具体的に書く（例：何回聞くか、スクリプトやイラストをいつ見るか、再生速度、声の大きさ、どこで止めるか、何ができたらOKか）。ニガテ分野と回答した部分は特にていねいに
-- 今日が何曜日でも、その曜日のフェーズから始めてよいことが伝わるようにする
-- 「続かなかった理由」への対策を、忙しい日の最低ラインとコツに反映する。学習報告SNS・質問コーナー・できない週があっても再スタートできる仕組みなど、mscの仕組みを自然に活かす
-- 取り組みやすい時間帯を反映する
+# 作り方
+1. type：回答（特に続かなかった理由・ニガテ・生活）から、この人を言い当てるオリジナルのタイプ名と説明を作る。読んだ人が「わかる、私だ」と思う内容に
+2. goal：使いたい場面と目標から、1週間で達成できる具体的なゴールを1つ。「何を・どれだけ・何も見ずに言える／聞き取れる」のように、できたかどうか本人が確かめられる形に
+3. focus：このコースのメニューの教材のうち、この人のニガテ・目標にとって特に大事なものを2〜3個選ぶ（教材名はメニューの表記どおり）。whyはこの人の回答に結びつけて書き、howはこの人のニガテに合わせた具体的なやり方（回数・再生速度・スクリプトを見るタイミング・できたらOKの基準など）
+4. light：残りの教材から、この人は軽くでOKなものを1〜2個と、その理由・こなし方を1文で
+5. week：月〜日の7日分。その曜日のメニューの範囲で、その日にやることをfocusを中心に1文で書く。時間帯は回答に合わせ、自由記述や使いたい場面に書かれた生活の様子もできるだけ反映する。忙しい曜日はbusyをtrueにして、最低限（5分程度）でOKな内容にする。minutesの目安は1日約${p.minutes}分
+6. ifthen：続かなかった理由と生活から、この人がくじけそうな具体的な瞬間を予想し、「もし〜したら → これだけやる」を2〜3個。学習報告SNS・質問コーナー・できない週があっても次の月曜から再スタートできる仕組みなど、mscの仕組みも自然に使う
+- メニューにない教材・アプリ・レッスン番号は作らない
 - 明るく前向きで、ワクワクする口調。上から目線にしない。絵文字は使わない
 
 # 出力形式（JSONのみ。前置きやコードブロックは不要）
 {
-  "title": "この人の1週間を表す、わくわくする短い見出し（20字以内）",
-  "message": "この人へのメッセージ。回答内容に触れながら2〜3文",
-  "phases": [{"name": "フェーズ名（8字以内）", "goal": "このフェーズのゴール（1文）", "steps": [{"minutes": 数値, "step": "教材名", "how": "具体的なやり方（1〜2文）"}]}],
-  "minimum": "忙しい日はこれだけでOK、という最低ライン（1文）",
-  "tips": ["続けるためのコツ"]
+  "title": "この人の1週間を表す、わくわくする見出し（20字以内）",
+  "message": "この人へのメッセージ。回答に触れながら2文",
+  "type": {"name": "タイプ名（15字以内）", "desc": "このタイプの説明と、だからこそ伸びるポイント（2文）"},
+  "goal": "今週のゴール（1文）",
+  "focus": [{"item": "教材名", "why": "この人にとって大事な理由（1文）", "how": "この人向けのやり方（2文）"}],
+  "light": [{"item": "教材名", "note": "軽くでOKな理由とこなし方（1文）"}],
+  "week": [{"day": "月", "when": "時間帯", "minutes": 数値, "busy": false, "todo": "その日にやること（1文）"}],
+  "ifthen": [{"if": "もし〜したら", "then": "これだけやる"}]
 }
-phasesは必ず3つ、tipsは2〜3個。`;
+weekは必ず月〜日の7つ。`;
 }
 
 async function generate(p){
@@ -350,7 +393,6 @@ async function generate(p){
     const r = await fetch(AI_ENDPOINT, { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(p) });
     if (!r.ok) throw { code:"server" };
     const data = await r.json();
-    // Geminiの生の応答（candidates形式）がそのまま返ってきた場合にも対応
     if (data && data.candidates){
       const text = (data.candidates[0]?.content?.parts || []).map(x => x.text || "").join("");
       return JSON.parse(text.match(/\{.*\}/s)[0]);
@@ -367,11 +409,15 @@ async function finish(){
   const res = $("result"); res.hidden = false; res.innerHTML = "";
   const tag = el("div","tag"); tag.append(el("span","en","Wait!"), el("span","ja","プランをつくっています"));
   const card = el("div","oct"); const ld = el("div","loading");
-  ld.append($("rocketTpl").content.cloneNode(true), el("p",null,"あなたの回答から、1週間を組み立て中…"), el("p","fine","30秒ほどかかることがあります"));
+  ld.append($("rocketTpl").content.cloneNode(true), el("p",null,"あなたの回答から、あなただけの1週間を組み立て中…"), el("p","fine","30秒ほどかかることがあります"));
   card.append(ld); res.append(tag, card); window.scrollTo(0,0);
 
   const p = payload();
-  try { show(await generate(p), p); }
+  try {
+    const plan = await generate(p);
+    if (!plan || !Array.isArray(plan.week) || !plan.type) throw { code:"shape" };
+    show(plan, p);
+  }
   catch(e){
     const msg = e && e.code==="not_granted" ? "AIの利用が許可されなかったので、基本プランを表示しています。"
               : e && e.code==="rate_limited" ? "混み合っているので、基本プランを表示しています。少し時間をおいて作り直せます。"
@@ -380,35 +426,60 @@ async function finish(){
   }
 }
 
+/* AIが使えないときの基本プラン（回答からルールで組み立て） */
+const WEAK_ITEM = { "聞き取り":["文字なしシャドーイング","ネイティブ英語のヒアリング"], "発音":["文字ありシャドーイング","発音矯正＆フレーズ解説ラジオ","ネイティブ速度シャドーイング"],
+  "単語・表現":["リズム単語","リズムチャンク"], "文法":["mahoの文法解説ラジオ","発音矯正＆フレーズ解説ラジオ"], "話そうとすると言葉が出てこない":["瞬間英作文前半","4コマ英作文","リズム単語（日本語のみ）","リズムチャンク（日本語のみ）"] };
+const TYPES = [
+  {name:"迷子になりがちタイプ", desc:"やる気はあるのに、何をやればいいか迷うと止まってしまうタイプ。やることが決まっていれば、ぐんぐん進めます。"},
+  {name:"忙しさに負けがちタイプ", desc:"時間がないと英語が後回しになりやすいタイプ。短くても毎日触れる形にすると、一気に定着します。"},
+  {name:"成長が見たいタイプ", desc:"伸びている実感がないと飽きてしまうタイプ。小さなゴールを毎週クリアすると、どんどん楽しくなります。"},
+  {name:"がんばりすぎタイプ", desc:"完璧にやろうとして疲れてしまうタイプ。7割できたらOKにすると、驚くほど長く続きます。"} ];
+const IFTHEN = [
+  [{if:"もし何をやればいいか迷ったら", then:"アプリで今日の曜日をタップして、いちばん上の教材だけやる"},{if:"もしわからないところで止まったら", then:"質問コーナーに一言投げて、先に進む"}],
+  [{if:"もし時間がとれなかったら", then:"今日の教材を1回聞くだけにして、学習報告SNSに「聞いた！」と書く"},{if:"もし1週間まるごとできなかったら", then:"次の月曜から新しい型で再スタートする"}],
+  [{if:"もし飽きてきたら", then:"学習報告SNSで仲間の投稿を3つ見てから始める"},{if:"もし伸びている気がしなかったら", then:"今週のゴールの文を声に出して、言えるか試してみる"}],
+  [{if:"もし全部できなかったら", then:"主役メニューだけできれば100点とする"},{if:"もし言えない文があったら", then:"1回で次へ進み、日曜にまとめてもう一度やる"}] ];
+function fallback(p){
+  const all = p.menu.flatMap(b=>b.items);
+  let focus = [...new Set(p._weak.flatMap(w=>WEAK_ITEM[w]||[]).filter(it=>all.includes(it)))].slice(0,3);
+  if (!focus.length) focus = [all.find(i=>i.includes("シャドーイング"))].filter(Boolean);
+  const light = all.filter(i=>!focus.includes(i)).filter((v,i,a)=>a.indexOf(v)===i).slice(0,2);
+  const t = TYPES[p._block] || TYPES[0];
+  return {
+    title:"あなたの1週間、ここからスタート",
+    message:"回答をもとに、あなたに合わせた基本プランを用意しました。主役のメニューを中心に、無理なく進めていきましょう。",
+    type:t,
+    goal:"今週のシャドーイングの中から、気に入った1文を何も見ずに言えるようにする",
+    focus: focus.map(it=>({ item:it, why:"ニガテと答えた部分を伸ばすのに、いちばん効く教材です。", how:howFor(it) })),
+    light: light.map(it=>({ item:it, note:"今週は1回通せればOK。主役の時間を優先しましょう。" })),
+    week: DAYS.map(d=>{
+      const items = p.menu[dayBlock(d)].items, busy = p._busy.includes(d);
+      const main = items.find(i=>focus.includes(i)) || items[0];
+      return { day:d, when:p._when, minutes: busy ? 5 : p.minutes, busy,
+        todo: busy ? `「${main}」を1回だけ。できたらOK` : `「${main}」を主役に、${items.filter(i=>i!==main).join("・")||"復習"}も進める` };
+    }),
+    ifthen: IFTHEN[p._block] || IFTHEN[0]
+  };
+}
 function howFor(item){
-  if (item.includes("日本語のみ")) return "日本語を聞いたら、答えが流れる前に英語を自分で言ってみます。言えなくても気にせず、次で言えればOK。";
-  if (item.includes("文字なし")) return "スクリプトを見ずに、音声のすぐ後ろを追いかけて声に出します。聞き取れないところは口パクでもOK。";
-  if (item.includes("文字あり")) return "スクリプトを見ながら、音声のすぐ後ろを追いかけて声に出します。むずかしければ再生速度を下げましょう。";
-  if (item.includes("ネイティブ速度")) return "速度を下げずに、ネイティブの速さのままついていきます。全部言えなくても、リズムに乗れたらOK。";
-  if (item.includes("ラジオ")) return "ラジオを聞きながら、今週の表現のポイントを1つだけメモします。";
-  if (item.includes("ヒアリング")) return "まずは何も見ずに聞いて、聞き取れた単語を頭の中で拾います。";
+  if (item.includes("日本語のみ")) return "日本語を聞いたら、答えが流れる前に英語を言ってみます。3秒以内に口を動かせたらOK。";
+  if (item.includes("文字なし")) return "スクリプトを見ずに、音声のすぐ後ろを追いかけて声に出します。聞き取れないところは口パクでOK、2回目で少し増えれば十分です。";
+  if (item.includes("ネイティブ速度")) return "速度を下げずについていきます。全部言えなくても、リズムに乗れたらOK。";
+  if (item.includes("文字あり")) return "スクリプトを見ながら、音のつながりを真似して声に出します。むずかしければ再生速度を0.8倍に。";
+  if (item.includes("ラジオ")) return "聞きながら、今週の表現のポイントを1つだけメモします。";
+  if (item.includes("ヒアリング")) return "何も見ずに聞いて、聞き取れた単語を頭の中で拾います。";
   if (item.includes("英作文")) return "絵を見て状況をつかみ、答えを見る前に自分で英語を言ってから確認します。";
   if (item.includes("リズム")) return "リズムに乗って、体を動かしながら声に出して真似します。";
   return "アプリで今日の教材を開いて取り組みます。";
 }
-function fallback(p){
-  const names = ["インプット","声に出す","使ってみる"], goals = ["今週の表現を知る","スクリプトなしで口を慣らす","自分で英語を組み立てる"];
-  return {
-    title:"今週は曜日メニューを楽しもう",
-    message:"回答をもとに、無理なく続けられる基本プランを用意しました。アプリで今日の曜日を開いて、同じ曜日のやり方を見ながら進めてください。",
-    phases: p.menu.map((b,i)=>{
-      const n = b.items.length, base = Math.floor(p.minutes/n), extra = p.minutes - base*n;
-      return { name:names[i], goal:goals[i], steps:b.items.map((it,k)=>({ minutes: base + (k===0?extra:0), step: it, how: howFor(it) })) };
-    }),
-    minimum:"忙しい日は、その日の最初の教材だけやって、学習報告SNSに「できた！」と書くだけでOK。",
-    tips:["今日が何曜日でも、その曜日のメニューから始めてOK","できた日は学習報告SNSで仲間とシェアしよう"]
-  };
-}
 
 function el(tag, cls, text){ const e=document.createElement(tag); if(cls) e.className=cls; if(text!=null) e.textContent=text; return e; }
+function section(en, ja){ const t = el("div","tag sect"); t.append(el("span","en",en), el("span","ja",ja)); return t; }
 
 function show(plan, p, notice){
   const res = $("result"); res.innerHTML = "";
+
+  // ヘッダー
   const tag = el("div","tag"); tag.append(el("span","en","MY PLAN"), el("span","ja","あなただけの1週間プラン"));
   const card = el("div","oct plan");
   const rk = el("span","rocket"); rk.append($("rocketTpl").content.cloneNode(true)); card.append(rk);
@@ -418,31 +489,55 @@ function show(plan, p, notice){
   if (notice) card.append(el("p","notice",notice));
   res.append(tag, card);
 
-  // 曜日ブロックごとのやり方
-  const colors = ["c-coral","c-blue","c-pink"];
-  (plan.phases||[]).slice(0,3).forEach((ph,i)=>{
-    const days = (p.menu[i] && p.menu[i].days) || "";
-    const t = el("div","tag sect"); t.append(el("span","en",`Phase ${i+1}`), el("span","ja",days));
-    const rc = el("div","oct routine-card");
-    const head = el("div","ph-head");
-    head.append(el("span","ph-days "+colors[i], days), el("h3","ph-name",ph.name||""));
-    rc.append(head, el("p","ph-goal",ph.goal||""));
-    const ol = el("ol","routine");
-    (ph.steps||[]).forEach(r=>{
-      const li = el("li");
-      const hd = el("div","r-head"); hd.append(el("span","r-step",r.step||""), el("span","r-min",`${r.minutes}分`));
-      li.append(hd, el("p","r-how",r.how||""));
-      ol.append(li);
-    });
-    rc.append(ol);
-    res.append(t, rc);
-  });
-  if (plan.minimum){ const mn = el("div","minimum solo"); mn.append(el("strong",null,"忙しい日はこれだけ"), el("span",null,plan.minimum)); res.append(mn); }
-
-  if ((plan.tips||[]).length){
-    const t = el("div","tips"); t.append(el("h3",null,"続けるためのコツ"));
-    const ul = el("ul"); plan.tips.forEach(x=>ul.append(el("li",null,x))); t.append(ul); res.append(t);
+  // あなたのタイプ
+  if (plan.type){
+    const tc = el("div","typecard");
+    tc.append(el("p","type-lbl","あなたは…"), el("p","type-name",plan.type.name||""), el("p","type-desc",plan.type.desc||""));
+    res.append(tc);
   }
+
+  // 今週のゴール
+  if (plan.goal){
+    res.append(section("Goal","今週のゴール"));
+    const g = el("div","oct goal-card"); g.append(el("p","goal-text",plan.goal)); res.append(g);
+  }
+
+  // 主役メニュー
+  res.append(section("Focus","あなたの主役メニュー"));
+  const fc = el("div","oct routine-card");
+  const ol = el("ol","routine");
+  (plan.focus||[]).forEach(f=>{
+    const li = el("li");
+    li.append(el("div","r-head")); li.firstChild.append(el("span","r-step",f.item||""));
+    li.append(el("p","r-why",f.why||""), el("p","r-how",f.how||""));
+    ol.append(li);
+  });
+  fc.append(ol);
+  if ((plan.light||[]).length){
+    const lt = el("div","light"); lt.append(el("strong",null,"軽くでOKなメニュー"));
+    plan.light.forEach(l=>{ const r = el("p"); r.append(el("b",null,l.item+"："), document.createTextNode(l.note||"")); lt.append(r); });
+    fc.append(lt);
+  }
+  res.append(fc);
+
+  // あなたの1週間
+  res.append(section("Week","あなたの1週間"));
+  const grid = el("div","week");
+  (plan.week||[]).slice(0,7).forEach((w,i)=>{
+    const c = el("article","wk"+(w.busy?" busy":""));
+    const hd = el("div","wk-head"); hd.append(el("span","wk-day",w.day||DAYS[i]), el("span","wk-min",w.busy?"忙しい日":`${w.minutes}分`));
+    c.append(hd, el("p","wk-when",w.when||""), el("p","wk-todo",w.todo||""));
+    grid.append(c);
+  });
+  res.append(grid);
+
+  // くじけそうな時の作戦
+  if ((plan.ifthen||[]).length){
+    const t = el("div","tips"); t.append(el("h3",null,"くじけそうな時の作戦"));
+    plan.ifthen.forEach(x=>{ const r = el("div","it"); r.append(el("p","it-if",x.if||""), el("p","it-then","→ "+(x.then||""))); t.append(r); });
+    res.append(t);
+  }
+
   const end = el("div","end");
   const again = el("button","btn","もう一度つくる");
   again.onclick = () => { step=0; for(const k in answers) delete answers[k]; res.hidden=true; $("intro").hidden=false; window.scrollTo(0,0); };
