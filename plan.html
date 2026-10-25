@@ -174,6 +174,53 @@ textarea{width:100%;min-height:120px;border:2px solid var(--blue);border-radius:
 .it:first-of-type{border-top:0}
 .it-if{margin:0;font-weight:700}
 .it-then{margin:2px 0 0}
+/* ===== 結果カード（スマホ1画面） ===== */
+body.result-mode .deco{display:none}
+body.result-mode .wrap{padding:10px 14px 12px;max-width:460px}
+.pcard{position:relative;background:var(--card);color:var(--ink);
+  clip-path:polygon(6% 0,94% 0,100% 4%,100% 96%,94% 100%,6% 100%,0 96%,0 4%);
+  padding:16px 16px 18px;display:flex;flex-direction:column;justify-content:space-between;gap:10px;
+  min-height:calc(100svh - 84px)}
+.pc-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.pc-tag{font-family:"DM Serif Display",Georgia,serif;font-size:22px;color:var(--coral);background:var(--pale);padding:3px 12px 5px;transform:rotate(-5deg);line-height:1;letter-spacing:.02em}
+.pc-course{background:var(--blue);color:var(--on-strong);font-size:11px;font-weight:700;border-radius:999px;padding:2px 10px;white-space:nowrap}
+.pc-notice{margin:0;font-size:11px;color:var(--muted);line-height:1.5}
+.pc-k{margin:0;font-size:12px;font-weight:700;color:var(--blue);letter-spacing:.04em}
+.pc-type{padding:2px 0}
+.pc-name{margin:0;font-size:clamp(22px,6.6vw,28px);font-weight:800;color:var(--coral);line-height:1.3}
+.pc-catch{margin:2px 0 0;font-size:14px;font-weight:700;line-height:1.5}
+.pc-block{display:flex;flex-direction:column;gap:4px}
+.pc-goal{margin:0;font-size:clamp(15px,4.4vw,18px);font-weight:800;line-height:1.6}
+.pc-goal span{background:linear-gradient(transparent 60%, color-mix(in srgb,var(--sun) 70%,transparent) 60%);-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.pc-focus{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;counter-reset:f}
+.pc-focus li{position:relative;padding-left:32px;counter-increment:f;line-height:1.4}
+.pc-focus li::before{content:counter(f);position:absolute;left:0;top:1px;width:24px;height:24px;border-radius:50%;background:var(--coral);color:#fff;font-weight:800;font-size:13px;display:grid;place-items:center;letter-spacing:0}
+.pc-focus b{display:block;font-size:15px}
+.pc-focus span{display:block;font-size:12.5px;color:var(--muted);font-weight:700}
+.pc-week{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.pc-day{border:2px solid var(--blue);border-radius:10px;padding:5px 1px 6px;text-align:center;min-height:58px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.pc-day.busy{background:var(--pale);border-style:dashed}
+.pc-day b{font-size:15px;color:var(--coral);line-height:1.2}
+.pc-day span{font-size:min(2.35vw,10.5px);line-height:1.3;font-weight:700;letter-spacing:-.03em;word-break:break-all}
+.pc-rescue{background:var(--sun);color:#23284A;padding:8px 14px;transform:rotate(-1deg);display:flex;flex-direction:column;line-height:1.45}
+.pc-rescue span{font-size:12.5px;font-weight:700}
+.pc-rescue b{font-size:14.5px}
+.pc-actions{display:flex;justify-content:center;align-items:center;gap:10px;margin:10px 0 0}
+.pc-actions .btn{padding:12px 26px;font-size:16px}
+.pc-detail{background:var(--card);border-radius:14px;padding:18px 20px;margin:18px 0 0}
+.pc-detail h3{font-size:16px;margin:16px 0 6px}
+.pc-msg{margin:0;line-height:1.8}
+.pc-d-item{margin:8px 0 0;font-weight:800}
+.pc-d-how{margin:2px 0 0;font-size:14px;line-height:1.8}
+.pc-d-week{margin:0;padding-left:1.1em;font-size:14px;line-height:1.8}
+.pc-detail .btn{display:block;margin:14px auto 0}
+.overlay{position:fixed;inset:0;background:rgba(20,24,50,.72);display:grid;place-items:center;padding:16px;z-index:50}
+.ov-box{background:var(--card);border-radius:18px;padding:14px;max-width:360px;width:100%;text-align:center;max-height:calc(100svh - 32px);display:flex;flex-direction:column;gap:8px}
+.ov-box img{width:100%;height:auto;max-height:calc(100svh - 180px);object-fit:contain;border-radius:10px;background:var(--bg);min-height:200px;-webkit-touch-callout:default}
+.ov-status{margin:0;font-size:13px;color:var(--muted)}
+.ov-actions{display:flex;justify-content:center;gap:8px}
+.ov-actions .btn{padding:11px 24px;font-size:15px}
+@media (min-height:880px){ .pcard{gap:14px;padding:22px 22px} }
 [hidden]{display:none!important}
 
 @media (max-width:560px){
@@ -216,7 +263,7 @@ textarea{width:100%;min-height:120px;border:2px solid var(--blue);border-radius:
   <div class="oct hero">
     <span class="rocket" data-rocket></span>
     <h1>英語を、<br>あなたの毎日に<br><em>ぴったりのかたち</em>で。</h1>
-    <p>10の質問に答えると、あなたのタイプ・今週のゴール・あなたの主役メニュー・あなたの1週間がわかるプランが届きます。3分ほどで終わります。</p>
+    <p>10の質問に答えると、あなたのタイプ・今週のゴール・主役メニュー・1週間がひと目でわかるプランが届きます。待受画像にして保存もできます。</p>
     <button class="btn" id="start">はじめる</button>
   </div>
   <div class="bubble">まずは1週間、いっしょに一歩ふみ出してみよう</div>
@@ -235,6 +282,17 @@ textarea{width:100%;min-height:120px;border:2px solid var(--blue);border-radius:
 </section>
 
 <section id="result" hidden aria-live="polite"></section>
+
+<div id="imgOverlay" class="overlay" hidden>
+  <div class="ov-box" role="dialog" aria-label="待受画像">
+    <img id="imgPreview" alt="あなただけの1週間プランの画像">
+    <p id="imgStatus" class="ov-status"></p>
+    <div class="ov-actions">
+      <button class="btn" id="imgSave">保存する</button>
+      <button class="btn ghost" id="imgClose">とじる</button>
+    </div>
+  </div>
+</div>
 
 </main>
 
@@ -351,6 +409,7 @@ function buildPrompt(p){
   return `あなたは英語学習コミュニティ「msc（maho shadowing club）」の学習コーチです。
 mscは「英語を通して、自分の可能性を広げるきっかけをつくる」場所。シャドーイングを中心に、忙しい大人が無理なく続けられる学習を大切にしています。
 この会員のためだけの「1週間プラン」を作ってください。コースの紹介ではなく、この人の目標・ニガテ・生活・つまずき方から組み立てることが何より大事です。誰にでも当てはまる文章は書かないでください。
+このプランはスマホの1画面に収まるカードと、待受画像になります。カードに出す項目は、指定の文字数を必ず守り、短く言い切ってください。
 
 # 会員が選んだコース：${p.course}
 ${p.courseAbout}
@@ -365,27 +424,25 @@ ${JSON.stringify(p.answers, null, 2)}
 使える時間の目安：1日約${p.minutes}分
 
 # 作り方
-1. type：回答（特に続かなかった理由・ニガテ・生活）から、この人を言い当てるオリジナルのタイプ名と説明を作る。読んだ人が「わかる、私だ」と思う内容に
-2. goal：使いたい場面と目標から、1週間で達成できる具体的なゴールを1つ。「何を・どれだけ・何も見ずに言える／聞き取れる」のように、できたかどうか本人が確かめられる形に
-3. focus：このコースのメニューの教材のうち、この人のニガテ・目標にとって特に大事なものを2〜3個選ぶ（教材名はメニューの表記どおり）。whyはこの人の回答に結びつけて書き、howはこの人のニガテに合わせた具体的なやり方（回数・再生速度・スクリプトを見るタイミング・できたらOKの基準など）
-4. light：残りの教材から、この人は軽くでOKなものを1〜2個と、その理由・こなし方を1文で
-5. week：月〜日の7日分。その曜日のメニューの範囲で、その日にやることをfocusを中心に1文で書く。時間帯は回答に合わせ、自由記述や使いたい場面に書かれた生活の様子もできるだけ反映する。忙しい曜日はbusyをtrueにして、最低限（5分程度）でOKな内容にする。minutesの目安は1日約${p.minutes}分
-6. ifthen：続かなかった理由と生活から、この人がくじけそうな具体的な瞬間を予想し、「もし〜したら → これだけやる」を2〜3個。学習報告SNS・質問コーナー・できない週があっても次の月曜から再スタートできる仕組みなど、mscの仕組みも自然に使う
+1. type：回答（特に続かなかった理由・ニガテ・生活）から、この人を言い当てるオリジナルのタイプ名（12字以内）と、このタイプが伸びるための合言葉（20字以内）
+2. goal：使いたい場面と目標から、1週間で達成できる具体的なゴールを1つ（28字以内）。できたかどうか本人が確かめられる形に
+3. focus：このコースのメニューの教材から、この人のニガテ・目標に特に効くものをちょうど2個（教材名はメニューの表記どおり）。tipはこの人向けのコツ（18字以内）。howはくわしいやり方（回数・再生速度・スクリプトを見るタイミング・できたらOKの基準など、2文）
+4. week：月〜日の7日分。labelはその日の主役（その曜日のメニューにある教材を短く。4字以内。例：文字なし／英作文／ラジオ／リズム）。忙しい曜日はbusyをtrueにしてlabelを「5分」にする。todoはその日にやること（1文）で、時間帯や生活の様子も反映する
+5. rescue：この人がいちばんくじけそうな瞬間を予想して、if（14字以内、「もし〜」）とthen（18字以内、「〜だけやる」など）。学習報告SNS・質問コーナー・次の月曜から再スタートできる仕組みも使ってよい
+6. message：この人へのメッセージ（回答に触れながら2文）
 - メニューにない教材・アプリ・レッスン番号は作らない
 - 明るく前向きで、ワクワクする口調。上から目線にしない。絵文字は使わない
 
 # 出力形式（JSONのみ。前置きやコードブロックは不要）
 {
-  "title": "この人の1週間を表す、わくわくする見出し（20字以内）",
-  "message": "この人へのメッセージ。回答に触れながら2文",
-  "type": {"name": "タイプ名（15字以内）", "desc": "このタイプの説明と、だからこそ伸びるポイント（2文）"},
-  "goal": "今週のゴール（1文）",
-  "focus": [{"item": "教材名", "why": "この人にとって大事な理由（1文）", "how": "この人向けのやり方（2文）"}],
-  "light": [{"item": "教材名", "note": "軽くでOKな理由とこなし方（1文）"}],
-  "week": [{"day": "月", "when": "時間帯", "minutes": 数値, "busy": false, "todo": "その日にやること（1文）"}],
-  "ifthen": [{"if": "もし〜したら", "then": "これだけやる"}]
+  "type": {"name": "12字以内", "catch": "20字以内"},
+  "goal": "28字以内",
+  "focus": [{"item": "教材名", "tip": "18字以内", "how": "2文"}],
+  "week": [{"day": "月", "label": "4字以内", "busy": false, "todo": "1文"}],
+  "rescue": {"if": "14字以内", "then": "18字以内"},
+  "message": "2文"
 }
-weekは必ず月〜日の7つ。`;
+focusはちょうど2個、weekは必ず月〜日の7つ。`;
 }
 
 async function generate(p){
@@ -415,7 +472,7 @@ async function finish(){
   const p = payload();
   try {
     const plan = await generate(p);
-    if (!plan || !Array.isArray(plan.week) || !plan.type) throw { code:"shape" };
+    if (!plan || !Array.isArray(plan.week) || !plan.type || !plan.goal) throw { code:"shape" };
     show(plan, p);
   }
   catch(e){
@@ -430,35 +487,54 @@ async function finish(){
 const WEAK_ITEM = { "聞き取り":["文字なしシャドーイング","ネイティブ英語のヒアリング"], "発音":["文字ありシャドーイング","発音矯正＆フレーズ解説ラジオ","ネイティブ速度シャドーイング"],
   "単語・表現":["リズム単語","リズムチャンク"], "文法":["mahoの文法解説ラジオ","発音矯正＆フレーズ解説ラジオ"], "話そうとすると言葉が出てこない":["瞬間英作文前半","4コマ英作文","リズム単語（日本語のみ）","リズムチャンク（日本語のみ）"] };
 const TYPES = [
-  {name:"迷子になりがちタイプ", desc:"やる気はあるのに、何をやればいいか迷うと止まってしまうタイプ。やることが決まっていれば、ぐんぐん進めます。"},
-  {name:"忙しさに負けがちタイプ", desc:"時間がないと英語が後回しになりやすいタイプ。短くても毎日触れる形にすると、一気に定着します。"},
-  {name:"成長が見たいタイプ", desc:"伸びている実感がないと飽きてしまうタイプ。小さなゴールを毎週クリアすると、どんどん楽しくなります。"},
-  {name:"がんばりすぎタイプ", desc:"完璧にやろうとして疲れてしまうタイプ。7割できたらOKにすると、驚くほど長く続きます。"} ];
-const IFTHEN = [
-  [{if:"もし何をやればいいか迷ったら", then:"アプリで今日の曜日をタップして、いちばん上の教材だけやる"},{if:"もしわからないところで止まったら", then:"質問コーナーに一言投げて、先に進む"}],
-  [{if:"もし時間がとれなかったら", then:"今日の教材を1回聞くだけにして、学習報告SNSに「聞いた！」と書く"},{if:"もし1週間まるごとできなかったら", then:"次の月曜から新しい型で再スタートする"}],
-  [{if:"もし飽きてきたら", then:"学習報告SNSで仲間の投稿を3つ見てから始める"},{if:"もし伸びている気がしなかったら", then:"今週のゴールの文を声に出して、言えるか試してみる"}],
-  [{if:"もし全部できなかったら", then:"主役メニューだけできれば100点とする"},{if:"もし言えない文があったら", then:"1回で次へ進み、日曜にまとめてもう一度やる"}] ];
+  {name:"迷子になりがちタイプ", catch:"やることを決めたら、もう迷わない"},
+  {name:"忙しさに負けがちタイプ", catch:"5分でも毎日ふれた人が勝つ"},
+  {name:"成長が見たいタイプ", catch:"小さなゴールを毎週クリア"},
+  {name:"がんばりすぎタイプ", catch:"7割できたら100点"} ];
+const RESCUE = [
+  {if:"もし何をやるか迷ったら", then:"今日のいちばん上だけやる"},
+  {if:"もし時間がとれなかったら", then:"1回聞いてSNSに報告"},
+  {if:"もし飽きてきたら", then:"仲間の投稿を3つ見る"},
+  {if:"もし全部できなかったら", then:"主役だけで100点"} ];
+function shortLabel(it){
+  if (it.includes("日本語のみ")) return "日→英";
+  if (it.includes("文字なし")) return "文字なし";
+  if (it.includes("ネイティブ速度")) return "速度UP";
+  if (it.includes("文字あり")) return "文字あり";
+  if (it.includes("ラジオ")) return "ラジオ";
+  if (it.includes("ヒアリング")) return "ヒアリ";
+  if (it.includes("英作文")) return "英作文";
+  if (it.includes("リズム")) return "リズム";
+  return it.slice(0,4);
+}
+function tipFor(item){
+  if (item.includes("日本語のみ")) return "3秒以内に口を動かす";
+  if (item.includes("文字なし")) return "2回目は口パクから声に";
+  if (item.includes("ネイティブ速度")) return "リズムに乗れたらOK";
+  if (item.includes("文字あり")) return "0.8倍で音のつながりを";
+  if (item.includes("ラジオ")) return "ポイントを1つだけメモ";
+  if (item.includes("ヒアリング")) return "聞こえた単語を拾う";
+  if (item.includes("英作文")) return "答えを見る前に言う";
+  if (item.includes("リズム")) return "体を動かして声に出す";
+  return "まずは1回通す";
+}
 function fallback(p){
   const all = p.menu.flatMap(b=>b.items);
-  let focus = [...new Set(p._weak.flatMap(w=>WEAK_ITEM[w]||[]).filter(it=>all.includes(it)))].slice(0,3);
-  if (!focus.length) focus = [all.find(i=>i.includes("シャドーイング"))].filter(Boolean);
-  const light = all.filter(i=>!focus.includes(i)).filter((v,i,a)=>a.indexOf(v)===i).slice(0,2);
-  const t = TYPES[p._block] || TYPES[0];
+  let focus = [...new Set(p._weak.flatMap(w=>WEAK_ITEM[w]||[]).filter(it=>all.includes(it)))];
+  [...new Set(all)].forEach(it=>{ if (focus.length<2 && !focus.includes(it) && it.includes("シャドーイング")) focus.push(it); });
+  focus = focus.slice(0,2);
   return {
-    title:"あなたの1週間、ここからスタート",
-    message:"回答をもとに、あなたに合わせた基本プランを用意しました。主役のメニューを中心に、無理なく進めていきましょう。",
-    type:t,
-    goal:"今週のシャドーイングの中から、気に入った1文を何も見ずに言えるようにする",
-    focus: focus.map(it=>({ item:it, why:"ニガテと答えた部分を伸ばすのに、いちばん効く教材です。", how:howFor(it) })),
-    light: light.map(it=>({ item:it, note:"今週は1回通せればOK。主役の時間を優先しましょう。" })),
+    type: TYPES[p._block] || TYPES[0],
+    goal: "お気に入りの1文を、何も見ずに言えるようになる",
+    focus: focus.map(it=>({ item:it, tip:tipFor(it), how:howFor(it) })),
     week: DAYS.map(d=>{
       const items = p.menu[dayBlock(d)].items, busy = p._busy.includes(d);
       const main = items.find(i=>focus.includes(i)) || items[0];
-      return { day:d, when:p._when, minutes: busy ? 5 : p.minutes, busy,
-        todo: busy ? `「${main}」を1回だけ。できたらOK` : `「${main}」を主役に、${items.filter(i=>i!==main).join("・")||"復習"}も進める` };
+      return { day:d, busy, label: busy ? "5分" : shortLabel(main),
+        todo: busy ? `「${main}」を1回だけ。できたらOK` : `${p._when}に「${main}」を主役に、ほかのメニューも進める` };
     }),
-    ifthen: IFTHEN[p._block] || IFTHEN[0]
+    rescue: RESCUE[p._block] || RESCUE[0],
+    message: "回答をもとに、あなたに合わせた基本プランを用意しました。主役のメニューを中心に、無理なく進めていきましょう。"
   };
 }
 function howFor(item){
@@ -474,77 +550,202 @@ function howFor(item){
 }
 
 function el(tag, cls, text){ const e=document.createElement(tag); if(cls) e.className=cls; if(text!=null) e.textContent=text; return e; }
-function section(en, ja){ const t = el("div","tag sect"); t.append(el("span","en",en), el("span","ja",ja)); return t; }
+const cut = (s, n) => { s = String(s||""); return s.length > n ? s.slice(0, n-1) + "…" : s; };
 
-function show(plan, p, notice){
+/* 結果：スマホ1画面に収まるカード */
+let lastPlan = null, lastP = null;
+function normalize(plan, p){
+  const fb = fallback(p);
+  const t = plan.type || fb.type;
+  const focus = (plan.focus||[]).slice(0,2); while (focus.length < 2 && fb.focus[focus.length]) focus.push(fb.focus[focus.length]);
+  const week = DAYS.map((d,i)=>{ const w = (plan.week||[]).find(x=>x && x.day===d) || (plan.week||[])[i] || fb.week[i]; return { ...w, day:d }; });
+  return {
+    type:{ name:cut(t.name||fb.type.name,14), catch:cut(t.catch||fb.type.catch,24) },
+    goal:cut(plan.goal||fb.goal,34),
+    focus:focus.map(f=>({ item:f.item||"", tip:cut(f.tip||tipFor(f.item||""),22), how:f.how||howFor(f.item||"") })),
+    week:week.map(w=>({ day:w.day, busy:!!w.busy, label:cut(w.busy?"5分":(w.label||""),5), todo:w.todo||"" })),
+    rescue:{ if:cut((plan.rescue||fb.rescue).if,18), then:cut((plan.rescue||fb.rescue).then,22) },
+    message:plan.message||fb.message
+  };
+}
+
+function show(raw, p, notice){
+  const plan = normalize(raw, p); lastPlan = plan; lastP = p;
+  document.body.classList.add("result-mode");
   const res = $("result"); res.innerHTML = "";
 
-  // ヘッダー
-  const tag = el("div","tag"); tag.append(el("span","en","MY PLAN"), el("span","ja","あなただけの1週間プラン"));
-  const card = el("div","oct plan");
-  const rk = el("span","rocket"); rk.append($("rocketTpl").content.cloneNode(true)); card.append(rk);
-  card.append(el("h2",null,plan.title||"あなたの1週間プラン"));
-  const meta = el("div","meta"); meta.append(el("span","chip",p.course), el("span","chip",`1日 約${p.minutes}分`)); card.append(meta);
-  card.append(el("p","msg",plan.message||""));
-  if (notice) card.append(el("p","notice",notice));
-  res.append(tag, card);
+  const card = el("div","pcard");
+  const top = el("div","pc-top");
+  top.append(el("span","pc-tag","MY PLAN"), el("span","pc-course",p.course));
+  card.append(top);
+  if (notice) card.append(el("p","pc-notice",notice));
 
-  // あなたのタイプ
-  if (plan.type){
-    const tc = el("div","typecard");
-    tc.append(el("p","type-lbl","あなたは…"), el("p","type-name",plan.type.name||""), el("p","type-desc",plan.type.desc||""));
-    res.append(tc);
-  }
+  const ty = el("div","pc-type");
+  ty.append(el("p","pc-k","あなたは"), el("p","pc-name",plan.type.name), el("p","pc-catch",plan.type.catch));
+  card.append(ty);
 
-  // 今週のゴール
-  if (plan.goal){
-    res.append(section("Goal","今週のゴール"));
-    const g = el("div","oct goal-card"); g.append(el("p","goal-text",plan.goal)); res.append(g);
-  }
+  const g = el("div","pc-block");
+  const gp = el("p","pc-goal"); gp.append(el("span",null,plan.goal)); g.append(el("p","pc-k","今週のゴール"), gp);
+  card.append(g);
 
-  // 主役メニュー
-  res.append(section("Focus","あなたの主役メニュー"));
-  const fc = el("div","oct routine-card");
-  const ol = el("ol","routine");
-  (plan.focus||[]).forEach(f=>{
-    const li = el("li");
-    li.append(el("div","r-head")); li.firstChild.append(el("span","r-step",f.item||""));
-    li.append(el("p","r-why",f.why||""), el("p","r-how",f.how||""));
-    ol.append(li);
-  });
-  fc.append(ol);
-  if ((plan.light||[]).length){
-    const lt = el("div","light"); lt.append(el("strong",null,"軽くでOKなメニュー"));
-    plan.light.forEach(l=>{ const r = el("p"); r.append(el("b",null,l.item+"："), document.createTextNode(l.note||"")); lt.append(r); });
-    fc.append(lt);
-  }
-  res.append(fc);
+  const f = el("div","pc-block");
+  f.append(el("p","pc-k","あなたの主役メニュー"));
+  const ol = el("ol","pc-focus");
+  plan.focus.forEach(x=>{ const li = el("li"); li.append(el("b",null,x.item), el("span",null,x.tip)); ol.append(li); });
+  f.append(ol); card.append(f);
 
-  // あなたの1週間
-  res.append(section("Week","あなたの1週間"));
-  const grid = el("div","week");
-  (plan.week||[]).slice(0,7).forEach((w,i)=>{
-    const c = el("article","wk"+(w.busy?" busy":""));
-    const hd = el("div","wk-head"); hd.append(el("span","wk-day",w.day||DAYS[i]), el("span","wk-min",w.busy?"忙しい日":`${w.minutes}分`));
-    c.append(hd, el("p","wk-when",w.when||""), el("p","wk-todo",w.todo||""));
-    grid.append(c);
-  });
-  res.append(grid);
+  const w = el("div","pc-block");
+  w.append(el("p","pc-k","あなたの1週間"));
+  const row = el("div","pc-week");
+  plan.week.forEach(d=>{ const c = el("div","pc-day"+(d.busy?" busy":"")); c.append(el("b",null,d.day), el("span",null,d.label)); row.append(c); });
+  w.append(row); card.append(w);
 
-  // くじけそうな時の作戦
-  if ((plan.ifthen||[]).length){
-    const t = el("div","tips"); t.append(el("h3",null,"くじけそうな時の作戦"));
-    plan.ifthen.forEach(x=>{ const r = el("div","it"); r.append(el("p","it-if",x.if||""), el("p","it-then","→ "+(x.then||""))); t.append(r); });
-    res.append(t);
-  }
+  const rs = el("div","pc-rescue");
+  rs.append(el("span",null,plan.rescue.if), el("b",null,"→ "+plan.rescue.then));
+  card.append(rs);
+  res.append(card);
 
-  const end = el("div","end");
-  const again = el("button","btn","もう一度つくる");
-  again.onclick = () => { step=0; for(const k in answers) delete answers[k]; res.hidden=true; $("intro").hidden=false; window.scrollTo(0,0); };
-  end.append(again, el("p","fine","このプランは回答をもとにAIが作成したものです。合わないと感じたら、いつでも作り直してください。"));
-  res.append(end);
+  const act = el("div","pc-actions");
+  const save = el("button","btn","画像で保存");
+  save.onclick = () => openImage(plan, p);
+  const more = el("button","btn ghost","くわしく見る");
+  act.append(save, more);
+  res.append(act);
+
+  // くわしく（タップで開く）
+  const det = el("div","pc-detail"); det.hidden = true;
+  det.append(el("p","pc-msg",plan.message));
+  det.append(el("h3",null,"主役メニューのやり方"));
+  plan.focus.forEach(x=>{ det.append(el("p","pc-d-item",x.item), el("p","pc-d-how",x.how)); });
+  det.append(el("h3",null,"曜日ごとにやること"));
+  const ul = el("ul","pc-d-week");
+  plan.week.forEach(d=>{ const li = el("li"); li.append(el("b",null,d.day+"："), document.createTextNode(d.todo)); ul.append(li); });
+  det.append(ul);
+  const again = el("button","btn ghost","もう一度つくる");
+  again.onclick = () => { step=0; for(const k in answers) delete answers[k]; res.hidden=true; document.body.classList.remove("result-mode"); $("intro").hidden=false; window.scrollTo(0,0); };
+  det.append(again);
+  res.append(det);
+  more.onclick = () => { det.hidden = !det.hidden; more.textContent = det.hidden ? "くわしく見る" : "とじる"; if (!det.hidden) det.scrollIntoView({behavior:"smooth"}); };
+
   window.scrollTo(0,0);
 }
+
+/* ===== 待受画像（1080×1920） ===== */
+function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+function wrapLines(ctx, text, maxW, maxLines){
+  const lines = []; let cur = "";
+  for (const ch of String(text)){
+    if (ctx.measureText(cur+ch).width > maxW && cur){ lines.push(cur); cur = ch; if (lines.length === maxLines) break; }
+    else cur += ch;
+  }
+  if (lines.length < maxLines && cur) lines.push(cur);
+  const used = lines.join("").length;
+  if (used < String(text).length && lines.length){ let l = lines[lines.length-1]; while (l && ctx.measureText(l+"…").width > maxW) l = l.slice(0,-1); lines[lines.length-1] = l+"…"; }
+  return lines;
+}
+function octagon(ctx, x, y, w, h, c){
+  ctx.beginPath(); ctx.moveTo(x+c, y); ctx.lineTo(x+w-c, y); ctx.lineTo(x+w, y+c); ctx.lineTo(x+w, y+h-c);
+  ctx.lineTo(x+w-c, y+h); ctx.lineTo(x+c, y+h); ctx.lineTo(x, y+h-c); ctx.lineTo(x, y+c); ctx.closePath();
+}
+function rrect(ctx, x, y, w, h, r){ ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x,y,w,h,r) : ctx.rect(x,y,w,h); }
+function star(ctx, cx, cy, r, color, lw){
+  ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.lineCap = "round";
+  for (let i=0;i<4;i++){ const a = i*Math.PI/4; ctx.beginPath(); ctx.moveTo(cx-Math.cos(a)*r, cy-Math.sin(a)*r); ctx.lineTo(cx+Math.cos(a)*r, cy+Math.sin(a)*r); ctx.stroke(); }
+  ctx.restore();
+}
+async function renderWallpaper(plan, p){
+  const R = "'M PLUS Rounded 1c', 'Hiragino Maru Gothic ProN', sans-serif", S = "'DM Serif Display', Georgia, serif";
+  const allText = JSON.stringify(plan) + p.course + "MY PLANあなたは今週のゴール主役メニュー1週間maho shadowing club→…" + DAYS.join("");
+  try { await Promise.all([document.fonts.load(`800 60px "M PLUS Rounded 1c"`, allText), document.fonts.load(`700 40px "M PLUS Rounded 1c"`, allText), document.fonts.load(`40px "DM Serif Display"`, "MY PLAN")]); } catch(e){}
+  const W = 1080, H = 1920, c = document.createElement("canvas"); c.width = W; c.height = H;
+  const x = c.getContext("2d");
+  const C = { bg:"#FDEC97", card:"#FFFFFF", ink:"#23284A", muted:"#5A5F7D", blue:"#4862AC", pale:"#D6DFF2", coral:"#E0623B", pink:"#EC8FB6", green:"#5DB572", sun:"#F4C34A" };
+  x.fillStyle = C.bg; x.fillRect(0,0,W,H);
+  // 時計の場所をあけて、上はかざりだけ
+  star(x, 120, 300, 34, C.coral, 14); star(x, 960, 420, 28, C.green, 14);
+  x.fillStyle = C.pink; x.beginPath(); x.arc(940, 250, 26, 0, Math.PI*2); x.fill();
+  x.fillStyle = C.sun; x.beginPath(); x.arc(180, 470, 14, 0, Math.PI*2); x.fill();
+
+  const PX = 60, PY = 560, PW = W-120, PH = 1300;
+  octagon(x, PX, PY, PW, PH, 70); x.fillStyle = C.card; x.fill();
+  // ラベル
+  x.save(); x.translate(PX+30, PY-34); x.rotate(-6*Math.PI/180);
+  x.fillStyle = C.pale; x.fillRect(0,0,300,84); x.fillStyle = C.coral; x.font = `52px ${S}`; x.textBaseline = "middle"; x.fillText("MY PLAN", 26, 46); x.restore();
+  x.font = `700 28px ${R}`; const cw = x.measureText(p.course).width + 44;
+  x.fillStyle = C.blue; rrect(x, PX+PW-cw-50, PY+40, cw, 50, 25); x.fill();
+  x.fillStyle = "#fff"; x.textBaseline = "middle"; x.fillText(p.course, PX+PW-cw-28, PY+66);
+
+  const L = PX+70, MW = PW-140; let y = PY+150;
+  x.textBaseline = "alphabetic";
+  const k = (t) => { x.fillStyle = C.blue; x.font = `700 30px ${R}`; x.fillText(t, L, y); y += 20; };
+  // タイプ
+  k("あなたは"); y += 66;
+  x.fillStyle = C.coral; x.font = `800 72px ${R}`; wrapLines(x, plan.type.name, MW, 1).forEach(l=>{ x.fillText(l, L, y); y += 84; });
+  x.fillStyle = C.ink; x.font = `700 36px ${R}`; wrapLines(x, plan.type.catch, MW, 1).forEach(l=>{ x.fillText(l, L, y); y += 50; });
+  y += 22;
+  // ゴール
+  k("今週のゴール"); y += 56;
+  x.font = `800 44px ${R}`;
+  wrapLines(x, plan.goal, MW, 2).forEach(l=>{ const w = x.measureText(l).width; x.fillStyle = C.sun; x.globalAlpha = .7; x.fillRect(L-4, y-16, w+8, 22); x.globalAlpha = 1; x.fillStyle = C.ink; x.fillText(l, L, y); y += 62; });
+  y += 20;
+  // 主役メニュー
+  k("あなたの主役メニュー"); y += 22;
+  plan.focus.forEach((f,i)=>{
+    x.fillStyle = C.coral; x.beginPath(); x.arc(L+26, y+26, 26, 0, Math.PI*2); x.fill();
+    x.fillStyle = "#fff"; x.font = `800 30px ${R}`; x.textAlign = "center"; x.fillText(String(i+1), L+26, y+37); x.textAlign = "left";
+    x.fillStyle = C.ink; x.font = `800 38px ${R}`; x.fillText(wrapLines(x, f.item, MW-80, 1)[0]||"", L+74, y+40);
+    x.fillStyle = C.muted; x.font = `700 30px ${R}`; x.fillText(wrapLines(x, f.tip, MW-80, 1)[0]||"", L+74, y+86);
+    y += 104;
+  });
+  y += 44;
+  // 1週間
+  k("あなたの1週間"); y += 26;
+  const gap = 10, cwid = (MW - gap*6)/7, ch = 130;
+  plan.week.forEach((d,i)=>{
+    const cx = L + i*(cwid+gap);
+    rrect(x, cx, y, cwid, ch, 16); x.fillStyle = d.busy ? C.pale : C.card; x.fill();
+    x.lineWidth = 3; x.strokeStyle = C.blue; if (d.busy) x.setLineDash([8,6]); x.stroke(); x.setLineDash([]);
+    x.textAlign = "center"; x.fillStyle = C.coral; x.font = `800 36px ${R}`; x.fillText(d.day, cx+cwid/2, y+48);
+    x.fillStyle = C.ink; x.font = `700 22px ${R}`;
+    wrapLines(x, d.label, cwid-8, 2).forEach((l,j)=> x.fillText(l, cx+cwid/2, y+86+j*28));
+    x.textAlign = "left";
+  });
+  y += ch + 30;
+  // くじけそうな時
+  x.save(); x.translate(L-10, y); x.rotate(-1.5*Math.PI/180);
+  x.fillStyle = C.sun; x.fillRect(0, 0, MW+20, 112);
+  x.fillStyle = C.ink; x.font = `700 30px ${R}`; x.fillText(wrapLines(x, plan.rescue.if, MW-20, 1)[0]||"", 30, 48);
+  x.font = `800 34px ${R}`; x.fillText(wrapLines(x, "→ "+plan.rescue.then, MW-20, 1)[0]||"", 30, 96);
+  x.restore();
+  // フッター
+  x.fillStyle = C.blue; x.font = `700 26px ${R}`; x.textAlign = "center"; x.fillText("maho shadowing club", W/2, 1898); x.textAlign = "left";
+  return await new Promise(r => c.toBlob(r, "image/png"));
+}
+
+let imgURL = null;
+async function openImage(plan, p){
+  const ov = $("imgOverlay"), img = $("imgPreview"), st = $("imgStatus");
+  ov.hidden = false; img.removeAttribute("src"); st.textContent = "画像をつくっています…";
+  const blob = await renderWallpaper(plan, p);
+  if (imgURL) URL.revokeObjectURL(imgURL);
+  imgURL = URL.createObjectURL(blob); img.src = imgURL;
+  st.textContent = "画像を長押しでも保存できます";
+  $("imgSave").onclick = () => saveImage(blob);
+}
+async function saveImage(blob){
+  const name = "msc-my-plan.png", st = $("imgStatus");
+  try {
+    const dl = window.claude && claude.use ? await claude.use("downloads") : null;
+    if (dl){ await dl.save({ filename:name, data:blob }); st.textContent = "保存しました。待受に設定してみてね"; return; }
+  } catch(e){ if (e && e.code === "declined") return; }
+  try {
+    const file = new File([blob], name, { type:"image/png" });
+    if (navigator.canShare && navigator.canShare({ files:[file] })){ await navigator.share({ files:[file] }); st.textContent = "「画像を保存」を選ぶと写真に入ります"; return; }
+  } catch(e){ if (e && e.name === "AbortError") return; }
+  const a = document.createElement("a"); a.href = imgURL; a.download = name; document.body.append(a); a.click(); a.remove();
+  st.textContent = "保存できない場合は、画像を長押しして保存してね";
+}
+document.addEventListener("click", e => { if (e.target.id === "imgClose" || e.target.id === "imgOverlay") $("imgOverlay").hidden = true; });
 </script>
 </body>
 </html>
