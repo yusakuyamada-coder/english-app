@@ -238,12 +238,11 @@ body.result-mode .wrap{padding:10px 14px 12px;max-width:460px}
 .pc-d-how{margin:2px 0 0;font-size:14px;line-height:1.8}
 .pc-d-week{margin:0;padding-left:1.1em;font-size:14px;line-height:1.8}
 .pc-detail .btn{display:block;margin:14px auto 0}
-.overlay{position:fixed;inset:0;background:rgba(20,24,50,.72);display:grid;place-items:center;padding:16px;z-index:50}
-.ov-box{background:var(--card);border-radius:18px;padding:14px;max-width:360px;width:100%;text-align:center;max-height:calc(100svh - 32px);display:flex;flex-direction:column;gap:8px}
-.ov-box img{width:100%;height:auto;max-height:calc(100svh - 180px);object-fit:contain;border-radius:10px;background:var(--bg);min-height:200px;-webkit-touch-callout:default}
-.ov-status{margin:0;font-size:13px;color:var(--muted)}
-.ov-actions{display:flex;justify-content:center;gap:8px}
-.ov-actions .btn{padding:11px 24px;font-size:15px}
+.shot{position:fixed;inset:0;z-index:50;background:#FDEC97;display:grid;place-items:center;cursor:pointer}
+.shot img{width:100%;height:100%;object-fit:contain;display:block}
+.shot-hint{position:absolute;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);margin:0;width:max-content;max-width:calc(100% - 32px);
+  background:rgba(35,40,74,.88);color:#fff;font-size:14px;font-weight:700;line-height:1.6;text-align:center;padding:10px 18px;border-radius:14px;transition:opacity .4s}
+.shot-hint.gone{opacity:0;pointer-events:none}
 @media (min-height:880px){ .pcard{gap:14px;padding:22px 22px} }
 .pc-sched{display:flex;flex-direction:column;gap:4px}
 .pc-days{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
@@ -354,15 +353,9 @@ body.result-mode .wrap{padding:10px 14px 12px;max-width:460px}
 
 <section id="result" hidden aria-live="polite"></section>
 
-<div id="imgOverlay" class="overlay" hidden>
-  <div class="ov-box" role="dialog" aria-label="待受画像">
-    <img id="imgPreview" alt="あなただけの1週間プランの画像">
-    <p id="imgStatus" class="ov-status"></p>
-    <div class="ov-actions">
-      <button class="btn" id="imgSave">保存する</button>
-      <button class="btn ghost" id="imgClose">とじる</button>
-    </div>
-  </div>
+<div id="imgOverlay" class="shot" hidden role="dialog" aria-label="待受画像">
+  <img id="imgPreview" alt="あなただけの1週間プランの待受画像">
+  <p id="imgStatus" class="shot-hint"></p>
 </div>
 
 </main>
@@ -733,7 +726,7 @@ function show(raw, p, notice){
   res.append(card);
 
   const act = el("div","pc-actions");
-  const save = el("button","btn","画像で保存");
+  const save = el("button","btn","待受画像にする");
   save.onclick = () => openImage(plan, p);
   const more = el("button","btn ghost","くわしく見る");
   act.append(save, more);
@@ -883,29 +876,19 @@ async function renderWallpaper(plan, p){
 }
 
 let imgURL = null;
+let hintTimer = null;
 async function openImage(plan, p){
   const ov = $("imgOverlay"), img = $("imgPreview"), st = $("imgStatus");
-  ov.hidden = false; img.removeAttribute("src"); st.textContent = "画像をつくっています…";
+  ov.hidden = false; img.removeAttribute("src");
+  st.classList.remove("gone"); st.textContent = "画像をつくっています…";
   const blob = await renderWallpaper(plan, p);
   if (imgURL) URL.revokeObjectURL(imgURL);
   imgURL = URL.createObjectURL(blob); img.src = imgURL;
-  st.textContent = "画像を長押しでも保存できます";
-  $("imgSave").onclick = () => saveImage(blob);
+  // 案内は数秒で消えるので、そのままスクリーンショットすれば待受に使える
+  st.innerHTML = "この画面を<b>スクリーンショット</b>して<br>待受に設定してね（タップでとじる）";
+  clearTimeout(hintTimer); hintTimer = setTimeout(() => st.classList.add("gone"), 3500);
 }
-async function saveImage(blob){
-  const name = "msc-my-plan.png", st = $("imgStatus");
-  try {
-    const dl = window.claude && claude.use ? await claude.use("downloads") : null;
-    if (dl){ await dl.save({ filename:name, data:blob }); st.textContent = "保存しました。待受に設定してみてね"; return; }
-  } catch(e){ if (e && e.code === "declined") return; }
-  try {
-    const file = new File([blob], name, { type:"image/png" });
-    if (navigator.canShare && navigator.canShare({ files:[file] })){ await navigator.share({ files:[file] }); st.textContent = "「画像を保存」を選ぶと写真に入ります"; return; }
-  } catch(e){ if (e && e.name === "AbortError") return; }
-  const a = document.createElement("a"); a.href = imgURL; a.download = name; document.body.append(a); a.click(); a.remove();
-  st.textContent = "保存できない場合は、画像を長押しして保存してね";
-}
-document.addEventListener("click", e => { if (e.target.id === "imgClose" || e.target.id === "imgOverlay") $("imgOverlay").hidden = true; });
+$("imgOverlay").addEventListener("click", () => { $("imgOverlay").hidden = true; clearTimeout(hintTimer); });
 </script>
 </body>
 </html>
