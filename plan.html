@@ -203,8 +203,46 @@ body.result-mode .wrap{padding:10px 14px 12px;max-width:460px}
 .pc-day b{font-size:15px;color:var(--coral);line-height:1.2}
 .pc-day span{font-size:min(2.35vw,10.5px);line-height:1.3;font-weight:700;letter-spacing:-.03em;word-break:break-all}
 .pc-rescue{background:var(--sun);color:#23284A;padding:8px 14px;transform:rotate(-1deg);display:flex;flex-direction:column;line-height:1.45}
+.pc-rk{margin:0 0 2px;font-size:11px;font-weight:800;letter-spacing:.04em;opacity:.75}
+.pc-r{display:flex;flex-direction:column}
+.pc-r2{border-top:1px dashed rgba(35,40,74,.35);margin-top:5px;padding-top:5px}
 .pc-rescue span{font-size:12.5px;font-weight:700}
 .pc-rescue b{font-size:14.5px}
+.pc-phrase{background:var(--pale);border-radius:12px;padding:7px 9px 8px;position:relative;display:flex;flex-direction:column;gap:5px}
+.pc-phrase .pc-khead{padding:0 4px}
+.pc-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pc-tab{display:flex;flex-direction:column;align-items:flex-start;text-align:left;background:color-mix(in srgb,var(--card) 55%,transparent);border:2px solid transparent;border-radius:10px;padding:5px 8px 6px;color:var(--ink);line-height:1.25;position:relative;letter-spacing:.01em}
+.pc-tab[aria-selected="true"]{background:var(--card);border-color:var(--coral)}
+.pc-ab{position:absolute;top:5px;right:7px;font-size:10px;font-weight:800;color:#fff;background:var(--coral);border-radius:999px;width:17px;height:17px;display:grid;place-items:center;letter-spacing:0}
+.pc-tab:not([aria-selected="true"]) .pc-ab{background:var(--blue)}
+.pc-form{font-family:"DM Serif Display",Georgia,serif;font-size:clamp(15px,4.3vw,18px);padding-right:18px}
+.pc-mean{font-size:10.5px;font-weight:700;color:var(--muted);margin-top:1px}
+.pc-exs{background:var(--card);border-radius:10px;padding:5px 10px 6px;display:flex;flex-direction:column;gap:3px}
+.pc-scene{margin:0;font-size:10.5px;font-weight:800;color:var(--blue)}
+.pc-ex{display:flex;flex-direction:column;line-height:1.25}
+.pc-exen{font-family:"DM Serif Display",Georgia,serif;font-size:clamp(14px,4vw,16px);letter-spacing:.01em}
+.pc-exen b{color:var(--coral);font-weight:400}
+.pc-exja{font-size:10.5px;font-weight:700;color:var(--muted)}
+.pc-phrase .pc-k{color:var(--coral)}
+.pc-en{margin:1px 0 0;font-family:"DM Serif Display",Georgia,serif;font-size:clamp(19px,5.4vw,23px);line-height:1.25;letter-spacing:.01em;color:var(--ink)}
+.pc-ja{margin:2px 0 0;font-size:12px;font-weight:700;color:var(--muted)}
+.pc-khead{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.pc-when{font-size:11px;font-weight:700;color:var(--muted)}
+@media (max-height:860px){ .pc-r2{display:none} .pc-rk{display:none} .pcard{gap:8px} .pc-catch{font-size:13px} }
+@media (max-height:700px){
+  .pc-r2{display:none}
+  .pcard{gap:6px;padding:12px 14px 12px;min-height:0}
+  .pc-tag{font-size:18px} .pc-course{font-size:10px}
+  .pc-notice{font-size:10px;line-height:1.4}
+  .pc-name{font-size:21px} .pc-catch{font-size:12.5px;margin:0}
+  .pc-goal{font-size:14.5px;line-height:1.5}
+  .pc-phrase{padding:5px 8px 6px;gap:4px} .pc-form{font-size:15px} .pc-mean{font-size:10px} .pc-exs{padding:4px 9px 5px;gap:1px} .pc-exen{font-size:13.5px} .pc-exja{display:none}
+  .pc-focus span{display:none} .pc-k{font-size:11px} .pc-goal{font-size:14px}
+  .pc-focus{gap:3px} .pc-focus b{font-size:14px} .pc-focus span{font-size:11.5px}
+  .pc-day{min-height:48px;padding:3px 1px 4px} .pc-day b{font-size:13px}
+  .pc-rescue{padding:6px 12px} .pc-rk{display:none}
+  .pc-actions{margin:8px 0 0} .pc-actions .btn{padding:9px 22px;font-size:15px}
+}
 .pc-actions{display:flex;justify-content:center;align-items:center;gap:10px;margin:10px 0 0}
 .pc-actions .btn{padding:12px 26px;font-size:16px}
 .pc-detail{background:var(--card);border-radius:14px;padding:18px 20px;margin:18px 0 0}
@@ -401,7 +439,7 @@ function payload(){
   const busy = (answers.busy||[]).map(i=>QUESTIONS.find(q=>q.id==="busy").opts[i]).filter(d=>DAYS.includes(d));
   const weak = (answers.weak||[]).map(i=>QUESTIONS.find(q=>q.id==="weak").opts[i]);
   return { answers:r, course:c.name, courseAbout:c.about, common:COMMON, menu:c.menu, minutes:MINUTES[answers.time],
-           _busy:busy, _weak:weak, _block:answers.block, _when:QUESTIONS.find(q=>q.id==="when").opts[answers.when] };
+           _busy:busy, _weak:weak, _block:answers.block, _goal:answers.goal, _when:QUESTIONS.find(q=>q.id==="when").opts[answers.when] };
 }
 
 /* プロンプト（api/plan.js にも同じものがあります。変えるときは両方を） */
@@ -428,8 +466,9 @@ ${JSON.stringify(p.answers, null, 2)}
 2. goal：使いたい場面と目標から、1週間で達成できる具体的なゴールを1つ（28字以内）。できたかどうか本人が確かめられる形に
 3. focus：このコースのメニューの教材から、この人のニガテ・目標に特に効くものをちょうど2個（教材名はメニューの表記どおり）。tipはこの人向けのコツ（18字以内）。howはくわしいやり方（回数・再生速度・スクリプトを見るタイミング・できたらOKの基準など、2文）
 4. week：月〜日の7日分。labelはその日の主役（その曜日のメニューにある教材を短く。4字以内。例：文字なし／英作文／ラジオ／リズム）。忙しい曜日はbusyをtrueにしてlabelを「5分」にする。todoはその日にやること（1文）で、時間帯や生活の様子も反映する
-5. rescue：この人がいちばんくじけそうな瞬間を予想して、if（14字以内、「もし〜」）とthen（18字以内、「〜だけやる」など）。学習報告SNS・質問コーナー・次の月曜から再スタートできる仕組みも使ってよい
-6. message：この人へのメッセージ（回答に触れながら2文）
+5. rescue：この人がくじけそうな具体的な瞬間を2つ予想して、それぞれif（16字以内、「もし〜」）とthen（20字以内、「〜だけやる」など）。2つは違う場面にする。学習報告SNS・質問コーナー・次の月曜から再スタートできる仕組みも使ってよい
+6. patterns：この人が使いたい場面でいちばん役立つ英語の「型（パターン）」をちょうど2つ。formは「~」を使った型（例：Could you ~?／Would you like ~?）、meaningは日本語の意味（15字以内、「〜」を使う）。examplesは、その型をこの人の場面に置き換えた例文を2つずつ（en 8語以内、ja 20字以内）。~の部分を入れ替えれば自分で文が作れると伝わるように、例文は必ずformの形のまま始める。このコース・レベルに合うやさしく自然な英語に。sceneは置き換える場面を短く（6字以内、例：仕事／旅行／カフェ／子育て）
+7. message：この人へのメッセージ（回答に触れながら2文）
 - メニューにない教材・アプリ・レッスン番号は作らない
 - 明るく前向きで、ワクワクする口調。上から目線にしない。絵文字は使わない
 
@@ -439,10 +478,12 @@ ${JSON.stringify(p.answers, null, 2)}
   "goal": "28字以内",
   "focus": [{"item": "教材名", "tip": "18字以内", "how": "2文"}],
   "week": [{"day": "月", "label": "4字以内", "busy": false, "todo": "1文"}],
-  "rescue": {"if": "14字以内", "then": "18字以内"},
+  "rescue": [{"if": "16字以内", "then": "20字以内"}, {"if": "16字以内", "then": "20字以内"}],
+  "scene": "6字以内",
+  "patterns": [{"form": "Could you ~?", "meaning": "15字以内", "examples": [{"en": "8語以内", "ja": "20字以内"}, {"en": "8語以内", "ja": "20字以内"}]}],
   "message": "2文"
 }
-focusはちょうど2個、weekは必ず月〜日の7つ。`;
+focusはちょうど2個、rescueはちょうど2個、patternsはちょうど2個、weekは必ず月〜日の7つ。`;
 }
 
 async function generate(p){
@@ -491,6 +532,20 @@ const TYPES = [
   {name:"忙しさに負けがちタイプ", catch:"5分でも毎日ふれた人が勝つ"},
   {name:"成長が見たいタイプ", catch:"小さなゴールを毎週クリア"},
   {name:"がんばりすぎタイプ", catch:"7割できたら100点"} ];
+const PATTERNS = [
+  { scene:"旅行", list:[
+    {form:"Can I have ~?", meaning:"〜をください", examples:[{en:"Can I have a coffee?", ja:"コーヒーをください"},{en:"Can I have the menu?", ja:"メニューをください"}]},
+    {form:"Where is ~?", meaning:"〜はどこですか？", examples:[{en:"Where is the station?", ja:"駅はどこですか？"},{en:"Where is the restroom?", ja:"お手洗いはどこですか？"}]} ]},
+  { scene:"日常", list:[
+    {form:"I feel like ~", meaning:"〜したい気分", examples:[{en:"I feel like watching a movie.", ja:"映画を観たい気分"},{en:"I feel like eating pizza.", ja:"ピザを食べたい気分"}]},
+    {form:"I'm about to ~", meaning:"今から〜するところ", examples:[{en:"I'm about to leave.", ja:"今から出るところ"},{en:"I'm about to take a shower.", ja:"今からシャワーを浴びるところ"}]} ]},
+  { scene:"仕事", list:[
+    {form:"Could you ~?", meaning:"〜していただけますか？", examples:[{en:"Could you send me the email?", ja:"メールを送っていただけますか？"},{en:"Could you check this document?", ja:"この資料を確認していただけますか？"}]},
+    {form:"Would you like ~?", meaning:"〜はいかがですか？", examples:[{en:"Would you like some coffee?", ja:"コーヒーはいかがですか？"},{en:"Would you like to join the meeting?", ja:"会議に参加されますか？"}]} ]},
+  { scene:"日常", list:[
+    {form:"I want to ~", meaning:"〜したい", examples:[{en:"I want to travel abroad.", ja:"海外旅行に行きたい"},{en:"I want to speak English.", ja:"英語を話したい"}]},
+    {form:"I'm going to ~", meaning:"〜するつもり", examples:[{en:"I'm going to cook dinner.", ja:"夕飯を作るつもり"},{en:"I'm going to study tonight.", ja:"今夜勉強するつもり"}]} ]} ];
+const RESCUE2 = {if:"もし1週間できなかったら", then:"次の月曜から新しく再スタート"};
 const RESCUE = [
   {if:"もし何をやるか迷ったら", then:"今日のいちばん上だけやる"},
   {if:"もし時間がとれなかったら", then:"1回聞いてSNSに報告"},
@@ -533,7 +588,9 @@ function fallback(p){
       return { day:d, busy, label: busy ? "5分" : shortLabel(main),
         todo: busy ? `「${main}」を1回だけ。できたらOK` : `${p._when}に「${main}」を主役に、ほかのメニューも進める` };
     }),
-    rescue: RESCUE[p._block] || RESCUE[0],
+    rescue: [RESCUE[p._block] || RESCUE[0], RESCUE2],
+    patterns: (PATTERNS[p._goal] || PATTERNS[0]).list,
+    scene: (PATTERNS[p._goal] || PATTERNS[0]).scene,
     message: "回答をもとに、あなたに合わせた基本プランを用意しました。主役のメニューを中心に、無理なく進めていきましょう。"
   };
 }
@@ -560,15 +617,27 @@ function normalize(plan, p){
   const focus = (plan.focus||[]).slice(0,2); while (focus.length < 2 && fb.focus[focus.length]) focus.push(fb.focus[focus.length]);
   const week = DAYS.map((d,i)=>{ const w = (plan.week||[]).find(x=>x && x.day===d) || (plan.week||[])[i] || fb.week[i]; return { ...w, day:d }; });
   return {
-    type:{ name:cut(t.name||fb.type.name,14), catch:cut(t.catch||fb.type.catch,24) },
-    goal:cut(plan.goal||fb.goal,34),
-    focus:focus.map(f=>({ item:f.item||"", tip:cut(f.tip||tipFor(f.item||""),22), how:f.how||howFor(f.item||"") })),
+    type:{ name:t.name||fb.type.name, catch:t.catch||fb.type.catch },
+    goal:plan.goal||fb.goal,
+    focus:focus.map(f=>({ item:f.item||"", tip:f.tip||tipFor(f.item||""), how:f.how||howFor(f.item||"") })),
     week:week.map(w=>({ day:w.day, busy:!!w.busy, label:cut(w.busy?"5分":(w.label||""),5), todo:w.todo||"" })),
-    rescue:{ if:cut((plan.rescue||fb.rescue).if,18), then:cut((plan.rescue||fb.rescue).then,22) },
+    rescue:(() => { let r = Array.isArray(plan.rescue) ? plan.rescue : (plan.rescue ? [plan.rescue] : []);
+      r = r.filter(z=>z && z.if && z.then).slice(0,2); fb.rescue.forEach(z=>{ if (r.length<2) r.push(z); }); return r; })(),
+    patterns:(() => { const ok = (plan.patterns||[]).filter(t=>t && t.form && Array.isArray(t.examples) && t.examples.length)
+        .map(t=>({ form:t.form, meaning:t.meaning||"", examples:t.examples.filter(e=>e && e.en).slice(0,2) })).slice(0,2);
+      return ok.length ? ok : fb.patterns; })(),
+    scene: plan.scene || fb.scene,
     message:plan.message||fb.message
   };
 }
 
+function patternHead(form){ return String(form||"").split("~")[0].trim(); }
+function fillEn(en, form){
+  const p = el("span","pc-exen"), head = patternHead(form);
+  if (head && en.toLowerCase().startsWith(head.toLowerCase())){ p.append(el("b",null,en.slice(0,head.length)), document.createTextNode(en.slice(head.length))); }
+  else p.textContent = en;
+  return p;
+}
 function show(raw, p, notice){
   const plan = normalize(raw, p); lastPlan = plan; lastP = p;
   document.body.classList.add("result-mode");
@@ -588,6 +657,24 @@ function show(raw, p, notice){
   const gp = el("p","pc-goal"); gp.append(el("span",null,plan.goal)); g.append(el("p","pc-k","今週のゴール"), gp);
   card.append(g);
 
+  // あなたの型（タブで切り替え）
+  const ph = el("div","pc-phrase");
+  const phh = el("div","pc-khead"); phh.append(el("p","pc-k","あなたの型"), el("span","pc-when",`${plan.scene}への置き換え`));
+  const tabs = el("div","pc-tabs"), exs = el("div","pc-exs");
+  const showPat = (n) => {
+    [...tabs.children].forEach((b,i)=> b.setAttribute("aria-selected", i===n));
+    exs.innerHTML = "";
+    plan.patterns[n].examples.forEach(e=>{ const r = el("div","pc-ex"); r.append(fillEn(e.en, plan.patterns[n].form), el("span","pc-exja",e.ja||"")); exs.append(r); });
+  };
+  plan.patterns.forEach((t,i)=>{
+    const b = el("button","pc-tab"); b.setAttribute("role","tab");
+    b.append(el("span","pc-ab",String.fromCharCode(65+i)), el("span","pc-form",t.form), el("span","pc-mean",t.meaning));
+    b.onclick = () => showPat(i); tabs.append(b);
+  });
+  tabs.setAttribute("role","tablist");
+  ph.append(phh, tabs, exs); showPat(0);
+  card.append(ph);
+
   const f = el("div","pc-block");
   f.append(el("p","pc-k","あなたの主役メニュー"));
   const ol = el("ol","pc-focus");
@@ -595,13 +682,15 @@ function show(raw, p, notice){
   f.append(ol); card.append(f);
 
   const w = el("div","pc-block");
-  w.append(el("p","pc-k","あなたの1週間"));
+  const wh = el("div","pc-khead"); wh.append(el("p","pc-k","あなたの1週間"), el("span","pc-when",`毎日 ${p._when}・約${p.minutes}分`));
+  w.append(wh);
   const row = el("div","pc-week");
   plan.week.forEach(d=>{ const c = el("div","pc-day"+(d.busy?" busy":"")); c.append(el("b",null,d.day), el("span",null,d.label)); row.append(c); });
   w.append(row); card.append(w);
 
   const rs = el("div","pc-rescue");
-  rs.append(el("span",null,plan.rescue.if), el("b",null,"→ "+plan.rescue.then));
+  rs.append(el("p","pc-rk","くじけそうな時の作戦"));
+  plan.rescue.forEach((r,i)=>{ const it = el("div","pc-r"+(i>0?" pc-r2":"")); it.append(el("span",null,r.if), el("b",null,"→ "+r.then)); rs.append(it); });
   card.append(rs);
   res.append(card);
 
@@ -615,6 +704,9 @@ function show(raw, p, notice){
   // くわしく（タップで開く）
   const det = el("div","pc-detail"); det.hidden = true;
   det.append(el("p","pc-msg",plan.message));
+  det.append(el("h3",null,"あなたの型"), el("p","pc-d-how","~の部分を入れ替えれば、自分の言いたい文が作れます。"));
+  plan.patterns.forEach((t,i)=>{ det.append(el("p","pc-d-item",`${String.fromCharCode(65+i)}：${t.form}（${t.meaning}）`));
+    t.examples.forEach(e=> det.append(el("p","pc-d-how",`・${e.en}（${e.ja||""}）`))); });
   det.append(el("h3",null,"主役メニューのやり方"));
   plan.focus.forEach(x=>{ det.append(el("p","pc-d-item",x.item), el("p","pc-d-how",x.how)); });
   det.append(el("h3",null,"曜日ごとにやること"));
@@ -656,69 +748,122 @@ function star(ctx, cx, cy, r, color, lw){
 async function renderWallpaper(plan, p){
   const R = "'M PLUS Rounded 1c', 'Hiragino Maru Gothic ProN', sans-serif", S = "'DM Serif Display', Georgia, serif";
   const allText = JSON.stringify(plan) + p.course + "MY PLANあなたは今週のゴール主役メニュー1週間maho shadowing club→…" + DAYS.join("");
-  try { await Promise.all([document.fonts.load(`800 60px "M PLUS Rounded 1c"`, allText), document.fonts.load(`700 40px "M PLUS Rounded 1c"`, allText), document.fonts.load(`40px "DM Serif Display"`, "MY PLAN")]); } catch(e){}
+  try { await Promise.all([document.fonts.load(`800 60px "M PLUS Rounded 1c"`, allText), document.fonts.load(`700 40px "M PLUS Rounded 1c"`, allText), document.fonts.load(`40px "DM Serif Display"`, "MY PLAN" + JSON.stringify(plan.patterns))]); } catch(e){}
   const W = 1080, H = 1920, c = document.createElement("canvas"); c.width = W; c.height = H;
   const x = c.getContext("2d");
   const C = { bg:"#FDEC97", card:"#FFFFFF", ink:"#23284A", muted:"#5A5F7D", blue:"#4862AC", pale:"#D6DFF2", coral:"#E0623B", pink:"#EC8FB6", green:"#5DB572", sun:"#F4C34A" };
-  x.fillStyle = C.bg; x.fillRect(0,0,W,H);
-  // 時計の場所をあけて、上はかざりだけ
-  star(x, 120, 300, 34, C.coral, 14); star(x, 960, 420, 28, C.green, 14);
-  x.fillStyle = C.pink; x.beginPath(); x.arc(940, 250, 26, 0, Math.PI*2); x.fill();
-  x.fillStyle = C.sun; x.beginPath(); x.arc(180, 470, 14, 0, Math.PI*2); x.fill();
+  const PX = 60, PW = W-120, L = PX+70, MW = PW-140;
+  const F = { k:`700 30px ${R}`, name:`800 72px ${R}`, catch:`700 36px ${R}`, goal:`800 44px ${R}`, item:`800 38px ${R}`, tip:`700 30px ${R}`,
+              day:`800 36px ${R}`, label:`700 22px ${R}`, rif:`700 30px ${R}`, rthen:`800 34px ${R}` };
+  const lines = (font, text, w, max) => { x.font = font; return wrapLines(x, text, w, max); };
 
-  const PX = 60, PY = 560, PW = W-120, PH = 1300;
+  // 1) 先に全部の行を組んで、高さをはかる（文字は切らずに折り返す）
+  // タイプ名は1行に収まるよう、文字を少しずつ小さくする
+  let ns = 72; x.font = `800 ${ns}px ${R}`;
+  while (ns > 50 && x.measureText(plan.type.name).width > MW){ ns -= 2; x.font = `800 ${ns}px ${R}`; }
+  F.name = `800 ${ns}px ${R}`;
+  const L_name = lines(F.name, plan.type.name, MW, 2);
+  const L_catch = lines(F.catch, plan.type.catch, MW, 3);
+  const L_goal = lines(F.goal, plan.goal, MW, 4);
+  const L_focus = plan.focus.map(f => ({ item: lines(F.item, f.item, MW-80, 2), tip: lines(F.tip, f.tip, MW-80, 3) }));
+  const cw7 = (MW - 60)/7;
+  const L_days = plan.week.map(d => lines(F.label, d.label, cw7-8, 2));
+  F.form = `44px ${S}`; F.mean = `700 24px ${R}`; F.exen = `33px ${S}`; F.exja = `700 22px ${R}`;
+  const L_pat = plan.patterns.map(t => ({ form: lines(F.form, t.form, MW-150, 2), mean: lines(F.mean, t.meaning, MW-150, 2),
+    ex: t.examples.map(e => ({ en: lines(F.exen, e.en, MW-90, 2), ja: lines(F.exja, e.ja||"", MW-90, 2) })) }));
+  const L_res = plan.rescue.slice(0,1).map(r => ({ i: lines(F.rif, r.if, MW-40, 3), t: lines(F.rthen, "→ " + r.then, MW-40, 3) }));
+  const KH = 48, CELL = 124; let GAP = 24;
+  const hType = KH + L_name.length*84 + L_catch.length*48;
+  const hGoal = KH + L_goal.length*60;
+  const hFocus = KH + L_focus.reduce((s,f)=> s + f.item.length*50 + f.tip.length*42 + 20, 0);
+  const hWeek = KH + CELL;
+  const patH = t => t.form.length*52 + t.mean.length*30 + 10 + t.ex.reduce((s,e)=> s + e.en.length*42 + e.ja.length*29 + 8, 0);
+  const hPhrase = 26 + 44 + L_pat.reduce((s,t)=> s + patH(t), 0) + (L_pat.length-1)*24 + 22;
+  const hRescue = 26 + 40 + L_res.reduce((s,r)=> s + r.i.length*42 + r.t.length*48, 0) + (L_res.length-1)*24 + 22;
+  const TOP_PAD = 110, BOT_PAD = 70;
+  // 時計のすぐ下（330px〜）から下（1840px）までをカードで埋める。余れば各ブロックの間を広げ、足りなければ全体を少し縮める
+  const AREA_T = 330, AREA_B = 1850;
+  // 待受は「型」と「1週間」を主役に。主役メニューは曜日マスに出ているので省き、作戦は1つにする
+  const base = TOP_PAD + hType + hGoal + hPhrase + hWeek + hRescue + BOT_PAD;
+  GAP = Math.max(14, Math.min(70, (AREA_B - AREA_T - base) / 4));
+  const PH = base + GAP*4;
+  const sc = Math.min(1, (AREA_B - AREA_T) / PH); window.__wall = {base, PH, sc};
+  const PY = AREA_T;
+
+  // 2) 描画
+  x.fillStyle = C.bg; x.fillRect(0,0,W,H);
+  star(x, 110, 150, 28, C.coral, 12); star(x, 975, 240, 24, C.green, 12);
+  x.fillStyle = C.pink; x.beginPath(); x.arc(940, 110, 22, 0, Math.PI*2); x.fill();
+  x.fillStyle = C.sun; x.beginPath(); x.arc(175, 245, 12, 0, Math.PI*2); x.fill();
+
+  x.save(); x.translate(W/2, PY); x.scale(sc, sc); x.translate(-W/2, -PY);
   octagon(x, PX, PY, PW, PH, 70); x.fillStyle = C.card; x.fill();
-  // ラベル
   x.save(); x.translate(PX+30, PY-34); x.rotate(-6*Math.PI/180);
   x.fillStyle = C.pale; x.fillRect(0,0,300,84); x.fillStyle = C.coral; x.font = `52px ${S}`; x.textBaseline = "middle"; x.fillText("MY PLAN", 26, 46); x.restore();
-  x.font = `700 28px ${R}`; const cw = x.measureText(p.course).width + 44;
-  x.fillStyle = C.blue; rrect(x, PX+PW-cw-50, PY+40, cw, 50, 25); x.fill();
-  x.fillStyle = "#fff"; x.textBaseline = "middle"; x.fillText(p.course, PX+PW-cw-28, PY+66);
-
-  const L = PX+70, MW = PW-140; let y = PY+150;
+  x.font = `700 28px ${R}`; const chw = x.measureText(p.course).width + 44;
+  x.fillStyle = C.blue; rrect(x, PX+PW-chw-50, PY+36, chw, 50, 25); x.fill();
+  x.fillStyle = "#fff"; x.textBaseline = "middle"; x.fillText(p.course, PX+PW-chw-28, PY+62);
   x.textBaseline = "alphabetic";
-  const k = (t) => { x.fillStyle = C.blue; x.font = `700 30px ${R}`; x.fillText(t, L, y); y += 20; };
-  // タイプ
-  k("あなたは"); y += 66;
-  x.fillStyle = C.coral; x.font = `800 72px ${R}`; wrapLines(x, plan.type.name, MW, 1).forEach(l=>{ x.fillText(l, L, y); y += 84; });
-  x.fillStyle = C.ink; x.font = `700 36px ${R}`; wrapLines(x, plan.type.catch, MW, 1).forEach(l=>{ x.fillText(l, L, y); y += 50; });
-  y += 22;
-  // ゴール
-  k("今週のゴール"); y += 56;
-  x.font = `800 44px ${R}`;
-  wrapLines(x, plan.goal, MW, 2).forEach(l=>{ const w = x.measureText(l).width; x.fillStyle = C.sun; x.globalAlpha = .7; x.fillRect(L-4, y-16, w+8, 22); x.globalAlpha = 1; x.fillStyle = C.ink; x.fillText(l, L, y); y += 62; });
-  y += 20;
-  // 主役メニュー
-  k("あなたの主役メニュー"); y += 22;
-  plan.focus.forEach((f,i)=>{
-    x.fillStyle = C.coral; x.beginPath(); x.arc(L+26, y+26, 26, 0, Math.PI*2); x.fill();
-    x.fillStyle = "#fff"; x.font = `800 30px ${R}`; x.textAlign = "center"; x.fillText(String(i+1), L+26, y+37); x.textAlign = "left";
-    x.fillStyle = C.ink; x.font = `800 38px ${R}`; x.fillText(wrapLines(x, f.item, MW-80, 1)[0]||"", L+74, y+40);
-    x.fillStyle = C.muted; x.font = `700 30px ${R}`; x.fillText(wrapLines(x, f.tip, MW-80, 1)[0]||"", L+74, y+86);
-    y += 104;
+
+  let y = PY + TOP_PAD;
+  const k = t => { x.fillStyle = C.blue; x.font = F.k; x.fillText(t, L, y + 30); y += KH; };
+  const draw = (font, color, ls, lh, dx=0) => { x.font = font; x.fillStyle = color; ls.forEach(l => { x.fillText(l, L+dx, y + lh*0.78); y += lh; }); };
+
+  k("あなたは"); draw(F.name, C.coral, L_name, 84); draw(F.catch, C.ink, L_catch, 48); y += GAP;
+
+  k("今週のゴール");
+  x.font = F.goal; L_goal.forEach(l => { const w = x.measureText(l).width; x.globalAlpha = .7; x.fillStyle = C.sun; x.fillRect(L-4, y+34, w+8, 20); x.globalAlpha = 1; x.fillStyle = C.ink; x.fillText(l, L, y+46); y += 60; });
+  y += GAP;
+
+  rrect(x, L-10, y, MW+20, hPhrase, 22); x.fillStyle = C.pale; x.fill();
+  x.fillStyle = C.coral; x.font = F.k; x.fillText("あなたの型", L+20, y+26+30);
+  x.fillStyle = C.muted; x.font = `700 24px ${R}`; x.textAlign = "right"; x.fillText(`${plan.scene}への置き換え`, L+MW-10, y+26+30); x.textAlign = "left";
+  let py = y + 26 + 44;
+  L_pat.forEach((t,i) => {
+    if (i > 0){ x.strokeStyle = "rgba(72,98,172,.35)"; x.lineWidth = 2; x.setLineDash([8,6]); x.beginPath(); x.moveTo(L+20, py+8); x.lineTo(L+MW-20, py+8); x.stroke(); x.setLineDash([]); py += 24; }
+    x.fillStyle = C.coral; x.beginPath(); x.arc(L+40, py+30, 22, 0, Math.PI*2); x.fill();
+    x.fillStyle = "#fff"; x.font = `800 26px ${R}`; x.textAlign = "center"; x.fillText(String.fromCharCode(65+i), L+40, py+39); x.textAlign = "left";
+    x.fillStyle = C.ink; x.font = F.form; t.form.forEach(l => { x.fillText(l, L+80, py+40); py += 52; });
+    x.fillStyle = C.muted; x.font = F.mean; t.mean.forEach(l => { x.fillText(l, L+80, py+24); py += 30; });
+    py += 10;
+    const head = patternHead(plan.patterns[i].form);
+    t.ex.forEach(e => {
+      e.en.forEach((l,j) => {
+        x.font = F.exen; let dx = L+80;
+        if (j === 0 && head && l.toLowerCase().startsWith(head.toLowerCase())){ x.fillStyle = C.coral; x.fillText(l.slice(0,head.length), dx, py+33); dx += x.measureText(l.slice(0,head.length)).width; x.fillStyle = C.ink; x.fillText(l.slice(head.length), dx, py+33); }
+        else { x.fillStyle = C.ink; x.fillText(l, dx, py+33); }
+        py += 42; });
+      x.fillStyle = C.muted; x.font = F.exja; e.ja.forEach(l => { x.fillText(l, L+80, py+22); py += 29; });
+      py += 8;
+    });
   });
-  y += 44;
-  // 1週間
-  k("あなたの1週間"); y += 26;
-  const gap = 10, cwid = (MW - gap*6)/7, ch = 130;
-  plan.week.forEach((d,i)=>{
-    const cx = L + i*(cwid+gap);
-    rrect(x, cx, y, cwid, ch, 16); x.fillStyle = d.busy ? C.pale : C.card; x.fill();
+  y += hPhrase + GAP;
+
+  x.fillStyle = C.muted; x.font = `700 26px ${R}`; x.textAlign = "right"; x.fillText(`毎日 ${p._when}・約${p.minutes}分`, L+MW, y+30); x.textAlign = "left";
+  k("あなたの1週間");
+  plan.week.forEach((d,i) => {
+    const cx = L + i*(cw7+10);
+    rrect(x, cx, y, cw7, CELL, 16); x.fillStyle = d.busy ? C.pale : C.card; x.fill();
     x.lineWidth = 3; x.strokeStyle = C.blue; if (d.busy) x.setLineDash([8,6]); x.stroke(); x.setLineDash([]);
-    x.textAlign = "center"; x.fillStyle = C.coral; x.font = `800 36px ${R}`; x.fillText(d.day, cx+cwid/2, y+48);
-    x.fillStyle = C.ink; x.font = `700 22px ${R}`;
-    wrapLines(x, d.label, cwid-8, 2).forEach((l,j)=> x.fillText(l, cx+cwid/2, y+86+j*28));
+    x.textAlign = "center"; x.fillStyle = C.coral; x.font = F.day; x.fillText(d.day, cx+cw7/2, y+48);
+    x.fillStyle = C.ink; x.font = F.label; L_days[i].forEach((l,j)=> x.fillText(l, cx+cw7/2, y+84+j*28));
     x.textAlign = "left";
   });
-  y += ch + 30;
-  // くじけそうな時
-  x.save(); x.translate(L-10, y); x.rotate(-1.5*Math.PI/180);
-  x.fillStyle = C.sun; x.fillRect(0, 0, MW+20, 112);
-  x.fillStyle = C.ink; x.font = `700 30px ${R}`; x.fillText(wrapLines(x, plan.rescue.if, MW-20, 1)[0]||"", 30, 48);
-  x.font = `800 34px ${R}`; x.fillText(wrapLines(x, "→ "+plan.rescue.then, MW-20, 1)[0]||"", 30, 96);
+  y += CELL + GAP;
+
+  x.save(); x.translate(L-10, y); x.rotate(-1.2*Math.PI/180);
+  x.fillStyle = C.sun; x.fillRect(0, 0, MW+20, hRescue);
+  let ry = 26;
+  x.fillStyle = C.ink; x.globalAlpha = .7; x.font = `800 26px ${R}`; x.fillText("くじけそうな時の作戦", 30, ry+28); x.globalAlpha = 1; ry += 40;
+  L_res.forEach((r,n) => {
+    if (n > 0){ x.strokeStyle = "rgba(35,40,74,.35)"; x.lineWidth = 2; x.setLineDash([8,6]); x.beginPath(); x.moveTo(30, ry+10); x.lineTo(MW-10, ry+10); x.stroke(); x.setLineDash([]); ry += 24; }
+    x.fillStyle = C.ink; x.font = F.rif; r.i.forEach(l => { x.fillText(l, 30, ry+32); ry += 42; });
+    x.font = F.rthen; r.t.forEach(l => { x.fillText(l, 30, ry+36); ry += 48; });
+  });
   x.restore();
-  // フッター
-  x.fillStyle = C.blue; x.font = `700 26px ${R}`; x.textAlign = "center"; x.fillText("maho shadowing club", W/2, 1898); x.textAlign = "left";
+  x.restore();
+
+  x.fillStyle = C.blue; x.font = `700 26px ${R}`; x.textAlign = "center"; x.fillText("maho shadowing club", W/2, Math.min(1895, PY+PH*sc+60)); x.textAlign = "left";
   return await new Promise(r => c.toBlob(r, "image/png"));
 }
 
