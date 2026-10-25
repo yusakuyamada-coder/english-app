@@ -229,26 +229,6 @@ body.result-mode .wrap{padding:10px 14px 12px;max-width:460px}
 .pc-ja{margin:2px 0 0;font-size:12px;font-weight:700;color:var(--muted)}
 .pc-khead{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .pc-when{font-size:11px;font-weight:700;color:var(--muted)}
-@media (max-height:860px){ .pc-r2{display:none} .pc-rk{display:none} .pcard{gap:6px;padding-top:12px} .pc-catch{font-size:13px} .pc-goal{font-size:15.5px;line-height:1.5} .pc-row{padding:3px 0} .pc-name{font-size:24px} }
-@media (max-height:760px){ .pc-row{padding:2px 0} .pc-row.busy{padding:2px 6px} .pc-main{font-size:13px} .pc-point{font-size:10.5px} .pc-dchip{width:24px;height:24px;font-size:12px} .pc-rescue{display:none} .pc-catch{display:none} .pc-plus li span{font-size:10.5px} .pc-plus li{padding:4px 7px} }
-@media (max-height:700px){
-  body.result-mode .wrap{padding:6px 12px 6px} .pc-actions{margin:6px 0 0!important}
-  .pc-notice{display:none} .pc-name small{font-size:10.5px} .pc-main{font-size:12.5px;line-height:1.25} .pc-point{font-size:10px;line-height:1.25}
-  .pc-dchip{width:22px;height:22px;font-size:11px} .pc-row{gap:8px} .pc-sched{gap:2px} .pc-plus{padding:4px 6px 6px} .pc-plus li b{font-size:11.5px}
-
-  .pc-r2{display:none}
-  .pcard{gap:6px;padding:12px 14px 12px;min-height:0}
-  .pc-tag{font-size:18px} .pc-course{font-size:10px}
-  .pc-notice{font-size:10px;line-height:1.4}
-  .pc-name{font-size:21px} .pc-catch{font-size:12.5px;margin:0}
-  .pc-goal{font-size:14.5px;line-height:1.5}
-  .pc-phrase{padding:5px 8px 6px;gap:4px} .pc-form{font-size:15px} .pc-mean{font-size:10px} .pc-exs{padding:4px 9px 5px;gap:1px} .pc-exen{font-size:13.5px} .pc-exja{display:none}
-  .pc-focus span{display:none} .pc-k{font-size:11px} .pc-goal{font-size:14px}
-  .pc-focus{gap:3px} .pc-focus b{font-size:14px} .pc-focus span{font-size:11.5px}
-  .pc-day{min-height:48px;padding:3px 1px 4px} .pc-day b{font-size:13px}
-  .pc-rescue{padding:6px 12px} .pc-rk{display:none}
-  .pc-actions{margin:8px 0 0} .pc-actions .btn{padding:9px 22px;font-size:15px}
-}
 .pc-actions{display:flex;justify-content:center;align-items:center;gap:10px;margin:10px 0 0}
 .pc-actions .btn{padding:12px 26px;font-size:16px}
 .pc-detail{background:var(--card);border-radius:14px;padding:18px 20px;margin:18px 0 0}
@@ -267,13 +247,19 @@ body.result-mode .wrap{padding:10px 14px 12px;max-width:460px}
 @media (min-height:880px){ .pcard{gap:14px;padding:22px 22px} }
 .pc-sched{display:flex;flex-direction:column;gap:4px}
 .pc-days{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
-.pc-row{display:flex;align-items:center;gap:10px;padding:4px 0;border-bottom:1px solid color-mix(in srgb,var(--blue) 15%,transparent)}
+.pc-row{display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid color-mix(in srgb,var(--blue) 15%,transparent)}
 .pc-row:last-child{border-bottom:0}
 .pc-row.busy{background:var(--pale);border-radius:8px;border-bottom-color:transparent;padding:4px 6px;margin:1px -6px}
 .pc-dchip{flex:0 0 auto;width:28px;height:28px;border-radius:50%;background:var(--coral);color:#fff;font-weight:800;font-size:14px;display:grid;place-items:center;letter-spacing:0}
 .pc-row.busy .pc-dchip{background:var(--blue)}
 .pc-rbody{display:flex;flex-direction:column;min-width:0;line-height:1.3}
-.pc-main{font-size:14px}
+.pc-rhead{display:flex;align-items:baseline;gap:6px;min-width:0}
+.pc-lcol{flex:0 0 44px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.pc-theme{font-size:9.5px;font-weight:800;color:var(--coral);line-height:1.2;letter-spacing:-.02em;white-space:nowrap}
+.pc-row.busy .pc-theme{color:var(--blue)}
+.pc-main{font-size:13px;line-height:1.3;letter-spacing:0}
+.pc-x{font-style:normal;color:var(--coral);margin:0 3px;font-weight:800}
+.pc-d-week small{color:var(--muted)}
 .pc-point{font-size:11.5px;font-weight:700;color:var(--muted)}
 .pc-row.busy .pc-point{color:var(--blue)}
 .pc-plus{background:var(--pale);border-radius:12px;padding:6px 8px 8px}
@@ -283,6 +269,29 @@ body.result-mode .wrap{padding:10px 14px 12px;max-width:460px}
 .pc-plus li{display:flex;flex-direction:column;line-height:1.35;background:var(--card);border-radius:8px;padding:5px 8px 6px}
 .pc-plus li b{font-size:12.5px}
 .pc-plus li span{font-size:11px;color:var(--muted);font-weight:700}
+/* 画面の高さに合わせて詰める（基本ルールより後ろに置く） */
+@media (max-height:860px){
+  .pc-notice{display:none} .pc-r2{display:none} .pc-rk{display:none}
+  .pcard{gap:6px;padding-top:12px} .pc-catch{font-size:13px} .pc-goal{font-size:15.5px;line-height:1.5} .pc-name{font-size:24px}
+  .pc-row{padding:3px 0} .pc-row.busy{padding:3px 6px} .pc-dchip{width:26px;height:26px;font-size:13px}
+}
+@media (max-height:760px){
+  .pc-catch{font-size:12px}
+  .pc-rescue{padding:5px 12px} .pc-rescue span{font-size:11px} .pc-rescue b{font-size:12.5px}
+  .pc-row{padding:2px 0} .pc-row.busy{padding:2px 6px} .pc-main{font-size:12.5px} .pc-point{font-size:10.5px} .pc-dchip{width:24px;height:24px;font-size:12px}
+  .pc-plus li{padding:4px 7px} .pc-plus li span{font-size:10.5px}
+}
+@media (max-height:700px){
+  body.result-mode .wrap{padding:6px 12px 6px}
+  .pcard{gap:5px;padding:10px 14px 10px;min-height:0}
+  .pc-tag{font-size:18px} .pc-course{font-size:10px}
+  .pc-k{font-size:11px} .pc-name{font-size:21px} .pc-name small{font-size:10.5px} .pc-goal{font-size:14px}
+  .pc-main{font-size:12.5px;line-height:1.25} .pc-point{font-size:10px;line-height:1.25}
+  .pc-lcol{flex-basis:36px} .pc-dchip{width:20px;height:20px;font-size:10.5px} .pc-theme{font-size:8.5px}
+  .pc-row{gap:4px;padding:1px 0} .pc-row.busy{padding:1px 6px} .pc-sched{gap:2px}
+  .pc-plus{padding:4px 6px 6px} .pc-plus li b{font-size:11.5px} .pc-plus li span{font-size:10px;line-height:1.3}
+  .pc-actions{margin:6px 0 0} .pc-actions .btn{padding:9px 22px;font-size:15px}
+}
 [hidden]{display:none!important}
 
 @media (max-width:560px){
@@ -470,7 +479,7 @@ function payload(){
 function buildPrompt(p){
   return `あなたは英語学習コミュニティ「msc（maho shadowing club）」の学習コーチです。
 mscは「英語を通して、自分の可能性を広げるきっかけをつくる」場所。シャドーイングを中心に、忙しい大人が無理なく続けられる学習を大切にしています。
-この会員のためだけの「1週間プラン」を作ってください。主役は、mscのアプリのメニューを使った月〜日のスケジュールです。この人の目標・ニガテ・生活・つまずき方に合わせて、毎日どのmscコンテンツを主役にして、どうやるかを決めてください。誰にでも当てはまる文章は書かないでください。
+この会員のためだけの「1週間プラン」を作ってください。主役は、mscのアプリのメニューを使った月〜日のスケジュールです。この人の目標・ニガテ・生活・つまずき方に合わせて、毎日どのmscコンテンツをどう組み合わせて、どうやるかを決めてください。誰にでも当てはまる文章は書かないでください。
 このプランはスマホの1画面に収まるカードと、待受画像になります。カードに出す項目は、指定の文字数を必ず守り、短く言い切ってください。
 
 # 会員が選んだコース：${p.course}
@@ -488,7 +497,12 @@ ${JSON.stringify(p.answers, null, 2)}
 # 作り方
 1. type：回答（特に続かなかった理由・ニガテ・生活）から、この人を言い当てるオリジナルのタイプ名（12字以内）と、このタイプが伸びるための合言葉（20字以内）
 2. goal：使いたい場面と目標から、1週間で達成できる具体的なゴールを1つ（28字以内）。できたかどうか本人が確かめられる形に
-3. week：月〜日の7日分。mainは、その曜日のメニューの中から、この人のニガテ・目標に照らしてその日いちばん力を入れる教材を1つ（教材名はメニューの表記どおり。同じ教材ばかりにせず、曜日のメニューを活かす）。pointは、その日のmainのこの人向けのやり方（20字以内。回数・再生速度・スクリプトを見るタイミング・できたらOKの基準など具体的に）。忙しいと答えた曜日はbusyをtrueにし、pointを「5分だけ：〜」の形にする。todoは、その日のメニュー全体の進め方と時間帯（1〜2文）
+3. week：月〜日の7日分。曜日ごとのメニューの教材を「組み合わせて」、1週間のストーリーになるように組み立てる。
+   - themeは、その日の役割を表す短い言葉（4字以内。例：知る／まねる／思い出す／つなげる／使う／広げる／ふり返る）。月→日で「知る→まねる→使う」のように流れができるように
+   - comboは、その曜日のメニューの中から、この人のニガテ・目標に効く教材を2つ選んだ組み合わせ（教材名はメニューの表記どおり、やる順番に並べる）。同じ組み合わせを何日も続けず、曜日のメニューを広く使う。同じ曜日ブロック（例：水・木）でも日によって組み合わせや狙いを変える
+   - pointは、その組み合わせをどうつなげるか（24字以内）。例：「ラジオでメモした表現を、シャドーイングで声に」「昨日の単語を、英作文で使ってみる」。前の日の内容を受けて次の日につなげる書き方も歓迎
+   - 忙しいと答えた曜日はbusyをtrueにし、comboは1つだけ、pointを「5分だけ：〜」の形にする
+   - todoは、その日のメニュー全体の進め方と時間帯（1〜2文）
 4. focus：1週間を通して特に大事な教材を2つ（教材名はメニューの表記どおり）。howはくわしいやり方（2文）
 5. plus：アプリの外で、この人の生活の中ですぐできる「＋α練習」をちょうど2つ。その週のmscの教材で覚えた表現や音を、日常で使い直す内容にする。titleは12字以内、howは24字以内。家事・通勤・子育て・お風呂など、回答にある生活の場面を使う。道具や他のアプリは使わない
 6. rescue：この人がくじけそうな具体的な瞬間を2つ予想して、それぞれif（16字以内、「もし〜」）とthen（20字以内、「〜だけやる」など）。2つは違う場面にする。mscの「楽習報告」に報告する・「質問広場」で質問する・次の月曜から再スタートできる、といった仕組みを使ってよい（名前は必ず「楽習報告」「質問広場」と書く）
@@ -500,7 +514,7 @@ ${JSON.stringify(p.answers, null, 2)}
 {
   "type": {"name": "12字以内", "catch": "20字以内"},
   "goal": "28字以内",
-  "week": [{"day": "月", "main": "教材名", "point": "20字以内", "busy": false, "todo": "1〜2文"}],
+  "week": [{"day": "月", "theme": "4字以内", "combo": ["教材名", "教材名"], "point": "24字以内", "busy": false, "todo": "1〜2文"}],
   "focus": [{"item": "教材名", "how": "2文"}],
   "plus": [{"title": "12字以内", "how": "24字以内"}, {"title": "12字以内", "how": "24字以内"}],
   "rescue": [{"if": "16字以内", "then": "20字以内"}, {"if": "16字以内", "then": "20字以内"}],
@@ -568,6 +582,20 @@ const RESCUE = [
   {if:"もし時間がとれなかったら", then:"1回聞いて楽習報告に報告"},
   {if:"もし飽きてきたら", then:"楽習報告で仲間の投稿を見る"},
   {if:"もし全部できなかったら", then:"主役だけで100点"} ];
+// 画面・待受で使う短い呼び名（編集ポイント：アプリでの呼び方に合わせて変えてOK）
+const SHORT = { "mahoの文法解説ラジオ":"文法ラジオ", "発音矯正＆フレーズ解説ラジオ":"発音ラジオ", "ネイティブ英語のヒアリング":"ヒアリング",
+  "リズム単語（日本語のみ）":"日本語→リズム単語", "リズムチャンク（日本語のみ）":"日本語→チャンク", "ネイティブ速度シャドーイング":"速度シャドーイング" };
+const shortName = it => SHORT[it] || it;
+const THEMES = ["知る","まねる","思い出す","つなげる","使う","広げる","ふり返る"];
+function comboTip(a, b){
+  if (!b) return tipFor(a);
+  if (b.includes("英作文")) return a.includes("英作文") ? "前半の表現を広げて、即興で言う" : "覚えた表現を、英作文で使ってみる";
+  if (b.includes("日本語のみ")) return "聞いた音を、日本語から英語で思い出す";
+  if (b.includes("リズム")) return "出てきた単語を、リズムで口に定着";
+  if (b.includes("ネイティブ速度")) return "仕上げに速度そのままで通してみる";
+  if (b.includes("シャドーイング")) return a.includes("ラジオ") ? "ラジオで知った表現を、まねして声に" : "聞いた音を、そのまままねして声に";
+  return tipFor(a);
+}
 function tipFor(item){
   if (item.includes("日本語のみ")) return "3秒以内に英語を口に出す";
   if (item.includes("文字なし")) return "見ずに2回。口パクからでOK";
@@ -606,8 +634,10 @@ function fallback(p){
       const cand = [...items.filter(i=>focus.includes(i)), ...items.filter(i=>!focus.includes(i))];
       const nth = DAYS.filter(x=>dayBlock(x)===dayBlock(d)).indexOf(d);
       const main = cand[nth % cand.length] || items[0];
-      return { day:d, main, busy, point: busy ? "5分だけ：1回聞けばOK" : tipFor(main),
-        todo: `${p._when}に、${items.join("→")}の順に進めます。「${main}」をいちばんていねいに。` };
+      const partner = items.filter(i=>i!==main)[nth % Math.max(1, items.length-1)];
+      const combo = busy || !partner ? [main] : [main, partner].sort((x,y)=>items.indexOf(x)-items.indexOf(y));
+      return { day:d, theme:THEMES[DAYS.indexOf(d)], combo, busy, point: busy ? "5分だけ：1回聞けばOK" : comboTip(combo[0], combo[1]),
+        todo: `${p._when}に、${items.join("→")}の順に進めます。「${combo.join("」と「")}」をていねいに。` };
     }),
     focus: focus.map(it=>({ item:it, how:howFor(it) })),
     plus: plus.slice(0,2),
@@ -627,9 +657,13 @@ function normalize(plan, p){
   const week = DAYS.map((d,i)=>{
     const w = (plan.week||[]).find(x=>x && x.day===d) || (plan.week||[])[i] || fb.week[i];
     const items = p.menu[dayBlock(d)].items;
-    const main = items.includes(w.main) ? w.main : (items.find(it => w.main && (it.includes(w.main) || w.main.includes(it))) || fb.week[i].main);
+    const match = s => items.includes(s) ? s : items.find(it => s && (it.includes(s) || s.includes(it)));
+    const raw = Array.isArray(w.combo) ? w.combo : (w.main ? [w.main] : []);
+    let combo = [...new Set(raw.map(match).filter(Boolean))].slice(0,2);
     const busy = !!w.busy;
-    return { day:d, main, busy, items, point: w.point || fb.week[i].point, todo: w.todo || fb.week[i].todo };
+    if (!combo.length) combo = fb.week[i].combo;
+    if (busy) combo = combo.slice(0,1);
+    return { day:d, theme: w.theme || fb.week[i].theme, combo, busy, items, point: w.point || fb.week[i].point, todo: w.todo || fb.week[i].todo };
   });
   const pick = (arr, fbArr, ok) => { const r = (arr||[]).filter(ok).slice(0,2); fbArr.forEach(z=>{ if (r.length<2) r.push(z); }); return r; };
   return {
@@ -676,8 +710,11 @@ function show(raw, p, notice){
   plan.week.forEach(d=>{
     const li = el("li","pc-row"+(d.busy?" busy":""));
     const body = el("div","pc-rbody");
-    body.append(el("b","pc-main",d.main), el("span","pc-point",d.point));
-    li.append(el("span","pc-dchip",d.day), body);
+    const mn = el("b","pc-main");
+    d.combo.forEach((it,k)=>{ if (k) mn.append(el("i","pc-x","×")); mn.append(el("span",null,shortName(it))); });
+    body.append(mn, el("span","pc-point",d.point));
+    const lc = el("div","pc-lcol"); lc.append(el("span","pc-dchip",d.day), el("span","pc-theme",d.theme));
+    li.append(lc, body);
     ol.append(li);
   });
   w.append(ol); card.append(w);
@@ -707,7 +744,8 @@ function show(raw, p, notice){
   det.append(el("p","pc-msg",plan.message));
   det.append(el("h3",null,"曜日ごとの進め方"));
   const ul = el("ul","pc-d-week");
-  plan.week.forEach(d=>{ const li = el("li"); li.append(el("b",null,`${d.day}（${d.items.join("・")}）`), el("br"), document.createTextNode(d.todo)); ul.append(li); });
+  plan.week.forEach(d=>{ const li = el("li"); li.append(el("b",null,`${d.day}【${d.theme}】${d.combo.join(" × ")}`), el("br"), document.createTextNode(d.point), el("br"),
+    el("small",null,`この日のメニュー：${d.items.join("・")}`), el("br"), document.createTextNode(d.todo)); ul.append(li); });
   det.append(ul);
   det.append(el("h3",null,"今週とくに大事なメニュー"));
   plan.focus.forEach(x=>{ det.append(el("p","pc-d-item",x.item), el("p","pc-d-how",x.how)); });
@@ -751,7 +789,7 @@ async function renderWallpaper(plan, p){
   const x = c.getContext("2d");
   const C = { bg:"#FDEC97", card:"#FFFFFF", ink:"#23284A", muted:"#5A5F7D", blue:"#4862AC", pale:"#D6DFF2", coral:"#E0623B", pink:"#EC8FB6", green:"#5DB572", sun:"#F4C34A" };
   const PX = 60, PW = W-120, L = PX+70, MW = PW-140;
-  const F = { k:`700 30px ${R}`, catch:`700 34px ${R}`, goal:`800 42px ${R}`, main:`800 32px ${R}`, point:`700 25px ${R}`,
+  const F = { k:`700 30px ${R}`, catch:`700 34px ${R}`, goal:`800 42px ${R}`, main:`800 29px ${R}`, point:`700 25px ${R}`,
               ptitle:`800 30px ${R}`, phow:`700 28px ${R}`, rif:`700 28px ${R}`, rthen:`800 32px ${R}` };
   const lines = (font, text, w, max) => { x.font = font; return wrapLines(x, text, w, max); };
 
@@ -762,13 +800,13 @@ async function renderWallpaper(plan, p){
   const L_name = lines(F.name, plan.type.name, MW, 2);
   const L_catch = lines(F.catch, plan.type.catch, MW, 2);
   const L_goal = lines(F.goal, plan.goal, MW, 3);
-  const RX = 96;                        // 曜日の丸の右から本文
-  const L_days = plan.week.map(d => ({ main: lines(F.main, d.main, MW-RX, 2), point: lines(F.point, d.point, MW-RX, 2) }));
+  const RX = 110;                        // 曜日の丸の右から本文
+  const L_days = plan.week.map((d,i) => ({ main: lines(F.main, d.combo.map(shortName).join(" × "), MW-RX, 2), point: lines(F.point, d.point, MW-RX, 2) }));
   const L_plus = plan.plus.map(z => lines(F.phow, z.how, MW-40, 2));
   const r0 = plan.rescue[0];
   const L_if = lines(F.rif, r0.if, MW-40, 2), L_then = lines(F.rthen, "→ " + r0.then, MW-40, 2);
   const KH = 48;
-  const rowH = d => Math.max(62, d.main.length*40 + d.point.length*31) + 10;
+  const rowH = d => Math.max(88, d.main.length*40 + d.point.length*31) + 8;
   const hType = KH + L_name.length*ns*1.12 + L_catch.length*44;
   const hGoal = KH + L_goal.length*58;
   const hWeek = KH + 6 + L_days.reduce((s,d)=> s + rowH(d), 0);
@@ -776,9 +814,10 @@ async function renderWallpaper(plan, p){
   const hRescue = 24 + 38 + L_if.length*38 + L_then.length*44 + 20;
   const TOP_PAD = 100, BOT_PAD = 54;
   const AREA_T = 330, AREA_B = 1850;
-  const base = TOP_PAD + hType + hGoal + hWeek + hPlus + hRescue + BOT_PAD;
-  let GAP = Math.max(12, Math.min(60, (AREA_B - AREA_T - base) / 4));
-  const PH = base + GAP*4;
+  // 待受は「タイプ・ゴール・1週間・＋α」。作戦は画面のカードで見る
+  const base = TOP_PAD + hType + hGoal + hWeek + hPlus + BOT_PAD;
+  let GAP = Math.max(12, Math.min(70, (AREA_B - AREA_T - base) / 3));
+  const PH = base + GAP*3;
   const sc = Math.min(1, (AREA_B - AREA_T) / PH); window.__wall = {base, PH, sc};
   const PY = AREA_T;
 
@@ -813,10 +852,14 @@ async function renderWallpaper(plan, p){
   plan.week.forEach((d,i) => {
     const h = rowH(L_days[i]);
     if (d.busy){ rrect(x, L-12, y-4, MW+24, h-6, 16); x.fillStyle = C.pale; x.fill(); }
-    x.fillStyle = d.busy ? C.blue : C.coral; x.beginPath(); x.arc(L+32, y+30, 30, 0, Math.PI*2); x.fill();
-    x.fillStyle = "#fff"; x.font = `800 30px ${R}`; x.textAlign = "center"; x.fillText(d.day, L+32, y+41); x.textAlign = "left";
+    x.fillStyle = d.busy ? C.blue : C.coral; x.beginPath(); x.arc(L+40, y+30, 30, 0, Math.PI*2); x.fill();
+    x.fillStyle = "#fff"; x.font = `800 30px ${R}`; x.textAlign = "center"; x.fillText(d.day, L+40, y+41); x.textAlign = "left";
     let ry = y;
-    x.fillStyle = C.ink; x.font = F.main; L_days[i].main.forEach(l => { x.fillText(l, L+RX, ry+32); ry += 40; });
+    x.font = `800 22px ${R}`; x.fillStyle = d.busy ? C.blue : C.coral; x.textAlign = "center"; x.fillText(d.theme, L+40, y+86); x.textAlign = "left";
+    const mx = L+RX;
+    x.font = F.main; L_days[i].main.forEach(l => {
+      let dx = mx; l.split(/( × )/).forEach(part => { x.fillStyle = part === " × " ? C.coral : C.ink; x.fillText(part, dx, ry+32); dx += x.measureText(part).width; });
+      ry += 40; });
     x.fillStyle = d.busy ? C.blue : C.muted; x.font = F.point; L_days[i].point.forEach(l => { x.fillText(l, L+RX, ry+25); ry += 31; });
     y += h;
     if (i < 6 && !d.busy && !plan.week[i+1].busy){ x.strokeStyle = "rgba(72,98,172,.22)"; x.lineWidth = 2; x.beginPath(); x.moveTo(L+RX, y-8); x.lineTo(L+MW, y-8); x.stroke(); }
@@ -831,16 +874,8 @@ async function renderWallpaper(plan, p){
     x.fillStyle = C.ink; x.font = F.ptitle; x.fillText("・" + z.title, L+14, py+30); py += 38;
     x.fillStyle = C.muted; x.font = F.phow; L_plus[i].forEach(l => { x.fillText(l, L+52, py+27); py += 34; }); py += 6;
   });
-  y += hPlus + GAP;
+  y += hPlus;
 
-  // 作戦（1つ）
-  x.save(); x.translate(L-10, y); x.rotate(-1.2*Math.PI/180);
-  x.fillStyle = C.sun; x.fillRect(0, 0, MW+20, hRescue);
-  let ry = 24;
-  x.fillStyle = C.ink; x.globalAlpha = .7; x.font = `800 24px ${R}`; x.fillText("くじけそうな時の作戦", 30, ry+26); x.globalAlpha = 1; ry += 38;
-  x.font = F.rif; L_if.forEach(l => { x.fillText(l, 30, ry+30); ry += 38; });
-  x.font = F.rthen; L_then.forEach(l => { x.fillText(l, 30, ry+34); ry += 44; });
-  x.restore();
   x.restore();
 
   x.fillStyle = C.blue; x.font = `700 26px ${R}`; x.textAlign = "center"; x.fillText("maho shadowing club", W/2, Math.min(1895, PY+PH*sc+60)); x.textAlign = "left";
