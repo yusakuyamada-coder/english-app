@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>発話くん - インタビューに答えてみよう</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --accent: #1D9E75; --accent-light: #E1F5EE; --text: #1a1a18; --radius: 16px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: transparent; }
+    body { font-family: 'Plus Jakarta Sans', "Hiragino Sans", sans-serif; display: flex; justify-content: center; padding: 4px; }
+    .container { width: 100%; max-width: 560px; display: flex; flex-direction: column; gap: 12px; }
+
+    .head { background: white; border-radius: var(--radius); padding: 14px 16px; border: 2px solid var(--accent); }
+    .head-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .brand { font-size: 13px; font-weight: 700; color: var(--accent); }
+    .qno { font-size: 12px; color: #fff; background: var(--accent); padding: 3px 10px; border-radius: 99px; font-weight: 700; }
+    .q-en { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.5; }
+    .q-ja { font-size: 12px; color: #888; margin-top: 2px; }
+    .howto { margin-top: 10px; font-size: 12px; color: #0F6E56; background: var(--accent-light); border-radius: 10px; padding: 8px 10px; line-height: 1.6; }
+    .written { margin-top: 8px; font-size: 12.5px; color: #555; display: none; }
+    .written b { color: var(--accent); }
+
+    .controls { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 4px 0; }
+    .status { font-weight: 600; color: #666; font-size: 13px; text-align: center; }
+    .rec-btn { width: 76px; height: 76px; border-radius: 50%; border: none; background: var(--accent); color: white; cursor: pointer; font-size: 30px; box-shadow: 0 8px 20px rgba(29,158,117,0.3); }
+    .rec-btn.recording { background: #E24B4A; animation: pulse 1.2s infinite; }
+    .rec-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .progress-wrap { width: 100%; display: none; flex-direction: column; align-items: center; gap: 8px; }
+    .progress-wrap.show { display: flex; }
+    .analysis-track { width: 100%; background: #e5e5e5; border-radius: 99px; height: 10px; overflow: hidden; }
+    .analysis-bar { height: 100%; background: var(--accent); border-radius: 99px; width: 0%; transition: width 0.4s ease; }
+    .progress-pct { font-size: 22px; font-weight: 700; color: var(--accent); }
+    .progress-step { font-size: 12px; color: #888; }
+
+    .result { background: white; border-radius: var(--radius); padding: 16px; border: 0.5px solid #ddd; display: none; }
+    .scores { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+    .score-box { background: #f0efe9; border-radius: 10px; padding: 10px; text-align: center; }
+    .score-box .lbl { font-size: 11px; color: #888; margin-bottom: 2px; }
+    .score-box .num { font-size: 28px; font-weight: 700; color: var(--accent); }
+    .label { font-size: 10px; font-weight: 700; color: #888; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.05em; }
+    .val-you { color: #E24B4A; font-weight: 600; margin-bottom: 12px; font-size: 14px; line-height: 1.5; }
+    .val-better { color: var(--accent); font-weight: 700; margin-bottom: 12px; font-size: 15px; line-height: 1.5; }
+    .feedback { background: #f7f7f5; padding: 12px 14px; border-radius: 10px; font-size: 13px; border-left: 4px solid var(--accent); line-height: 1.7; white-space: pre-wrap; color: #333; }
+    .retry-btn { width: 100%; padding: 11px; background: white; color: #666; border: 1px solid #ddd; border-radius: 99px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 12px; }
+
+    @keyframes pulse { 0%{transform:scale(1)} 50%{transform:scale(1.1)} 100%{transform:scale(1)} }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="head">
+    <div class="head-row">
+      <span class="brand">🎤 発話くんで採点</span>
+      <span class="qno" id="qno">Q1</span>
+    </div>
+    <div class="q-en" id="qEn"></div>
+    <div class="q-ja" id="qJa"></div>
+    <div class="written" id="written"><b>あなたが書いた答え：</b><span id="writtenText"></span></div>
+    <div class="howto">質問に英語で答えて録音しよう。書いた答えでも、答えの例でもOK！<br>発音と英語の正しさを採点するよ。</div>
+  </div>
+
+  <div class="controls">
+    <p class="status" id="status">🎤 ボタンを押して英語で答えてね</p>
+    <button class="rec-btn" id="recBtn">🎤</button>
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-pct" id="progressPct">0%</div>
+      <div class="analysis-track"><div class="analysis-bar" id="analysisBar"></div></div>
+      <div class="progress-step" id="progressStep"></div>
+    </div>
+  </div>
+
+  <div class="result" id="result">
+    <div class="scores">
+      <div class="score-box"><div class="lbl">発音</div><div class="num" id="sPron">-</div></div>
+      <div class="score-box"><div class="lbl">英語の正しさ</div><div class="num" id="sEng">-</div></div>
+    </div>
+    <div class="label">Your Answer（聞き取った英語）</div>
+    <div class="val-you" id="userAns"></div>
+    <div class="label">Better Answer</div>
+    <div class="val-better" id="betterAns"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="retry-btn" id="retryBtn">もう一度チャレンジ 🔄</button>
+  </div>
+</div>
+
+<script>
+// 石川選手 Week1 インタビュー（埋め込み元と同じ10問）
+const QUESTIONS = [
+  {q:"Mayu, great win tonight. How do you feel after that one?", qj:"今夜は見事な勝利でした。試合を終えてどんな気持ちですか？", a:"It feels great. I'm really happy we got the win tonight."},
+  {q:"What was the key to today's win?", qj:"今日の勝因は何でしたか？", a:"I think our serve was the key. We kept the pressure on them."},
+  {q:"You dropped the second set. How did the team bounce back?", qj:"第2セットを落としましたが、チームはどうやって立て直したんですか？", a:"We stayed calm and talked as a team. We focused on one point at a time."},
+  {q:"What did the coach tell you during the timeout?", qj:"タイムアウトで監督から何を言われましたか？", a:"He told us to be more aggressive and trust each other."},
+  {q:"You scored twenty points tonight. How would you rate your own performance?", qj:"今夜は20得点でした。自分のプレーを評価するとしたら？", a:"I think I played well, but I can still improve my serve receive."},
+  {q:"As captain, what message did you give your teammates?", qj:"キャプテンとして、チームメイトにどんな声をかけましたか？", a:"I told them to enjoy the game and keep fighting together."},
+  {q:"What do you think about your opponent today?", qj:"今日の対戦相手についてはどう思いますか？", a:"They're a really strong team. Their blocking was very good."},
+  {q:"What was it like playing in front of this crowd?", qj:"この観客の前でプレーしてみてどうでしたか？", a:"It was amazing. The fans gave us so much energy. Thank you!"},
+  {q:"You moved to Turkey this season. How are you adjusting to life here?", qj:"今シーズンからトルコに移籍しました。こちらでの生活にはどう慣れてきていますか？", a:"It's going well. My teammates help me a lot, and I love the food here."},
+  {q:"What's your goal for the rest of the season?", qj:"シーズンの残りの目標は何ですか？", a:"We want to win the league. I'll keep working hard every day."}
+];
+
+const $ = id => document.getElementById(id);
+let cur = 0, written = "";
+let isRecording = false, mediaRecorder = null, stream = null, audioChunks = [], recToken = 0, progressTimer = null;
+
+// ?q=3 で問題番号を指定（1〜10）
+const qp = parseInt(new URLSearchParams(location.search).get("q"), 10);
+if (qp >= 1 && qp <= QUESTIONS.length) cur = qp - 1;
+
+function render() {
+  const d = QUESTIONS[cur];
+  $("qno").textContent = "Q" + (cur + 1);
+  $("qEn").textContent = d.q;
+  $("qJa").textContent = d.qj;
+  $("writtenText").textContent = written;
+  $("written").style.display = written.trim() ? "block" : "none";
+  sendHeight();
+}
+function resetResult() {
+  $("result").style.display = "none";
+  $("status").textContent = "🎤 ボタンを押して英語で答えてね";
+  $("recBtn").disabled = false;
+}
+
+// 埋め込み元のページから「今の問題」と「書いた答え」を受け取る
+window.addEventListener("message", e => {
+  const m = e.data;
+  if (!m || m.type !== "msc-hatsuwa") return;
+  if (typeof m.q === "number" && m.q >= 1 && m.q <= QUESTIONS.length && m.q - 1 !== cur) {
+    cur = m.q - 1;
+    if (isRecording) stopRecording(false);
+    resetResult();
+  }
+  if (typeof m.written === "string") written = m.written.slice(0, 500);
+  render();
+});
+
+// 中身の高さを親ページに伝えて、枠の高さを合わせてもらう
+function sendHeight() {
+  try { parent.postMessage({ type: "msc-hatsuwa-height", h: document.documentElement.scrollHeight }, "*"); } catch (e) {}
+}
+new ResizeObserver(sendHeight).observe(document.body);
+
+// ── 進み具合の表示 ──
+const STEPS = [
+  { pct: 10, label: "音声を受信中..." },
+  { pct: 30, label: "音声を文字に変換中..." },
+  { pct: 55, label: "発音をチェック中..." },
+  { pct: 75, label: "フィードバックを作成中..." },
+  { pct: 90, label: "もうすぐ完了..." }
+];
+function setProgress(p, l) { $("analysisBar").style.width = p + "%"; $("progressPct").textContent = p + "%"; $("progressStep").textContent = l; }
+function showProgress() {
+  $("progressWrap").classList.add("show"); let i = 0;
+  progressTimer = setInterval(() => { if (i >= STEPS.length) { clearInterval(progressTimer); return; } setProgress(STEPS[i].pct, STEPS[i].label); i++; }, 900);
+}
+function completeProgress() {
+  clearInterval(progressTimer); setProgress(100, "完了！");
+  setTimeout(() => { $("progressWrap").classList.remove("show"); setProgress(0, ""); }, 600);
+}
+
+// ── 録音（iPhoneのSafariはwebmが使えないことがあるので、使える形式を選ぶ）──
+function pickMime() {
+  if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return "";
+  return ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/aac"].find(t => MediaRecorder.isTypeSupported(t)) || "";
+}
+function stopRecording(analyze) {
+  if (!mediaRecorder) return;
+  if (!analyze) audioChunks = [];
+  isRecording = false;
+  $("recBtn").classList.remove("recording");
+  try { mediaRecorder.stop(); } catch (e) {}
+}
+$("recBtn").onclick = async () => {
+  if (isRecording) { $("status").textContent = "AI が分析中..."; stopRecording(true); return; }
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  } catch (e) {
+    $("status").innerHTML = '<span style="color:#E24B4A">マイクが使えませんでした。ブラウザの設定でマイクを許可してね。</span>';
+    return;
+  }
+  const mt = pickMime();
+  mediaRecorder = mt ? new MediaRecorder(stream, { mimeType: mt }) : new MediaRecorder(stream);
+  audioChunks = [];
+  mediaRecorder.ondataavailable = e => { if (e.data && e.data.size > 0) audioChunks.push(e.data); };
+  mediaRecorder.onstop = async () => {
+    stream.getTracks().forEach(t => t.stop());
+    if (!audioChunks.length) return;
+    const type = (mediaRecorder.mimeType || mt || "audio/webm").split(";")[0];
+    const blob = new Blob(audioChunks, { type });
+    const base64 = await new Promise(r => { const rd = new FileReader(); rd.onload = () => r(rd.result.split(",")[1]); rd.readAsDataURL(blob); });
+    processAnswer(base64, type);
+  };
+  mediaRecorder.start();
+  isRecording = true;
+  $("recBtn").classList.add("recording");
+  $("status").textContent = "話してね... 終わったらもう一度タップ";
+  $("result").style.display = "none";
+  const token = ++recToken;
+  setTimeout(() => {
+    if (isRecording && token === recToken) { stopRecording(false); $("status").textContent = "録音が長すぎます（30秒まで）。もう一度どうぞ。"; }
+  }, 30000);
+};
+
+// ── 採点 ──
+async function processAnswer(base64, mimeType) {
+  const d = QUESTIONS[cur];
+  showProgress();
+  $("recBtn").disabled = true;
+
+  const prompt = `あなたはプロの英語コーチです。
+生徒は、記者からのインタビューの質問に英語で答える練習をしています。
+質問：「${d.q}」
+答えの例：「${d.a}」
+${written.trim() ? `生徒が事前に書いた答え：「${written.trim()}」` : ""}
+生徒は答えの例を読んでも、自分の言葉で答えてもかまいません。答えの例と違っても、質問に合った自然な答えなら減点しないでください。
+音声を聞いて、発音（個々の音・つながり・リズムやイントネーション）と、英語の正しさ（文法・自然さ・質問に答えているか）を採点してください。
+以下のJSON形式でのみ回答してください:
+{"transcript":"聞き取った生徒の英語","improved":"生徒の答えをより自然に直した英語（直す必要がなければそのまま）","pron":0-100,"english":0-100,"feedback":"まず良かった点を一言褒めてから、発音で気をつけるとよい音やつながりを1〜2個、具体的な単語を挙げてやさしく日本語で説明してください。英語の間違いがあれば一言添えてください。最後に一言励ましの言葉を添えてください。"}`;
+
+  try {
+    const res = await fetch("/api/correct", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ base64Audio: base64, mimeType, prompt })
+    });
+    const data = await res.json();
+    if (!data.candidates || !data.candidates[0]) throw new Error("AIの応答がありませんでした。もう一度お試しください。");
+    const r = JSON.parse(data.candidates[0].content.parts[0].text.match(/\{.*\}/s)[0]);
+
+    completeProgress();
+    $("sPron").textContent = Number(r.pron) || 0;
+    $("sEng").textContent = Number(r.english) || 0;
+    $("userAns").textContent = r.transcript || "";
+    $("betterAns").textContent = r.improved || "";
+    $("feedback").textContent = r.feedback || "";
+    $("result").style.display = "block";
+    $("status").textContent = "採点完了！";
+    $("recBtn").disabled = false;
+  } catch (e) {
+    completeProgress();
+    $("status").innerHTML = '<span style="color:#E24B4A">エラー: ' + String(e.message).replace(/</g, "&lt;") + "</span>";
+    $("recBtn").disabled = false;
+  }
+  sendHeight();
+}
+$("retryBtn").onclick = resetResult;
+
+render();
+</script>
+</body>
+</html>
