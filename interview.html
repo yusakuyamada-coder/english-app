@@ -46,6 +46,12 @@
     .feedback { background: #f7f7f5; padding: 12px 14px; border-radius: 10px; font-size: 13px; border-left: 4px solid var(--accent); line-height: 1.7; white-space: pre-wrap; color: #333; }
     .retry-btn { width: 100%; padding: 11px; background: white; color: #666; border: 1px solid #ddd; border-radius: 99px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 12px; }
 
+    body.embed .head { display: none; }
+    body.embed .container { gap: 8px; }
+    .rec-row { display: flex; align-items: center; gap: 14px; justify-content: center; }
+    .rec-row .status { text-align: left; max-width: 220px; }
+    .result .val-you { color: #666; font-weight: 500; font-size: 13px; }
+    .better-wrap { display: none; }
     @keyframes pulse { 0%{transform:scale(1)} 50%{transform:scale(1.1)} 100%{transform:scale(1)} }
   </style>
 </head>
@@ -63,8 +69,10 @@
   </div>
 
   <div class="controls">
-    <p class="status" id="status">🎤 ボタンを押して英語で答えてね</p>
-    <button class="rec-btn" id="recBtn">🎤</button>
+    <div class="rec-row">
+      <button class="rec-btn" id="recBtn">🎤</button>
+      <p class="status" id="status">タップして英語で答えてね<br>もう一度タップで採点</p>
+    </div>
     <div class="progress-wrap" id="progressWrap">
       <div class="progress-pct" id="progressPct">0%</div>
       <div class="analysis-track"><div class="analysis-bar" id="analysisBar"></div></div>
@@ -77,10 +85,12 @@
       <div class="score-box"><div class="lbl">発音</div><div class="num" id="sPron">-</div></div>
       <div class="score-box"><div class="lbl">英語の正しさ</div><div class="num" id="sEng">-</div></div>
     </div>
-    <div class="label">Your Answer（聞き取った英語）</div>
+    <div class="label">聞き取った英語</div>
     <div class="val-you" id="userAns"></div>
-    <div class="label">Better Answer</div>
-    <div class="val-better" id="betterAns"></div>
+    <div class="better-wrap" id="betterWrap">
+      <div class="label">こう言うともっと自然</div>
+      <div class="val-better" id="betterAns"></div>
+    </div>
     <div class="feedback" id="feedback"></div>
     <button class="retry-btn" id="retryBtn">もう一度チャレンジ 🔄</button>
   </div>
@@ -120,7 +130,7 @@ function render() {
 }
 function resetResult() {
   $("result").style.display = "none";
-  $("status").textContent = "🎤 ボタンを押して英語で答えてね";
+  $("status").innerHTML = "タップして英語で答えてね<br>もう一度タップで採点";
   $("recBtn").disabled = false;
 }
 
@@ -196,7 +206,7 @@ $("recBtn").onclick = async () => {
   mediaRecorder.start();
   isRecording = true;
   $("recBtn").classList.add("recording");
-  $("status").textContent = "話してね... 終わったらもう一度タップ";
+  $("status").textContent = "話してね…終わったらタップ";
   $("result").style.display = "none";
   const token = ++recToken;
   setTimeout(() => {
@@ -218,7 +228,7 @@ ${written.trim() ? `生徒が事前に書いた答え：「${written.trim()}」`
 生徒は答えの例を読んでも、自分の言葉で答えてもかまいません。答えの例と違っても、質問に合った自然な答えなら減点しないでください。
 音声を聞いて、発音（個々の音・つながり・リズムやイントネーション）と、英語の正しさ（文法・自然さ・質問に答えているか）を採点してください。
 以下のJSON形式でのみ回答してください:
-{"transcript":"聞き取った生徒の英語","improved":"生徒の答えをより自然に直した英語（直す必要がなければそのまま）","pron":0-100,"english":0-100,"feedback":"まず良かった点を一言褒めてから、発音で気をつけるとよい音やつながりを1〜2個、具体的な単語を挙げてやさしく日本語で説明してください。英語の間違いがあれば一言添えてください。最後に一言励ましの言葉を添えてください。"}`;
+{"transcript":"聞き取った生徒の英語","improved":"生徒の答えをより自然に直した英語（直す必要がなければそのまま）","pron":0-100,"english":0-100,"feedback":"まず良かった点を一言褒めてから、発音で気をつけるとよい音やつながりを1〜2個、具体的な単語を挙げてやさしく日本語で説明してください。英語の間違いがあれば一言添えてください。最後に一言励ましの言葉を添えてください。全体で3〜4文、短めに。"}`;
 
   try {
     const res = await fetch("/api/correct", {
@@ -235,6 +245,8 @@ ${written.trim() ? `生徒が事前に書いた答え：「${written.trim()}」`
     $("sEng").textContent = Number(r.english) || 0;
     $("userAns").textContent = r.transcript || "";
     $("betterAns").textContent = r.improved || "";
+    const norm = t => String(t || "").toLowerCase().replace(/[^a-z' ]/g, "").replace(/\s+/g, " ").trim();
+    $("betterWrap").style.display = r.improved && norm(r.improved) !== norm(r.transcript) ? "block" : "none";
     $("feedback").textContent = r.feedback || "";
     $("result").style.display = "block";
     $("status").textContent = "採点完了！";
@@ -248,6 +260,8 @@ ${written.trim() ? `生徒が事前に書いた答え：「${written.trim()}」`
 }
 $("retryBtn").onclick = resetResult;
 
+// LearnWorldsの枠の中ではシンプル表示
+if (window.self !== window.top) document.body.classList.add("embed");
 render();
 </script>
 </body>
